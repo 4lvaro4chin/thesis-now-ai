@@ -3,7 +3,7 @@ export function Footer() {
     <footer className="bg-navy py-9">
       <div className="max-w-prose mx-auto px-6 sm:px-8 md:px-12 flex justify-between items-center flex-wrap gap-4">
         <div>
-          <div className="text-base font-semibold -tracking-wide text-white/70">
+          <div className="text-base font-semibold -tracking-wide" style={{ color: '#04342C' }}>
             Thesis<span className="text-green-400">Now</span>
           </div>
           <p className="text-sm italic text-white/30 mt-1">Tu revisión bibliográfica, en minutos.</p>
