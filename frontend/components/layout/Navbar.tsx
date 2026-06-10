@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase';
+import { useTranslation, detectLanguage } from '@/lib/i18n';
+import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 import type { User } from '@supabase/supabase-js';
 
 interface NavbarProps {
@@ -14,6 +16,7 @@ export function Navbar({ user: initialUser }: NavbarProps) {
   const supabase = createClient();
   const [user, setUser] = useState(initialUser);
   const [mounted, setMounted] = useState(false);
+  const { lang } = useTranslation();
 
   useEffect(() => {
     setMounted(true);
@@ -130,8 +133,11 @@ export function Navbar({ user: initialUser }: NavbarProps) {
         </li>
       </ul>
 
-      {/* Auth Buttons */}
-      <div style={{ display: 'flex', gap: '12px', alignItems: 'center', paddingRight: '8px' }} className="sm:pr-0">
+      {/* Language Switcher + Auth Buttons */}
+      <div style={{ display: 'flex', gap: '16px', alignItems: 'center', paddingRight: '8px' }} className="sm:pr-0">
+        {mounted && <LanguageSwitcher currentLang={lang} />}
+
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
         {user ? (
           <>
             <div style={{
@@ -247,6 +253,7 @@ export function Navbar({ user: initialUser }: NavbarProps) {
             </button>
           </>
         )}
+        </div>
       </div>
     </nav>
   );

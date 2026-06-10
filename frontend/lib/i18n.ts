@@ -106,6 +106,15 @@ const translations = {
 };
 
 export function detectLanguage(): Language {
+  // First check if user has a saved preference
+  if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+    const saved = localStorage.getItem('preferredLanguage');
+    if (saved === 'es' || saved === 'en' || saved === 'pt') {
+      return saved as Language;
+    }
+  }
+
+  // Fall back to browser language detection
   if (typeof navigator === 'undefined') return 'es';
   const lang = navigator.language.split('-')[0];
   if (lang === 'en') return 'en';
