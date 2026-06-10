@@ -34,6 +34,21 @@ export const translations = {
     'navbar.signIn': 'Iniciar sesión',
     'navbar.startFree': 'Empezar gratis',
     'navbar.logout': 'Salir',
+
+    // Search page
+    'search.section.builder': 'Constructor',
+    'search.title': 'Construye tu búsqueda',
+    'search.subtitle': 'Ajusta los operadores booleanos y selecciona las bases de datos donde buscar.',
+    'search.section.operators': 'Operadores booleanos',
+    'search.operators.hint': 'Usa estos operadores para refinar tu búsqueda:',
+    'search.operators.and': 'Incluye todos los términos',
+    'search.operators.or': 'Incluye alguno de los términos',
+    'search.operators.not': 'Excluye el término',
+    'search.operators.trunc': 'Busca palabras con prefijo',
+    'search.section.databases': 'Bases de datos',
+    'search.databases.hint': 'Selecciona dónde deseas buscar:',
+    'search.button.back': 'Volver',
+    'search.button.execute': 'Ejecutar búsqueda',
   },
   en: {
     // Login page
@@ -68,6 +83,21 @@ export const translations = {
     'navbar.signIn': 'Sign In',
     'navbar.startFree': 'Start Free',
     'navbar.logout': 'Logout',
+
+    // Search page
+    'search.section.builder': 'Builder',
+    'search.title': 'Build your search',
+    'search.subtitle': 'Adjust boolean operators and select the databases where to search.',
+    'search.section.operators': 'Boolean Operators',
+    'search.operators.hint': 'Use these operators to refine your search:',
+    'search.operators.and': 'Includes all terms',
+    'search.operators.or': 'Includes some of the terms',
+    'search.operators.not': 'Excludes the term',
+    'search.operators.trunc': 'Search words with prefix',
+    'search.section.databases': 'Databases',
+    'search.databases.hint': 'Select where you want to search:',
+    'search.button.back': 'Back',
+    'search.button.execute': 'Execute search',
   },
   pt: {
     // Login page
@@ -102,6 +132,21 @@ export const translations = {
     'navbar.signIn': 'Entrar',
     'navbar.startFree': 'Começar grátis',
     'navbar.logout': 'Sair',
+
+    // Search page
+    'search.section.builder': 'Construtor',
+    'search.title': 'Construa sua pesquisa',
+    'search.subtitle': 'Ajuste os operadores booleanos e selecione os bancos de dados onde pesquisar.',
+    'search.section.operators': 'Operadores Booleanos',
+    'search.operators.hint': 'Use esses operadores para refinar sua pesquisa:',
+    'search.operators.and': 'Inclui todos os termos',
+    'search.operators.or': 'Inclui alguns dos termos',
+    'search.operators.not': 'Exclui o termo',
+    'search.operators.trunc': 'Pesquisa palavras com prefixo',
+    'search.section.databases': 'Bancos de dados',
+    'search.databases.hint': 'Selecione onde você deseja pesquisar:',
+    'search.button.back': 'Voltar',
+    'search.button.execute': 'Executar pesquisa',
   },
 };
 

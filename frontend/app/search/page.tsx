@@ -3,9 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useAuthProtection } from "@/lib/useAuthProtection";
+import { useTranslation } from "@/lib/useTranslation";
 
 export default function SearchPage() {
   useAuthProtection();
+  const { t } = useTranslation();
   const [selectedOperators, setSelectedOperators] = useState<string[]>(["AND"]);
   const [selectedDatabases, setSelectedDatabases] = useState<Record<string, boolean>>({
     pubmed: true,
@@ -27,10 +29,10 @@ export default function SearchPage() {
   };
 
   const operatorConfig: Record<string, { bg: string; text: string; desc: string }> = {
-    AND: { bg: "#E1F5EE", text: "#0F6E56", desc: "Incluye todos los términos" },
-    OR: { bg: "#EBF4FD", text: "#1B6FA8", desc: "Incluye alguno de los términos" },
-    NOT: { bg: "#FEF0EC", text: "#A33820", desc: "Excluye el término" },
-    TRUNC: { bg: "#FDF4E3", text: "#8A5100", desc: "Busca palabras con prefijo" },
+    AND: { bg: "#E1F5EE", text: "#0F6E56", desc: t('search.operators.and') },
+    OR: { bg: "#EBF4FD", text: "#1B6FA8", desc: t('search.operators.or') },
+    NOT: { bg: "#FEF0EC", text: "#A33820", desc: t('search.operators.not') },
+    TRUNC: { bg: "#FDF4E3", text: "#8A5100", desc: t('search.operators.trunc') },
   };
 
   return (
@@ -46,7 +48,7 @@ export default function SearchPage() {
             color: "#1D9E75",
             marginBottom: "10px"
           }}>
-            Constructor
+            {t('search.section.builder')}
           </p>
           <h1 style={{
             fontFamily: "'DM Sans', sans-serif",
@@ -57,7 +59,7 @@ export default function SearchPage() {
             lineHeight: 1.2,
             marginBottom: "16px"
           }}>
-            Construye tu búsqueda
+            {t('search.title')}
           </h1>
           <p style={{
             fontSize: "15px",
@@ -65,7 +67,7 @@ export default function SearchPage() {
             lineHeight: 1.65,
             maxWidth: "56ch"
           }}>
-            Ajusta los operadores booleanos y selecciona las bases de datos donde buscar.
+            {t('search.subtitle')}
           </p>
         </div>
 
@@ -78,14 +80,14 @@ export default function SearchPage() {
             marginBottom: "16px",
             letterSpacing: "-0.3px"
           }}>
-            Operadores booleanos
+            {t('search.section.operators')}
           </h2>
           <p style={{
             fontSize: "14px",
             color: "#6B7280",
             marginBottom: "24px"
           }}>
-            Usa estos operadores para refinar tu búsqueda:
+            {t('search.operators.hint')}
           </p>
 
           {/* Chips Grid */}
@@ -159,14 +161,14 @@ export default function SearchPage() {
             marginBottom: "16px",
             letterSpacing: "-0.3px"
           }}>
-            Bases de datos
+            {t('search.section.databases')}
           </h2>
           <p style={{
             fontSize: "14px",
             color: "#6B7280",
             marginBottom: "24px"
           }}>
-            Selecciona dónde deseas buscar:
+            {t('search.databases.hint')}
           </p>
 
           <div style={{
@@ -243,7 +245,7 @@ export default function SearchPage() {
               textAlign: "center"
             }}
           >
-            Volver
+            {t('search.button.back')}
           </Link>
           <Link
             href="/searching"
@@ -262,7 +264,7 @@ export default function SearchPage() {
               textAlign: "center"
             }}
           >
-            Ejecutar búsqueda
+            {t('search.button.execute')}
           </Link>
         </div>
       </div>
