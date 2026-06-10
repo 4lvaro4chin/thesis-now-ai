@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ThesisNow — Revisión bibliográfica automatizada</title>
+  <meta name="description" content="Ingresa el título de tu tesis y recibe una revisión bibliográfica completa en menos de 3 minutos." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Tokens — Manual de Marca v1.0 ── */
+    :root {
+      --green-900: #04342C;
+      --green-800: #085041;
+      --green-700: #0F6E56;
+      --green-500: #1D9E75;
+      --green-400: #5DCAA5;
+      --green-300: #9FE1CB;
+      --green-100: #E1F5EE;
+      --green-50:  #F0FBF7;
+      --navy:      #1B2A4A;
+      --text:      #2D3748;
+      --text-mid:  #374151;
+      --text-muted:#6B7280;
+      --text-light:#9CA3AF;
+      --border:    #E8EDEB;
+      --bg:        #F4F6F5;
+      --white:     #FFFFFF;
+
+      --and-bg: #E1F5EE; --and-text: #0F6E56;
+      --or-bg:  #EBF4FD; --or-text:  #1B6FA8;
+      --not-bg: #FEF0EC; --not-text: #A33820;
+      --trc-bg: #FDF4E3; --trc-text: #8A5100;
+
+      --shadow-green: 0 4px 20px rgba(15,110,86,0.12);
+      --shadow-green-lg: 0 8px 40px rgba(15,110,86,0.16);
+      --shadow-sm: 0 1px 4px rgba(27,42,74,0.06);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── SCREEN LABEL ── */
+    .screen-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      margin-bottom: 12px;
+    }
+    .screen-label::before {
+      content: '';
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--green-500);
+    }
+
+    /* ── NAV ── */
+    nav {
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      padding: 0 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 58px;
+    }
+    .logo {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      color: var(--navy);
+      text-decoration: none;
+    }
+    .logo span { color: var(--green-500); }
+    nav ul { list-style: none; display: flex; gap: 28px; }
+    nav ul a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 400;
+      transition: color 0.18s;
+      position: relative;
+    }
+    nav ul a:hover { color: var(--navy); }
+    nav ul a.active { color: var(--navy); font-weight: 500; }
+    nav ul a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -18px; left: 0; right: 0;
+      height: 2px;
+      background: var(--green-500);
+      border-radius: 1px;
+    }
+    .nav-actions { display: flex; gap: 8px; align-items: center; }
+    .btn-ghost {
+      padding: 7px 16px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: var(--text-mid);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: border-color 0.18s, color 0.18s, transform 0.1s;
+    }
+    .btn-ghost:hover { border-color: var(--green-400); color: var(--green-700); }
+    .btn-ghost:active { transform: scale(0.98); }
+    .btn-cta {
+      padding: 8px 18px;
+      background: var(--green-500);
+      border: none;
+      border-radius: 7px;
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.18s, transform 0.1s, box-shadow 0.18s;
+      box-shadow: 0 2px 8px rgba(29,158,117,0.3);
+    }
+    .btn-cta:hover { background: var(--green-700); box-shadow: var(--shadow-green); }
+    .btn-cta:active { transform: scale(0.98); }
+
+    /* ── HERO ── */
+    .hero {
+      background: var(--green-900);
+      padding: 88px 48px 80px;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* noise grain overlay */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+      pointer-events: none;
+      opacity: 0.6;
+      z-index: 0;
+    }
+
+    /* radial glow top-right */
+    .hero-glow-1 {
+      position: absolute;
+      top: -100px; right: -80px;
+      width: 480px; height: 480px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(29,158,117,0.18) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    /* radial glow bottom-left */
+    .hero-glow-2 {
+      position: absolute;
+      bottom: -120px; left: -60px;
+      width: 360px; height: 360px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(93,202,165,0.1) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 720px;
+      width: 100%;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--green-300);
+      margin-bottom: 24px;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      width: 20px; height: 1px;
+      background: var(--green-400);
+    }
+    .hero-eyebrow::after {
+      content: '';
+      width: 20px; height: 1px;
+      background: var(--green-400);
+    }
+
+    .hero h1 {
+      font-family: 'DM Sans', sans-serif;
+      font-size: clamp(44px, 6vw, 68px);
+      font-weight: 600;
+      color: var(--white);
+      line-height: 1.05;
+      letter-spacing: -2px;
+      margin-bottom: 16px;
+      text-wrap: balance;
+    }
+
+    .hero-tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 24px;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 44px;
+      line-height: 1.4;
+    }
+    .hero-tagline em { color: var(--green-400); font-style: italic; }
+
+    /* Search box — hero */
+    .search-wrap {
+      max-width: 600px;
+      margin: 0 auto 14px;
+      display: flex;
+      background: var(--white);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1.5px solid transparent;
+      transition: box-shadow 0.2s, border-color 0.2s;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+    }
+    .search-wrap:focus-within {
+      border-color: var(--green-400);
+      box-shadow: 0 0 0 4px rgba(29,158,117,0.2), 0 4px 24px rgba(0,0,0,0.2);
+    }
+    .search-wrap input {
+      flex: 1;
+      border: none;
+      outline: none;
+      padding: 15px 20px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--text);
+      background: transparent;
+    }
+    .search-wrap input::placeholder { color: var(--text-light); font-style: italic; }
+    .btn-search {
+      padding: 13px 24px;
+      background: var(--green-500);
+      border: none;
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.18s;
+      white-space: nowrap;
+    }
+    .btn-search:hover { background: var(--green-700); }
+    .btn-search:active { transform: scale(0.98); }
+
+    .hero-hint {
+      font-size: 12px;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 0.03em;
+    }
+    .hero-hint strong { color: var(--green-300); font-weight: 500; }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      margin-top: 60px;
+      padding-top: 36px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .stat {
+      flex: 1;
+      text-align: center;
+      padding: 0 24px;
+      border-right: 1px solid rgba(255,255,255,0.08);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-value {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 32px;
+      font-weight: 600;
+      color: var(--white);
+      letter-spacing: -1px;
+      display: block;
+      font-variant-numeric: tabular-nums;
+    }
+    .stat-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.35);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 2px;
+    }
+
+    /* ── SECTION WRAPPER ── */
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 72px 48px; }
+
+    .section-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--green-500);
+      margin-bottom: 10px;
+    }
+    .section-title {
+      font-family: 'DM Sans', sans-serif;
+      font-size: clamp(26px, 3vw, 34px);
+      font-weight: 600;
+      color: var(--navy);
+      letter-spacing: -0.7px;
+      line-height: 1.2;
+      margin-bottom: 48px;
+      text-wrap: balance;
+    }
+
+    /* ── HOW IT WORKS — Timeline layout ── */
+    .steps-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .step-row {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 0 32px;
+      padding: 32px 0;
+      border-bottom: 1px solid var(--border);
+      align-items: start;
+      transition: background 0.2s;
+    }
+    .step-row:first-child { padding-top: 0; }
+    .step-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .step-row:hover .step-num-big { color: var(--green-500); }
+
+    .step-num-big {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 52px;
+      font-weight: 600;
+      color: var(--border);
+      line-height: 1;
+      letter-spacing: -2px;
+      transition: color 0.25s;
+      font-variant-numeric: tabular-nums;
+      padding-top: 2px;
+    }
+    .step-content { padding-top: 4px; }
+    .step-content h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 8px;
+      letter-spacing: -0.3px;
+    }
+    .step-content p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 56ch;
+    }
+    .step-tag {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 3px 10px;
+      background: var(--green-50);
+      border: 1px solid var(--green-100);
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--green-700);
+      letter-spacing: 0.04em;
+    }
+
+    /* ── BOOLEAN SECTION ── */
+    .boolean-section {
+      background: var(--white);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 72px 48px;
+    }
+    .boolean-inner { max-width: 1100px; margin: 0 auto; }
+
+    .thesis-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+    .thesis-pill strong { color: var(--navy); font-weight: 500; }
+    .thesis-pill-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-light);
+      background: var(--white);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      border-radius: 3px;
+    }
+
+    .bool-legend {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .bool-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .bool-legend-dot {
+      width: 8px; height: 8px;
+      border-radius: 2px;
+    }
+
+    .boolean-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 32px;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px 5px 8px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 13px;
+      cursor: pointer;
+      transition: transform 0.15s, filter 0.15s, box-shadow 0.15s;
+      border: 1px solid transparent;
+    }
+    .chip:hover { transform: translateY(-1px); filter: brightness(0.97); }
+    .chip:active { transform: scale(0.97); }
+    .chip-label {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 1px 5px;
+      border-radius: 3px;
+      opacity: 0.8;
+    }
+    .chip-and { background: var(--and-bg); color: var(--and-text); border-color: #C6EBD9; }
+    .chip-and .chip-label { background: rgba(15,110,86,0.12); }
+    .chip-or  { background: var(--or-bg);  color: var(--or-text);  border-color: #BAD8F5; }
+    .chip-or  .chip-label { background: rgba(27,111,168,0.12); }
+    .chip-not { background: var(--not-bg); color: var(--not-text); border-color: #F5C9B7; }
+    .chip-not .chip-label { background: rgba(163,56,32,0.1); }
+    .chip-trc { background: var(--trc-bg); color: var(--trc-text); border-color: #F0DAAE; }
+    .chip-trc .chip-label { background: rgba(138,81,0,0.1); }
+
+    .db-row-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-light);
+      margin-bottom: 12px;
+    }
+    .db-toggles {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+    .db-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.18s, transform 0.1s;
+    }
+    .db-toggle:hover { border-color: var(--green-400); color: var(--green-700); }
+    .db-toggle:active { transform: scale(0.97); }
+    .db-toggle.active {
+      background: var(--green-50);
+      border-color: var(--green-400);
+      color: var(--green-700);
+      box-shadow: 0 1px 4px rgba(29,158,117,0.12);
+    }
+    .toggle-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: background 0.18s;
+    }
+    .db-toggle.active .toggle-dot { background: var(--green-500); }
+
+    .execute-row { display: flex; justify-content: flex-end; align-items: center; gap: 12px; }
+    .execute-hint { font-size: 12px; color: var(--text-light); }
+    .btn-execute {
+      padding: 11px 28px;
+      background: var(--green-500);
+      border: none;
+      border-radius: 8px;
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.18s, transform 0.1s, box-shadow 0.18s;
+      box-shadow: 0 2px 10px rgba(29,158,117,0.35);
+    }
+    .btn-execute:hover { background: var(--green-700); box-shadow: var(--shadow-green); }
+    .btn-execute:active { transform: scale(0.98); }
+
+    /* ── PROGRESS ── */
+    .progress-section {
+      background: var(--green-900);
+      padding: 72px 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .progress-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+      pointer-events: none;
+      opacity: 0.5;
+    }
+    .progress-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 560px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .progress-logo {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: -0.3px;
+      margin-bottom: 32px;
+    }
+    .progress-logo span { color: var(--green-400); }
+
+    /* Animated dots loader */
+    .loader-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+    .loader-dots span {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--green-500);
+      animation: dot-pulse 1.4s infinite ease-in-out both;
+    }
+    .loader-dots span:nth-child(1) { animation-delay: -0.32s; }
+    .loader-dots span:nth-child(2) { animation-delay: -0.16s; }
+    .loader-dots span:nth-child(3) { animation-delay: 0s; }
+    @keyframes dot-pulse {
+      0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+      40%           { transform: scale(1.1); opacity: 1; }
+    }
+
+    .progress-title {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--white);
+      letter-spacing: -0.4px;
+      margin-bottom: 6px;
+    }
+    .progress-sub {
+      font-size: 14px;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 36px;
+    }
+    .progress-sub strong { color: var(--green-300); font-weight: 500; }
+
+    .db-progress-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      text-align: left;
+    }
+    .db-progress-item {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 14px 18px;
+      backdrop-filter: blur(4px);
+    }
+    .db-progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .db-progress-name { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.85); }
+    .db-progress-status {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 10px;
+      letter-spacing: 0.02em;
+    }
+    .status-done     { background: rgba(29,158,117,0.25); color: var(--green-300); }
+    .status-searching{ background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6); }
+    .status-waiting  { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.3); }
+    .progress-bar-track {
+      height: 3px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--green-700), var(--green-400));
+    }
+    .bar-pulse { animation: bar-shimmer 1.5s infinite linear; }
+    @keyframes bar-shimmer {
+      0%   { background-position: -200px 0; }
+      100% { background-position: 200px 0; }
+    }
+
+    /* ── RESULTS ── */
+    .results-wrap { max-width: 1100px; margin: 0 auto; padding: 72px 48px; }
+
+    .metrics-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+    .metric-pill {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 16px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+    }
+    .metric-pill.green {
+      background: var(--green-50);
+      border-color: var(--green-100);
+      color: var(--green-700);
+    }
+    .metric-pill.navy { color: var(--navy); }
+    .metric-pill.muted { color: var(--text-muted); }
+    .metric-icon { font-size: 14px; }
+
+    .results-grid { display: grid; grid-template-columns: 210px 1fr; gap: 20px; }
+
+    .filter-panel {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      align-self: start;
+      position: sticky;
+      top: 76px;
+    }
+    .filter-panel h4 {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-light);
+      margin-bottom: 18px;
+    }
+    .filter-group { margin-bottom: 18px; }
+    .filter-group label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      display: block;
+      margin-bottom: 7px;
+    }
+    .filter-chip {
+      display: inline-block;
+      padding: 4px 9px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      font-size: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      margin: 0 4px 4px 0;
+      transition: all 0.15s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .filter-chip.active {
+      background: var(--green-50);
+      border-color: var(--green-300);
+      color: var(--green-700);
+      font-weight: 500;
+    }
+    .filter-chip:hover { border-color: var(--green-400); color: var(--green-700); }
+
+    .articles-col { display: flex; flex-direction: column; gap: 10px; }
+    .db-section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 0 10px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2px;
+    }
+    .db-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green-500); flex-shrink: 0; }
+    .db-section-name {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+    }
+    .db-section-count {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 600;
+      background: var(--green-50);
+      color: var(--green-700);
+      padding: 2px 9px;
+      border-radius: 10px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .article-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      display: flex;
+      gap: 14px;
+      transition: border-color 0.18s, box-shadow 0.18s, transform 0.18s;
+    }
+    .article-card:hover {
+      border-color: var(--green-300);
+      box-shadow: var(--shadow-green);
+      transform: translateY(-1px);
+    }
+    .rel-badge {
+      flex-shrink: 0;
+      width: 44px; height: 44px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    .rel-high { background: var(--green-100); color: var(--green-800); }
+    .rel-mid  { background: #FDF4E3;          color: #7A4F00; }
+    .rel-low  { background: #FEF0EC;          color: #A33820; }
+    .article-body { flex: 1; min-width: 0; }
+    .article-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--navy);
+      line-height: 1.45;
+      margin-bottom: 5px;
+    }
+    .article-meta { font-size: 12px; color: var(--text-light); }
+    .article-meta span { margin: 0 3px; }
+
+    .results-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+    }
+    .btn-text {
+      background: none; border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px; color: var(--green-700);
+      cursor: pointer; font-weight: 500;
+      padding: 0;
+      transition: color 0.15s;
+    }
+    .btn-text:hover { color: var(--green-900); }
+    .export-group { display: flex; gap: 8px; }
+    .btn-export {
+      padding: 9px 18px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-mid);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s, transform 0.1s;
+    }
+    .btn-export:hover { border-color: var(--green-400); color: var(--green-700); }
+    .btn-export:active { transform: scale(0.97); }
+    .btn-export.primary {
+      background: var(--green-500);
+      border-color: var(--green-500);
+      color: var(--white);
+      box-shadow: 0 2px 8px rgba(29,158,117,0.3);
+    }
+    .btn-export.primary:hover { background: var(--green-700); border-color: var(--green-700); }
+
+    /* ── PRICING ── */
+    .pricing-outer {
+      background: var(--white);
+      border-top: 1px solid var(--border);
+      padding: 72px 48px;
+    }
+    .pricing-inner { max-width: 1100px; margin: 0 auto; }
+
+    .pricing-cards {
+      display: grid;
+      grid-template-columns: 1fr 1.08fr 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+    .price-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      position: relative;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .price-card:hover { box-shadow: var(--shadow-green); transform: translateY(-2px); }
+
+    /* Featured card — inverted dark */
+    .price-card.featured {
+      background: var(--green-900);
+      border-color: var(--green-700);
+      color: var(--white);
+      box-shadow: var(--shadow-green-lg);
+    }
+    .price-card.featured:hover { transform: translateY(-3px); box-shadow: 0 12px 48px rgba(15,110,86,0.25); }
+
+    .price-badge {
+      position: absolute;
+      top: -13px; left: 50%;
+      transform: translateX(-50%);
+      background: var(--green-500);
+      color: var(--white);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 4px 14px;
+      border-radius: 100px;
+      white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(29,158,117,0.4);
+    }
+    .price-name {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-light);
+      margin-bottom: 16px;
+    }
+    .price-card.featured .price-name { color: rgba(255,255,255,0.4); }
+    .price-value {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 44px;
+      font-weight: 600;
+      color: var(--navy);
+      letter-spacing: -1.5px;
+      line-height: 1;
+      margin-bottom: 4px;
+      font-variant-numeric: tabular-nums;
+    }
+    .price-value sup { font-size: 22px; vertical-align: top; margin-top: 7px; letter-spacing: 0; }
+    .price-card.featured .price-value { color: var(--white); }
+    .price-credits {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .price-card.featured .price-credits { color: rgba(255,255,255,0.5); }
+    .price-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .price-card.featured .price-desc { color: rgba(255,255,255,0.45); border-color: rgba(255,255,255,0.08); }
+    .price-features { list-style: none; margin-bottom: 28px; }
+    .price-features li {
+      font-size: 13px;
+      color: var(--text-mid);
+      padding: 7px 0;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      border-bottom: 1px solid var(--border);
+    }
+    .price-card.featured .price-features li { color: rgba(255,255,255,0.75); border-color: rgba(255,255,255,0.07); }
+    .price-features li:last-child { border-bottom: none; }
+    .price-features li::before {
+      content: '✓';
+      color: var(--green-500);
+      font-weight: 700;
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+    .price-card.featured .price-features li::before { color: var(--green-300); }
+    .btn-price {
+      width: 100%;
+      padding: 11px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-mid);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.18s, transform 0.1s;
+    }
+    .btn-price:hover { border-color: var(--green-500); color: var(--green-700); }
+    .btn-price:active { transform: scale(0.98); }
+    .btn-price.featured-btn {
+      background: var(--green-500);
+      border-color: var(--green-500);
+      color: var(--white);
+      box-shadow: 0 3px 12px rgba(29,158,117,0.4);
+    }
+    .btn-price.featured-btn:hover { background: var(--green-400); border-color: var(--green-400); }
+
+    /* ── NOTE / CALLOUT ── */
+    .note {
+      background: var(--green-50);
+      border-left: 3px solid var(--green-500);
+      border-radius: 0 8px 8px 0;
+      padding: 14px 20px;
+      font-size: 13px;
+      color: #3D6B58;
+      line-height: 1.65;
+      margin-top: 32px;
+    }
+    .note strong { color: var(--green-700); }
+
+    /* ── DIVIDER ── */
+    hr { border: none; border-top: 1px solid var(--border); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--navy);
+      padding: 36px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-logo {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.7);
+      letter-spacing: -0.3px;
+    }
+    .footer-logo span { color: var(--green-400); }
+    .footer-tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 14px;
+      color: rgba(255,255,255,0.3);
+    }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a {
+      font-size: 12px;
+      color: rgba(255,255,255,0.3);
+      text-decoration: none;
+      transition: color 0.18s;
+    }
+    .footer-links a:hover { color: rgba(255,255,255,0.7); }
+
+    /* ── ENTRY ANIMATIONS ── */
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .hero-inner > * {
+      animation: fade-up 0.6s ease both;
+    }
+    .hero-inner > *:nth-child(1) { animation-delay: 0.05s; }
+    .hero-inner > *:nth-child(2) { animation-delay: 0.12s; }
+    .hero-inner > *:nth-child(3) { animation-delay: 0.2s; }
+    .hero-inner > *:nth-child(4) { animation-delay: 0.28s; }
+    .hero-inner > *:nth-child(5) { animation-delay: 0.34s; }
+    .hero-inner > *:nth-child(6) { animation-delay: 0.42s; }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a class="logo" href="#">Thesis<span>Now</span></a>
+    <ul>
+      <li><a href="#" class="active">Inicio</a></li>
+      <li><a href="#">Cómo funciona</a></li>
+      <li><a href="#">Precios</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="btn-ghost">Iniciar sesión</button>
+      <button class="btn-cta">Empezar gratis</button>
+    </div>
+  </nav>
+
+  <!-- ── PANTALLA 1: HERO ── -->
+  <section class="hero">
+    <div class="hero-glow-1"></div>
+    <div class="hero-glow-2"></div>
+    <div class="hero-inner">
+      <div class="screen-label" style="background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.1);color:var(--green-300);">
+        <span style="background:var(--green-400);"></span>
+        Pantalla 1 — Landing
+      </div>
+      <div class="hero-eyebrow">Revisión bibliográfica automatizada</div>
+      <h1>De tu título de tesis<br>a la bibliografía completa.</h1>
+      <div class="hero-tagline">Tu revisión, en <em>minutos.</em> No en semanas.</div>
+
+      <div class="search-wrap">
+        <input type="text" placeholder="Ej: Impacto del mindfulness en el rendimiento académico universitario…" />
+        <button class="btn-search">Buscar ahora</button>
+      </div>
+      <p class="hero-hint">1 búsqueda <strong>gratis</strong> al registrarte · Sin tarjeta de crédito</p>
+
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-value">12+</span>
+          <span class="stat-label">Bases de datos</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value">&lt;3 min</span>
+          <span class="stat-label">Por búsqueda</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value">40 hrs</span>
+          <span class="stat-label">Trabajo ahorrado</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── HOW IT WORKS — Timeline ── -->
+  <div class="wrap">
+    <div class="screen-label">Pantalla 1 — Sección "cómo funciona"</div>
+    <div class="section-eyebrow">Proceso</div>
+    <div class="section-title">Tres pasos. Menos de 3 minutos.</div>
+    <div class="steps-timeline">
+      <div class="step-row">
+        <div class="step-num-big">01</div>
+        <div class="step-content">
+          <h3>Ingresa el título de tu tesis</h3>
+          <p>Escribe el título exacto. Nuestro motor NLP extrae conceptos clave, genera sinónimos y construye operadores booleanos precisos de forma automática.</p>
+          <span class="step-tag">NLP · GPT-4o-mini</span>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num-big">02</div>
+        <div class="step-content">
+          <h3>Revisas y ajustas los booleanos</h3>
+          <p>Ves las queries generadas como tarjetas editables, organizadas por tipo (AND, OR, NOT, truncaciones). Agrega términos o elimina los que no aplican antes de ejecutar.</p>
+          <span class="step-tag">Edición manual · Selección de bases</span>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num-big">03</div>
+        <div class="step-content">
+          <h3>Descargas el reporte en PDF o Word</h3>
+          <p>ThesisNow ejecuta búsquedas en paralelo en todas las bases seleccionadas y te entrega un reporte organizado con título, autores, DOI, abstract y puntuación de relevancia.</p>
+          <span class="step-tag">PDF · Word · RIS · BibTeX</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr />
+
+  <!-- ── PANTALLA 2: BOOLEANOS ── -->
+  <div class="boolean-section">
+    <div class="boolean-inner">
+      <div class="screen-label">Pantalla 2 — Operadores booleanos</div>
+      <div class="section-eyebrow">Paso 2 de 3</div>
+      <div class="section-title" style="margin-bottom:20px;">Operadores generados para tu tesis</div>
+
+      <div class="thesis-pill">
+        <span class="thesis-pill-label">Título</span>
+        <strong>"Impacto del mindfulness en el rendimiento académico universitario"</strong>
+      </div>
+
+      <div class="bool-legend">
+        <div class="bool-legend-item">
+          <div class="bool-legend-dot" style="background:var(--and-text);"></div>
+          AND — términos obligatorios
+        </div>
+        <div class="bool-legend-item">
+          <div class="bool-legend-dot" style="background:var(--or-text);"></div>
+          OR — sinónimos alternativos
+        </div>
+        <div class="bool-legend-item">
+          <div class="bool-legend-dot" style="background:var(--not-text);"></div>
+          NOT — exclusiones
+        </div>
+        <div class="bool-legend-item">
+          <div class="bool-legend-dot" style="background:var(--trc-text);"></div>
+          TRUNC — truncaciones
+        </div>
+      </div>
+
+      <div class="boolean-row">
+        <div class="chip chip-and"><span class="chip-label">AND</span>mindfulness</div>
+        <div class="chip chip-and"><span class="chip-label">AND</span>academic performance</div>
+        <div class="chip chip-and"><span class="chip-label">AND</span>university students</div>
+        <div class="chip chip-or"><span class="chip-label">OR</span>mindful*</div>
+        <div class="chip chip-or"><span class="chip-label">OR</span>meditation</div>
+        <div class="chip chip-or"><span class="chip-label">OR</span>stress reduction</div>
+        <div class="chip chip-or"><span class="chip-label">OR</span>academic achievement</div>
+        <div class="chip chip-or"><span class="chip-label">OR</span>GPA</div>
+        <div class="chip chip-not"><span class="chip-label">NOT</span>clinical trial</div>
+        <div class="chip chip-not"><span class="chip-label">NOT</span>children</div>
+        <div class="chip chip-trc"><span class="chip-label">TRUNC</span>mindful*</div>
+        <div class="chip chip-trc"><span class="chip-label">TRUNC</span>adolescen*</div>
+      </div>
+
+      <div class="db-row-label">Bases de datos</div>
+      <div class="db-toggles">
+        <div class="db-toggle active"><span class="toggle-dot"></span>PubMed</div>
+        <div class="db-toggle active"><span class="toggle-dot"></span>Semantic Scholar</div>
+        <div class="db-toggle active"><span class="toggle-dot"></span>arXiv</div>
+        <div class="db-toggle"><span class="toggle-dot"></span>ERIC</div>
+        <div class="db-toggle"><span class="toggle-dot"></span>OpenAlex</div>
+      </div>
+
+      <div class="execute-row">
+        <span class="execute-hint">3 bases seleccionadas · 1 crédito</span>
+        <button class="btn-execute">Ejecutar búsqueda →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PANTALLA 3: PROGRESO ── -->
+  <div class="progress-section">
+    <div class="progress-inner">
+      <div class="screen-label" style="background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.1);color:var(--green-300);">
+        <span style="background:var(--green-400);"></span>
+        Pantalla 3 — Progreso de búsqueda
+      </div>
+      <div class="progress-logo">Thesis<span>Now</span></div>
+      <div class="loader-dots">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="progress-title">Buscando en 3 bases de datos</div>
+      <div class="progress-sub">Encontramos <strong>127 artículos</strong> hasta ahora</div>
+
+      <div class="db-progress-list">
+        <div class="db-progress-item">
+          <div class="db-progress-header">
+            <span class="db-progress-name">PubMed</span>
+            <span class="db-progress-status status-done">✓ 54 resultados</span>
+          </div>
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" style="width:100%"></div>
+          </div>
+        </div>
+        <div class="db-progress-item">
+          <div class="db-progress-header">
+            <span class="db-progress-name">Semantic Scholar</span>
+            <span class="db-progress-status status-searching">Buscando…</span>
+          </div>
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill bar-pulse" style="width:62%;background:linear-gradient(90deg, var(--green-700), var(--green-400), var(--green-700));background-size:400px 100%;animation:bar-shimmer 1.2s infinite linear;"></div>
+          </div>
+        </div>
+        <div class="db-progress-item">
+          <div class="db-progress-header">
+            <span class="db-progress-name">arXiv</span>
+            <span class="db-progress-status status-waiting">En espera</span>
+          </div>
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PANTALLA 4: RESULTADOS ── -->
+  <div class="results-wrap">
+    <div class="screen-label">Pantalla 4 — Resultados</div>
+    <div class="section-eyebrow">Paso 3 de 3</div>
+    <div class="section-title" style="margin-bottom:20px;">143 artículos encontrados</div>
+
+    <div class="metrics-row">
+      <div class="metric-pill green"><span class="metric-icon">●</span>62 alta relevancia</div>
+      <div class="metric-pill green"><span class="metric-icon">◎</span>143 artículos totales</div>
+      <div class="metric-pill navy">3 bases consultadas</div>
+      <div class="metric-pill muted">⏱ 2 min 14 seg</div>
+    </div>
+
+    <div class="results-grid">
+      <div class="filter-panel">
+        <h4>Filtros</h4>
+        <div class="filter-group">
+          <label>Por año</label>
+          <button class="filter-chip active">2020–2024</button>
+          <button class="filter-chip">2015–2019</button>
+          <button class="filter-chip">Todos</button>
+        </div>
+        <div class="filter-group">
+          <label>Por relevancia</label>
+          <button class="filter-chip active">&gt; 80%</button>
+          <button class="filter-chip">&gt; 60%</button>
+          <button class="filter-chip">Todos</button>
+        </div>
+        <div class="filter-group">
+          <label>Base de datos</label>
+          <button class="filter-chip active">PubMed (54)</button>
+          <button class="filter-chip">Semantic (61)</button>
+          <button class="filter-chip">arXiv (28)</button>
+        </div>
+      </div>
+
+      <div class="articles-col">
+        <div class="db-section-header">
+          <div class="db-dot"></div>
+          <span class="db-section-name">PubMed</span>
+          <span class="db-section-count">54 resultados</span>
+        </div>
+
+        <div class="article-card">
+          <div class="rel-badge rel-high">94%</div>
+          <div class="article-body">
+            <div class="article-title">Mindfulness-based interventions and academic performance in university students: a systematic review</div>
+            <div class="article-meta">Kabat-Zinn J., Brown K.W., Ryan R.M.<span>·</span>Journal of Educational Psychology<span>·</span>2022<span>·</span>DOI: 10.1037/edu0000712</div>
+          </div>
+        </div>
+
+        <div class="article-card">
+          <div class="rel-badge rel-high">87%</div>
+          <div class="article-body">
+            <div class="article-title">Effects of mindfulness meditation on stress and academic achievement among college students</div>
+            <div class="article-meta">Shapiro S.L., Astin J.A., Bishop S.R.<span>·</span>Mindfulness<span>·</span>2021<span>·</span>DOI: 10.1007/s12671-021-01618-0</div>
+          </div>
+        </div>
+
+        <div class="article-card">
+          <div class="rel-badge rel-mid">71%</div>
+          <div class="article-body">
+            <div class="article-title">The relationship between meditation practice and academic burnout in higher education</div>
+            <div class="article-meta">Chiesa A., Serretti A.<span>·</span>Higher Education<span>·</span>2023<span>·</span>DOI: 10.1007/s10734-023-00985-0</div>
+          </div>
+        </div>
+
+        <div class="results-actions">
+          <button class="btn-text">Ver 51 artículos más →</button>
+          <div class="export-group">
+            <button class="btn-export">↓ Word</button>
+            <button class="btn-export primary">↓ Exportar PDF</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PANTALLA 5: PRICING ── -->
+  <div class="pricing-outer">
+    <div class="pricing-inner">
+      <div class="screen-label">Pantalla 5 — Precios</div>
+      <div class="section-eyebrow">Precios</div>
+      <div class="section-title">Sin suscripciones. Pagas una vez,<br>los créditos no vencen nunca.</div>
+      <div class="pricing-cards">
+        <div class="price-card">
+          <div class="price-name">Pack Básico</div>
+          <div class="price-value"><sup>$</sup>4.99</div>
+          <div class="price-credits">3 búsquedas</div>
+          <div class="price-desc">Para empezar tu revisión bibliográfica.</div>
+          <ul class="price-features">
+            <li>3 búsquedas completas</li>
+            <li>2 bases de datos</li>
+            <li>Exportación PDF</li>
+            <li>Soporte por email</li>
+          </ul>
+          <button class="btn-price">Comprar</button>
+        </div>
+
+        <div class="price-card featured">
+          <div class="price-badge">Más elegido</div>
+          <div class="price-name">Pack Tesis</div>
+          <div class="price-value"><sup>$</sup>9.99</div>
+          <div class="price-credits">8 búsquedas</div>
+          <div class="price-desc">Para completar toda tu tesis sin quedarte sin créditos.</div>
+          <ul class="price-features">
+            <li>8 búsquedas completas</li>
+            <li>5 bases de datos</li>
+            <li>PDF + Word</li>
+            <li>Filtros avanzados</li>
+          </ul>
+          <button class="btn-price featured-btn">Comprar</button>
+        </div>
+
+        <div class="price-card">
+          <div class="price-name">Pack Investigador</div>
+          <div class="price-value"><sup>$</sup>19.99</div>
+          <div class="price-credits">20 búsquedas</div>
+          <div class="price-desc">Para investigadores con múltiples proyectos activos.</div>
+          <ul class="price-features">
+            <li>20 búsquedas completas</li>
+            <li>5 bases de datos</li>
+            <li>PDF + Word + RIS</li>
+            <li>Historial completo</li>
+          </ul>
+          <button class="btn-price">Comprar</button>
+        </div>
+      </div>
+
+      <div class="note">
+        <strong>Sin sorpresas.</strong> El estudiante paga una vez y no vuelve hasta la siguiente tesis. Los créditos no vencen. La universidad paga anualmente y convierte ThesisNow en un beneficio para todos sus alumnos.
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div>
+      <div class="footer-logo">Thesis<span>Now</span></div>
+      <div class="footer-tagline">Tu revisión bibliográfica, en minutos.</div>
+    </div>
+    <div class="footer-links">
+      <a href="#">Privacidad</a>
+      <a href="#">Términos</a>
+      <a href="#">Contacto</a>
+      <a href="#">thesisnow.ai</a>
+    </div>
+  </footer>
+
+</body>
+</html>

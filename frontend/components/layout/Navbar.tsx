@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase';
-import { useTranslation, detectLanguage } from '@/lib/i18n';
+import { useTranslation } from '@/lib/useTranslation';
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 import type { User } from '@supabase/supabase-js';
 

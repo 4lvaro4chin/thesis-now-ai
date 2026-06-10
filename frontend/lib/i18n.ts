@@ -1,10 +1,6 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-
 export type Language = 'es' | 'en' | 'pt';
 
-const translations = {
+export const translations = {
   es: {
     // Login page
     'login.welcome': 'Bienvenido',
@@ -122,39 +118,4 @@ export function detectLanguage(): Language {
   if (lang === 'en') return 'en';
   if (lang === 'pt') return 'pt';
   return 'es';
-}
-
-export function useTranslation(lang?: Language) {
-  const [currentLang, setCurrentLang] = useState<Language>(lang || 'es');
-
-  useEffect(() => {
-    setCurrentLang(lang || detectLanguage());
-
-    const handleLanguageChange = (event: Event) => {
-      const customEvent = event as CustomEvent<{ lang: Language }>;
-      setCurrentLang(customEvent.detail.lang);
-    };
-
-    const handleStorageChange = () => {
-      const saved = localStorage.getItem('preferredLanguage');
-      if (saved === 'es' || saved === 'en' || saved === 'pt') {
-        setCurrentLang(saved as Language);
-      }
-    };
-
-    window.addEventListener('languageChange', handleLanguageChange);
-    window.addEventListener('storage', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('languageChange', handleLanguageChange);
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, [lang]);
-
-  return {
-    t: (key: string) => {
-      return (translations[currentLang] as Record<string, string>)[key] || key;
-    },
-    lang: currentLang,
-  };
 }
