@@ -20,13 +20,12 @@ export function LanguageSwitcher({ currentLang = 'es' }: LanguageSwitcherProps) 
   const router = useRouter();
 
   const handleLanguageChange = (lang: Language) => {
-    // Save to localStorage
     if (typeof window !== 'undefined') {
       localStorage.setItem('preferredLanguage', lang);
+      // Dispatch custom event to notify other components
+      window.dispatchEvent(new CustomEvent('languageChange', { detail: { lang } }));
     }
     setOpen(false);
-    // Refresh to apply language change
-    router.refresh();
   };
 
   const currentLanguage = languages.find((l) => l.code === currentLang);
@@ -41,9 +40,7 @@ export function LanguageSwitcher({ currentLang = 'es' }: LanguageSwitcherProps) 
           cursor: 'pointer',
           padding: '8px 12px',
           borderRadius: '8px',
-          fontSize: '14px',
-          fontWeight: 600,
-          color: '#6B7280',
+          fontSize: '16px',
           transition: 'all 0.2s',
           display: 'flex',
           alignItems: 'center',
@@ -51,16 +48,13 @@ export function LanguageSwitcher({ currentLang = 'es' }: LanguageSwitcherProps) 
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.background = '#F3F4F6';
-          e.currentTarget.style.color = '#1F2937';
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.background = 'transparent';
-          e.currentTarget.style.color = '#6B7280';
         }}
       >
         <span>{currentLanguage?.flag}</span>
-        <span>{currentLanguage?.code.toUpperCase()}</span>
-        <span style={{ fontSize: '12px' }}>{open ? '▲' : '▼'}</span>
+        <span style={{ fontSize: '12px', color: '#6B7280' }}>{open ? '▲' : '▼'}</span>
       </button>
 
       {open && (

@@ -1,4 +1,8 @@
-type Language = 'es' | 'en' | 'pt';
+'use client';
+
+import { useState, useEffect } from 'react';
+
+export type Language = 'es' | 'en' | 'pt';
 
 const translations = {
   es: {
@@ -106,7 +110,6 @@ const translations = {
 };
 
 export function detectLanguage(): Language {
-  // First check if user has a saved preference
   if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
     const saved = localStorage.getItem('preferredLanguage');
     if (saved === 'es' || saved === 'en' || saved === 'pt') {
@@ -114,7 +117,6 @@ export function detectLanguage(): Language {
     }
   }
 
-  // Fall back to browser language detection
   if (typeof navigator === 'undefined') return 'es';
   const lang = navigator.language.split('-')[0];
   if (lang === 'en') return 'en';
@@ -123,7 +125,31 @@ export function detectLanguage(): Language {
 }
 
 export function useTranslation(lang?: Language) {
-  const currentLang = lang || detectLanguage();
+  const [currentLang, setCurrentLang] = useState<Language>(lang || 'es');
+
+  useEffect(() => {
+    setCurrentLang(lang || detectLanguage());
+
+    const handleLanguageChange = (event: Event) => {
+      const customEvent = event as CustomEvent<{ lang: Language }>;
+      setCurrentLang(customEvent.detail.lang);
+    };
+
+    const handleStorageChange = () => {
+      const saved = localStorage.getItem('preferredLanguage');
+      if (saved === 'es' || saved === 'en' || saved === 'pt') {
+        setCurrentLang(saved as Language);
+      }
+    };
+
+    window.addEventListener('languageChange', handleLanguageChange);
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('languageChange', handleLanguageChange);
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [lang]);
 
   return {
     t: (key: string) => {
