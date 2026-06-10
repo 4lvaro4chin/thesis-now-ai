@@ -1,4 +1,4 @@
-type Language = 'es' | 'en';
+type Language = 'es' | 'en' | 'pt';
 
 const translations = {
   es: {
@@ -69,12 +69,48 @@ const translations = {
     'navbar.startFree': 'Start Free',
     'navbar.logout': 'Logout',
   },
+  pt: {
+    // Login page
+    'login.welcome': 'Bem-vindo',
+    'login.createAccount': 'Comece agora',
+    'login.subtitle.login': 'Acesse sua revisão bibliográfica',
+    'login.subtitle.signup': 'Crie sua conta para começar',
+    'login.email': 'E-mail',
+    'login.password': 'Senha',
+    'login.signIn': 'Entrar',
+    'login.signUp': 'Criar conta',
+    'login.signingIn': 'Entrando...',
+    'login.signingUp': 'Criando conta...',
+    'login.noAccount': 'Não tem conta?',
+    'login.haveAccount': 'Já tem conta?',
+    'login.createOne': 'Criar uma',
+    'login.signInInstead': 'Entrar',
+    'login.terms': 'Termos de Serviço',
+    'login.privacy': 'Política de Privacidade',
+    'login.accept': 'Ao continuar, você aceita nossos',
+    'login.and': 'e',
+
+    // Errors
+    'error.invalidCredentials': 'Credenciais inválidas',
+    'error.userNotFound': 'Usuário não encontrado',
+    'error.weakPassword': 'A senha é muito fraca',
+    'error.emailInUse': 'Este e-mail já está registrado',
+    'error.networkError': 'Erro de conexão. Tente novamente',
+    'error.default': 'Algo deu errado. Tente novamente',
+
+    // Navbar
+    'navbar.signIn': 'Entrar',
+    'navbar.startFree': 'Começar grátis',
+    'navbar.logout': 'Sair',
+  },
 };
 
 export function detectLanguage(): Language {
   if (typeof navigator === 'undefined') return 'es';
   const lang = navigator.language.split('-')[0];
-  return (lang === 'en' ? 'en' : 'es') as Language;
+  if (lang === 'en') return 'en';
+  if (lang === 'pt') return 'pt';
+  return 'es';
 }
 
 export function useTranslation(lang?: Language) {
