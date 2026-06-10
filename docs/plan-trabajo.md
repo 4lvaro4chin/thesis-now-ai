@@ -5,19 +5,38 @@
 
 ---
 
+## 📊 Sesión 2026-06-11 — Completado
+
+✅ **i18n completo: selector manual + todas las páginas traducidas**
+- Selector de idioma manual en Navbar (🇪🇸/🇬🇧/🇧🇷)
+- Persistencia de preferencia en localStorage
+- Hook useTranslation reactivo a cambios de idioma
+- Traducciones en 3 idiomas (ES, EN, PT):
+  - Navbar (logout, sign in, start free)
+  - Landing page (hero, steps, databases)
+  - Search page (operators, databases, buttons)
+  - Searching page (status, progress)
+  - Results page (filters, export)
+  - Login/signup pages
+- 5 commits a GitHub
+- URL: https://thesis-now-ai.vercel.app (100% funcional)
+
+**Semana 1 Progress: ~90% completa**
+- ✅ Completado: Auth, i18n (3 idiomas + selector manual), design system, todas las páginas
+- Pendiente: FastAPI init (1.3), deploy Railway (1.8), Sentry (1.10)
+
+---
+
 ## 📊 Sesión 2026-06-10 — Completado
 
 ✅ **Frontend 100% deployado en producción**
 - Auth email/password funcional (login/signup/logout)
-- i18n español/inglés con detección automática
+- i18n español/inglés/portugués con detección automática
 - Protección de rutas desde cliente
 - Página de error de autenticación
 - Diseño profesional (hero + glassmorphism)
 - 9 commits a GitHub
 - URL: https://thesis-now-ai.vercel.app
-
-**Semana 1 Progress: ~80% completa**
-- Pendiente: FastAPI init (1.3), deploy Railway (1.8), Sentry (1.10)
 
 ---
 
@@ -58,7 +77,7 @@
 | 1.6 | Conectar Supabase Auth al frontend (registro + login por email) | Usuario puede registrarse y ver sesión activa | ✅ Completado | Email/password auth implementado. Middleware protege `/search`, `/searching`, `/results`. Auth listener en Navbar para sync en tiempo real. Página `/login` con dual tabs (login/signup). |
 | 1.6.1 | Página login profesional (diseño hero + formulario) | Página sigue design system landing + colores corporativos | ✅ Completado | Fondo #04342C + noise texture + radial glows. DM Sans + Cormorant Garamond. Tabs login/signup. Inputs con focus ring. Botón gradient verde. |
 | 1.6.2 | OAuth (Google, GitHub, Facebook) | Buttons OAuth en login page | ⏳ Pendiente (Fase 1) | Descartado para Fase 0. Email/password es suficiente para MVP. OAuth se agregará en Fase 1 cuando tengamos más usuarios. |
-| 1.6.3 | i18n (Internacionalización) | UI detecta idioma del navegador, traducciones español/inglés | ✅ Completado | `lib/i18n.ts` con 40+ keys. Errores de Supabase traducidos. Navbar y login UI completamente i18n. |
+| 1.6.3 | i18n (Internacionalización) | UI detecta idioma + selector manual en navbar, traducciones ES/EN/PT | ✅ Completado | `lib/i18n.ts` + `useTranslation.ts` con 100+ keys. Selector de idioma reactivo. Todas las páginas traducidas (landing, login, search, searching, results, navbar). localStorage persiste preferencia. |
 | 1.6.4 | Navbar auth state (mostrar usuario logueado) | Navbar muestra email o botones login/signup dinámicamente | ✅ Completado | Auth listener con `onAuthStateChange`. Logo "ThesisNow" en colores corporativos. Links dinámicos (logo → `/search` si logueado, `/` si no). |
 | 1.6.5 | Rediseño botones auth en Navbar | Botones "Iniciar sesión" y "Empezar gratis" profesionales | ✅ Completado | Estilos consistentes con login page. Hover states con translateY. Sombras verdes. DM Sans. Responsive en mobile. |
 | 1.7 | Deployar frontend en Vercel (auto-deploy desde `main`) | URL de Vercel accesible públicamente | ✅ Completado | URL: https://thesis-now-ai.vercel.app. Variables de entorno (NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY) configuradas. Auto-deploy activo desde GitHub. |
