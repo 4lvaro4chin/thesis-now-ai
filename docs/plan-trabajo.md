@@ -5,6 +5,22 @@
 
 ---
 
+## 📊 Sesión 2026-06-10 — Completado
+
+✅ **Frontend 100% deployado en producción**
+- Auth email/password funcional (login/signup/logout)
+- i18n español/inglés con detección automática
+- Protección de rutas desde cliente
+- Página de error de autenticación
+- Diseño profesional (hero + glassmorphism)
+- 9 commits a GitHub
+- URL: https://thesis-now-ai.vercel.app
+
+**Semana 1 Progress: ~80% completa**
+- Pendiente: FastAPI init (1.3), deploy Railway (1.8), Sentry (1.10)
+
+---
+
 ## FASE 0 — Concierge MVP (Semanas 0–3)
 **Objetivo:** Cobrarle a alguien antes de construir la infraestructura completa.
 **Presupuesto de tiempo:** ~75 horas (incluye pre-requisitos)
@@ -41,11 +57,13 @@
 | 1.5 | Crear tablas iniciales: `users`, `searches`, `results` | Tablas visibles en Supabase Table Editor | ✅ Completado (parcial) | Tabla `searches` con RLS creada. Usuario debe ejecutar SQL en dashboard. Requiere: id, user_id, title, boolean_query, databases[], status, results_count, created_at. |
 | 1.6 | Conectar Supabase Auth al frontend (registro + login por email) | Usuario puede registrarse y ver sesión activa | ✅ Completado | Email/password auth implementado. Middleware protege `/search`, `/searching`, `/results`. Auth listener en Navbar para sync en tiempo real. Página `/login` con dual tabs (login/signup). |
 | 1.6.1 | Página login profesional (diseño hero + formulario) | Página sigue design system landing + colores corporativos | ✅ Completado | Fondo #04342C + noise texture + radial glows. DM Sans + Cormorant Garamond. Tabs login/signup. Inputs con focus ring. Botón gradient verde. |
-| 1.6.2 | OAuth (Google, GitHub, Facebook) | Buttons OAuth en login page | ⏳ En progreso | Buttons UI listos pero deshabilitados. Google/GitHub/Facebook requieren credenciales (Stripe Link era prioridad). Apple para Fase 1. |
+| 1.6.2 | OAuth (Google, GitHub, Facebook) | Buttons OAuth en login page | ⏳ Pendiente (Fase 1) | Descartado para Fase 0. Email/password es suficiente para MVP. OAuth se agregará en Fase 1 cuando tengamos más usuarios. |
 | 1.6.3 | i18n (Internacionalización) | UI detecta idioma del navegador, traducciones español/inglés | ✅ Completado | `lib/i18n.ts` con 40+ keys. Errores de Supabase traducidos. Navbar y login UI completamente i18n. |
 | 1.6.4 | Navbar auth state (mostrar usuario logueado) | Navbar muestra email o botones login/signup dinámicamente | ✅ Completado | Auth listener con `onAuthStateChange`. Logo "ThesisNow" en colores corporativos. Links dinámicos (logo → `/search` si logueado, `/` si no). |
 | 1.6.5 | Rediseño botones auth en Navbar | Botones "Iniciar sesión" y "Empezar gratis" profesionales | ✅ Completado | Estilos consistentes con login page. Hover states con translateY. Sombras verdes. DM Sans. Responsive en mobile. |
-| 1.7 | Deployar frontend en Vercel (auto-deploy desde `main`) | URL de Vercel accesible públicamente | Pendiente | Setup: conectar repo GitHub → Vercel, configurar env vars. Build ya verifica sin errores. |
+| 1.7 | Deployar frontend en Vercel (auto-deploy desde `main`) | URL de Vercel accesible públicamente | ✅ Completado | URL: https://thesis-now-ai.vercel.app. Variables de entorno (NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY) configuradas. Auto-deploy activo desde GitHub. |
+| 1.7.1 | Protección de rutas desde cliente | `/search`, `/searching`, `/results` redirigen a `/login` si no hay sesión | ✅ Completado | Hook `useAuthProtection` implementado. Client-side check con `supabase.auth.getUser()`. Aplicado a las 3 rutas protegidas. |
+| 1.7.2 | Página de error de autenticación | `/auth/auth-code-error` muestra error amigable si confirma código inválido | ✅ Completado | Página creada con diseño consistente. Botón "Volver al Login". |
 | 1.8 | Deployar backend en Railway | URL de Railway responde en `/health` | Pendiente | Requerido tras 1.3 (FastAPI init). Railway ya conectada a GitHub (Semana 0.5). |
 | 1.9 | Configurar variables de entorno en Railway y Vercel | Backend consume `SUPABASE_URL`, `OPENAI_API_KEY` sin errores | Pendiente | `.env.example` ya creado en frontend. Backend: replicar estructura. |
 | 1.10 | Configurar Sentry en frontend y backend | Error de prueba aparece en dashboard Sentry | Pendiente | Proyectos Sentry ya creados (Semana 0.6). Requerida integración en ambos stacks. |
