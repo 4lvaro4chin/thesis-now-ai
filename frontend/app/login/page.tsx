@@ -337,6 +337,85 @@ export default function LoginPage() {
               <div style={{ flex: 1, height: "1px", background: "#E5E7EB" }} />
             </div>
 
+            {/* OAuth Buttons */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              <button
+                type="button"
+                onClick={() => {
+                  const supabase = createClient();
+                  supabase.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: { redirectTo: `${window.location.origin}/auth/callback` }
+                  });
+                }}
+                style={{
+                  width: "100%",
+                  padding: "11px 16px",
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "13px",
+                  fontWeight: 600,
+                  color: "#1F2937",
+                  background: "#F3F4F6",
+                  border: "1.5px solid #E5E7EB",
+                  borderRadius: "10px",
+                  cursor: "pointer",
+                  transition: "all 0.2s",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "#E5E7EB";
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "#F3F4F6";
+                  e.currentTarget.style.transform = "translateY(0)";
+                }}
+              >
+                <span>🔵</span> Google
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  const supabase = createClient();
+                  supabase.auth.signInWithOAuth({
+                    provider: 'github',
+                    options: { redirectTo: `${window.location.origin}/auth/callback` }
+                  });
+                }}
+                style={{
+                  width: "100%",
+                  padding: "11px 16px",
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "13px",
+                  fontWeight: 600,
+                  color: "#1F2937",
+                  background: "#F3F4F6",
+                  border: "1.5px solid #E5E7EB",
+                  borderRadius: "10px",
+                  cursor: "pointer",
+                  transition: "all 0.2s",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "#E5E7EB";
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "#F3F4F6";
+                  e.currentTarget.style.transform = "translateY(0)";
+                }}
+              >
+                <span>⚫</span> GitHub
+              </button>
+            </div>
+
             {/* Toggle Link */}
             <p style={{
               textAlign: "center",
