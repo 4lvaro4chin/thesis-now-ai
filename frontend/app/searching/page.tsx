@@ -1,8 +1,10 @@
 'use client';
 
 import Link from "next/link";
+import { useAuthProtection } from "@/lib/useAuthProtection";
 
 export default function SearchingPage() {
+  useAuthProtection();
   const databases = [
     { name: "PubMed", progress: 85, status: "searching" as const, count: 234 },
     { name: "ScienceDirect", progress: 60, status: "searching" as const, count: 156 },

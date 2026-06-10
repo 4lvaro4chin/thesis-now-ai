@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useAuthProtection } from "@/lib/useAuthProtection";
 
 export default function SearchPage() {
+  useAuthProtection();
   const [selectedOperators, setSelectedOperators] = useState<string[]>(["AND"]);
   const [selectedDatabases, setSelectedDatabases] = useState<Record<string, boolean>>({
     pubmed: true,

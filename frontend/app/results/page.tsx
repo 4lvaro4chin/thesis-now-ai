@@ -1,6 +1,9 @@
 'use client';
 
+import { useAuthProtection } from "@/lib/useAuthProtection";
+
 export default function ResultsPage() {
+  useAuthProtection();
   const mockArticles = [
     {
       id: 1,
