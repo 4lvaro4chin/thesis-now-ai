@@ -1,9 +1,11 @@
 'use client';
 
 import { useAuthProtection } from "@/lib/useAuthProtection";
+import { useTranslation } from "@/lib/useTranslation";
 
 export default function ResultsPage() {
   useAuthProtection();
+  const { t } = useTranslation();
   const mockArticles = [
     {
       id: 1,
@@ -37,9 +39,9 @@ export default function ResultsPage() {
   ];
 
   const relevanceConfig = {
-    high: { bg: "#E1F5EE", text: "#0F6E56", label: "Alta" },
-    medium: { bg: "#EBF4FD", text: "#1B6FA8", label: "Media" },
-    low: { bg: "#FEF0EC", text: "#A33820", label: "Baja" },
+    high: { bg: "#E1F5EE", text: "#0F6E56", label: t('results.relevance.high') },
+    medium: { bg: "#EBF4FD", text: "#1B6FA8", label: t('results.relevance.medium') },
+    low: { bg: "#FEF0EC", text: "#A33820", label: t('results.relevance.low') },
   };
 
   return (
@@ -56,13 +58,13 @@ export default function ResultsPage() {
             lineHeight: 1.2,
             marginBottom: "8px"
           }}>
-            Resultados
+            {t('results.title')}
           </h1>
           <p style={{
             fontSize: "14px",
             color: "#6B7280"
           }}>
-            Se encontraron <span style={{ fontWeight: 600, color: "#1B2A4A" }}>847</span> artículos en 6 bases de datos
+            {t('results.subtitle')} <span style={{ fontWeight: 600, color: "#1B2A4A" }}>847</span> {t('results.articles')}
           </p>
         </div>
 
@@ -83,9 +85,9 @@ export default function ResultsPage() {
             cursor: "pointer",
             transition: "all 0.18s"
           }}>
-            <option>Relevancia: Alta a Baja</option>
-            <option>Año: Más reciente</option>
-            <option>Año: Más antiguo</option>
+            <option>{t('results.sort.relevance')}</option>
+            <option>{t('results.sort.newest')}</option>
+            <option>{t('results.sort.oldest')}</option>
           </select>
           <select style={{
             padding: "10px 14px",
@@ -97,14 +99,14 @@ export default function ResultsPage() {
             cursor: "pointer",
             transition: "all 0.18s"
           }}>
-            <option>Todas las bases</option>
+            <option>{t('results.filter.all')}</option>
             <option>PubMed</option>
             <option>ScienceDirect</option>
             <option>Google Scholar</option>
           </select>
           <input
             type="search"
-            placeholder="Filtrar por palabra clave..."
+            placeholder={t('results.search.placeholder')}
             style={{
               flex: 1,
               minWidth: "200px",
@@ -248,7 +250,7 @@ export default function ResultsPage() {
                     marginLeft: "auto",
                     transition: "color 0.18s"
                   }}>
-                    Ver más
+                    {t('results.button.more')}
                   </button>
                 </div>
               </article>
@@ -269,7 +271,7 @@ export default function ResultsPage() {
             cursor: "pointer",
             transition: "all 0.18s"
           }}>
-            Cargar más resultados
+            {t('results.button.load')}
           </button>
         </div>
       </div>
@@ -299,7 +301,7 @@ export default function ResultsPage() {
             fontSize: "13px",
             color: "#6B7280"
           }}>
-            <span style={{ fontWeight: 600, color: "#1B2A4A" }}>5</span> artículos seleccionados
+            <span style={{ fontWeight: 600, color: "#1B2A4A" }}>5</span> {t('results.export.selected')}
           </p>
           <div style={{
             display: "flex",
@@ -342,7 +344,7 @@ export default function ResultsPage() {
               cursor: "pointer",
               transition: "background 0.18s"
             }}>
-              Descargar
+              {t('results.button.download')}
             </button>
           </div>
         </div>

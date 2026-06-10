@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useAuthProtection } from "@/lib/useAuthProtection";
+import { useTranslation } from "@/lib/useTranslation";
 
 export default function SearchingPage() {
   useAuthProtection();
+  const { t } = useTranslation();
   const databases = [
     { name: "PubMed", progress: 85, status: "searching" as const, count: 234 },
     { name: "ScienceDirect", progress: 60, status: "searching" as const, count: 156 },
@@ -41,14 +43,14 @@ export default function SearchingPage() {
           marginBottom: "16px",
           textWrap: "balance"
         }}>
-          Búsqueda en progreso
+          {t('searching.title')}
         </h1>
         <p style={{
           fontSize: "15px",
           color: "rgba(255,255,255,0.6)",
           marginBottom: "48px"
         }}>
-          Estamos buscando en múltiples bases de datos...
+          {t('searching.subtitle')}
         </p>
 
         {/* Loader Animation */}
@@ -103,9 +105,9 @@ export default function SearchingPage() {
                     fontSize: "12px",
                     color: "rgba(255,255,255,0.6)"
                   }}>
-                    {db.status === "done" && `${db.count} artículos`}
-                    {db.status === "searching" && "Buscando..."}
-                    {db.status === "waiting" && "Esperando..."}
+                    {db.status === "done" && `${db.count} ${t('searching.status.articles')}`}
+                    {db.status === "searching" && t('searching.status.searching')}
+                    {db.status === "waiting" && t('searching.status.waiting')}
                   </span>
                 </div>
                 <div style={{
@@ -158,7 +160,7 @@ export default function SearchingPage() {
             fontSize: "14px",
             color: "rgba(255,255,255,0.6)"
           }}>
-            artículos encontrados hasta ahora
+            {t('searching.articles.found')}
           </p>
         </div>
 
@@ -168,7 +170,7 @@ export default function SearchingPage() {
           color: "rgba(255,255,255,0.5)",
           marginBottom: "32px"
         }}>
-          Tiempo estimado: ~2 minutos 15 segundos
+          {t('searching.estimated_time')}
         </p>
 
         {/* Skip Button */}
@@ -188,7 +190,7 @@ export default function SearchingPage() {
             display: "inline-block"
           }}
         >
-          Ver resultados provisionales
+          {t('searching.button.view')}
         </Link>
 
         <style>{`
