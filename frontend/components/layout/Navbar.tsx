@@ -16,7 +16,7 @@ export function Navbar({ user: initialUser }: NavbarProps) {
   const supabase = createClient();
   const [user, setUser] = useState(initialUser);
   const [mounted, setMounted] = useState(false);
-  const { lang } = useTranslation();
+  const { t, lang } = useTranslation();
 
   useEffect(() => {
     setMounted(true);
@@ -189,7 +189,7 @@ export function Navbar({ user: initialUser }: NavbarProps) {
                 e.currentTarget.style.transform = 'translateY(0)';
               }}
             >
-              Salir
+              {t('navbar.logout')}
             </button>
           </>
         ) : (
@@ -221,7 +221,7 @@ export function Navbar({ user: initialUser }: NavbarProps) {
                 e.currentTarget.style.transform = 'translateY(0)';
               }}
             >
-              Iniciar sesión
+              {t('navbar.signIn')}
             </button>
             <button
               onClick={handleLogin}
@@ -249,7 +249,7 @@ export function Navbar({ user: initialUser }: NavbarProps) {
                 e.currentTarget.style.transform = 'translateY(0)';
               }}
             >
-              Empezar gratis
+              {t('navbar.startFree')}
             </button>
           </>
         )}

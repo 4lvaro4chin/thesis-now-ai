@@ -1,8 +1,24 @@
 'use client';
 
 import Link from "next/link";
+import { useTranslation } from "@/lib/useTranslation";
 
 export default function Home() {
+  const { t } = useTranslation();
+
+  const steps = [
+    { num: "1", title: t('home.step1.title'), desc: t('home.step1.desc') },
+    { num: "2", title: t('home.step2.title'), desc: t('home.step2.desc') },
+    { num: "3", title: t('home.step3.title'), desc: t('home.step3.desc') },
+    { num: "4", title: t('home.step4.title'), desc: t('home.step4.desc') }
+  ];
+
+  const stats = [
+    { value: "15+", label: t('home.stats.databases') },
+    { value: "<3 min", label: t('home.stats.search') },
+    { value: "100%", label: t('home.stats.automated') }
+  ];
+
   return (
     <>
       {/* Hero Section */}
@@ -28,7 +44,7 @@ export default function Home() {
           {/* Eyebrow */}
           <div className="flex items-center justify-center gap-2 mb-8" style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(159,225,203,1)" }}>
             <div className="w-5 h-px bg-green-400" />
-            <span>Revisión bibliográfica automatizada</span>
+            <span>{t('home.eyebrow')}</span>
             <div className="w-5 h-px bg-green-400" />
           </div>
 
@@ -43,7 +59,7 @@ export default function Home() {
             marginBottom: "16px",
             textWrap: "balance"
           }}>
-            Tu revisión bibliográfica en minutos
+            {t('home.title')}
           </h1>
 
           {/* Tagline */}
@@ -56,7 +72,7 @@ export default function Home() {
             lineHeight: 1.4,
             textWrap: "pretty"
           }}>
-            Ingresa el título de tu tesis y recibe una búsqueda completa automatizada en menos de 3 minutos.
+            {t('home.tagline')}
           </p>
 
           {/* Search Box */}
@@ -73,7 +89,7 @@ export default function Home() {
           }}>
             <input
               type="text"
-              placeholder="Ej: Cambio climático y migraciones humanas"
+              placeholder={t('home.input.placeholder')}
               style={{
                 flex: 1,
                 border: "none",
@@ -104,7 +120,7 @@ export default function Home() {
                 textDecoration: "none"
               }}
             >
-              Empezar
+              {t('home.button.start')}
             </Link>
           </div>
 
@@ -115,7 +131,7 @@ export default function Home() {
             letterSpacing: "0.03em",
             marginBottom: "60px"
           }}>
-            Ej: <strong style={{ color: "rgba(159,225,203,1)", fontWeight: 500 }}>AI + educación</strong>
+            {t('home.hint.prefix')} <strong style={{ color: "rgba(159,225,203,1)", fontWeight: 500 }}>{t('home.hint.example')}</strong>
           </p>
 
           {/* Stats */}
@@ -126,11 +142,7 @@ export default function Home() {
             paddingTop: "36px",
             borderTop: "1px solid rgba(255,255,255,0.08)"
           }}>
-            {[
-              { value: "15+", label: "bases de datos" },
-              { value: "<3 min", label: "búsqueda" },
-              { value: "100%", label: "automatizado" }
-            ].map((stat, i) => (
+            {stats.map((stat, i) => (
               <div
                 key={i}
                 style={{
@@ -176,7 +188,7 @@ export default function Home() {
             color: "#1D9E75",
             marginBottom: "10px"
           }}>
-            Proceso
+            {t('home.process.label')}
           </p>
           <h2 style={{
             fontFamily: "'DM Sans', sans-serif",
@@ -187,18 +199,13 @@ export default function Home() {
             lineHeight: 1.2,
             textWrap: "balance"
           }}>
-            Cómo funciona
+            {t('home.process.title')}
           </h2>
         </div>
 
         {/* Timeline */}
         <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-          {[
-            { num: "1", title: "Ingresa tu tema", desc: "Proporciona el título o resumen de tu tesis. Es todo lo que necesitamos." },
-            { num: "2", title: "Generamos búsquedas booleanas", desc: "Nuestro motor crea automáticamente decenas de queries optimizadas para encontrar artículos relevantes." },
-            { num: "3", title: "Buscamos en 15+ bases", desc: "Ejecutamos tus búsquedas en paralelo en PubMed, ScienceDirect, Google Scholar, y más." },
-            { num: "4", title: "Recibe tu reporte", desc: "Descarga un PDF filtrado, clasificado y listo para citar. Listo en menos de 3 minutos." }
-          ].map((step) => (
+          {steps.map((step) => (
             <div
               key={step.num}
               style={{
@@ -260,7 +267,7 @@ export default function Home() {
             color: "#1D9E75",
             marginBottom: "10px"
           }}>
-            Alcance
+            {t('home.databases.label')}
           </p>
           <h2 style={{
             fontFamily: "'DM Sans', sans-serif",
@@ -271,7 +278,7 @@ export default function Home() {
             lineHeight: 1.2,
             textWrap: "balance"
           }}>
-            Bases de datos incluidas
+            {t('home.databases.title')}
           </h2>
         </div>
 
