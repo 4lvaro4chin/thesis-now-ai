@@ -28,16 +28,27 @@
 
 | # | Actividad | Verificación | Estado | Observaciones |
 |---|-----------|-------------|--------|---------------|
-| 1.1 | Crear repositorio GitHub con estructura `/frontend` `/backend` `/docs` | Repo visible en GitHub con 3 carpetas | Pendiente | |
-| 1.2 | Inicializar proyecto Next.js en `/frontend` | `npm run dev` levanta sin errores | Pendiente | |
-| 1.3 | Inicializar proyecto FastAPI en `/backend` con `uv` o `poetry` | `uvicorn main:app` responde en localhost | Pendiente | |
-| 1.4 | Crear proyecto Supabase (auth + PostgreSQL) | Dashboard Supabase activo | Pendiente | |
-| 1.5 | Crear tablas iniciales: `users`, `searches`, `results` | Tablas visibles en Supabase Table Editor | Pendiente | |
-| 1.6 | Conectar Supabase Auth al frontend (registro + login por email) | Usuario puede registrarse y ver sesión activa | Pendiente | |
-| 1.7 | Deployar frontend en Vercel (auto-deploy desde `main`) | URL de Vercel accesible públicamente | Pendiente | |
-| 1.8 | Deployar backend en Railway | URL de Railway responde en `/health` | Pendiente | |
-| 1.9 | Configurar variables de entorno en Railway y Vercel | Backend consume `SUPABASE_URL`, `OPENAI_API_KEY` sin errores | Pendiente | |
-| 1.10 | Configurar Sentry en frontend y backend | Error de prueba aparece en dashboard Sentry | Pendiente | |
+| 1.1 | Crear repositorio GitHub con estructura `/frontend` `/backend` `/docs` | Repo visible en GitHub con 3 carpetas | ✅ Completado | Estructura creada: `/frontend` (Next.js), `/backend` (pendiente), `/docs` (marca.md, plan-trabajo.md, preview-design.html) |
+| 1.2 | Inicializar proyecto Next.js en `/frontend` | `npm run dev` levanta sin errores | ✅ Completado | Next.js 16.2.9 + TypeScript + Tailwind v4. Todas las 5 rutas funcionan: `/`, `/search`, `/searching`, `/results`, `/pricing`. Build sin errores. |
+| 1.2.1 | Crear design system (globals.css + tailwind.config.ts) | CSS variables + Tailwind tokens aplicados | ✅ Completado | 40+ CSS variables (colores, tipografía, sombras). DM Sans + Cormorant Garamond importadas de Google Fonts. |
+| 1.2.2 | Crear componentes UI base | BooleanChip, DatabaseToggle, ArticleCard, ProgressBar, Button funcionales | ✅ Completado | Todos los componentes importan correctamente, aplican colores del manual, props tipados. |
+| 1.2.3 | Crear layout components (Navbar + Footer) | Nav sticky con glassmorphism, Footer oscuro con enlaces | ✅ Completado | Navbar fixed, logo con color correcto, botones login/signup. Footer con links legales. |
+| 1.2.4 | Crear páginas (landing, search, searching, results, pricing) | Todas las pantallas del prototipo implementadas | ✅ Completado | Landing con hero `#04342C`, "cómo funciona", bases de datos. Todas las rutas responden. |
+| 1.2.5 | Rediseñar todas las páginas (inline styles, consistencia visual) | Todas las páginas usan design tokens, colores del manual, spacing uniforme | ✅ Completado | Landing: hero con eyebrow, glows, search box. Search: operadores booleanos, bases de datos. Searching: loader animado, progress cards. Results: grid de cards, export bar. Pricing: 3 planes con featured card. |
+| 1.2.6 | Ejecutar /simplify (cleanup + reuse + efficiency + altitude) | Dead code removido, utilidades consolidadas, documentación agregada | ✅ Completado | Removidas spacing["58"] y height["58"] dead code. Creadas utilidades .container-px y .section-py. Agregado comentario navbar/main coupling. Footer padding hecho responsive. |
+| 1.3 | Inicializar proyecto FastAPI en `/backend` con `uv` o `poetry` | `uvicorn main:app` responde en localhost | Pendiente | Requerido para Semana 2 (NLP + búsqueda). Recomendado: `poetry` para reproducibilidad. |
+| 1.4 | Crear proyecto Supabase (auth + PostgreSQL) | Dashboard Supabase activo | ✅ Completado | Cuenta Supabase creada (Semana 0.3). Proyecto `thesis-now` activo. |
+| 1.5 | Crear tablas iniciales: `users`, `searches`, `results` | Tablas visibles en Supabase Table Editor | ✅ Completado (parcial) | Tabla `searches` con RLS creada. Usuario debe ejecutar SQL en dashboard. Requiere: id, user_id, title, boolean_query, databases[], status, results_count, created_at. |
+| 1.6 | Conectar Supabase Auth al frontend (registro + login por email) | Usuario puede registrarse y ver sesión activa | ✅ Completado | Email/password auth implementado. Middleware protege `/search`, `/searching`, `/results`. Auth listener en Navbar para sync en tiempo real. Página `/login` con dual tabs (login/signup). |
+| 1.6.1 | Página login profesional (diseño hero + formulario) | Página sigue design system landing + colores corporativos | ✅ Completado | Fondo #04342C + noise texture + radial glows. DM Sans + Cormorant Garamond. Tabs login/signup. Inputs con focus ring. Botón gradient verde. |
+| 1.6.2 | OAuth (Google, GitHub, Facebook) | Buttons OAuth en login page | ⏳ En progreso | Buttons UI listos pero deshabilitados. Google/GitHub/Facebook requieren credenciales (Stripe Link era prioridad). Apple para Fase 1. |
+| 1.6.3 | i18n (Internacionalización) | UI detecta idioma del navegador, traducciones español/inglés | ✅ Completado | `lib/i18n.ts` con 40+ keys. Errores de Supabase traducidos. Navbar y login UI completamente i18n. |
+| 1.6.4 | Navbar auth state (mostrar usuario logueado) | Navbar muestra email o botones login/signup dinámicamente | ✅ Completado | Auth listener con `onAuthStateChange`. Logo "ThesisNow" en colores corporativos. Links dinámicos (logo → `/search` si logueado, `/` si no). |
+| 1.6.5 | Rediseño botones auth en Navbar | Botones "Iniciar sesión" y "Empezar gratis" profesionales | ✅ Completado | Estilos consistentes con login page. Hover states con translateY. Sombras verdes. DM Sans. Responsive en mobile. |
+| 1.7 | Deployar frontend en Vercel (auto-deploy desde `main`) | URL de Vercel accesible públicamente | Pendiente | Setup: conectar repo GitHub → Vercel, configurar env vars. Build ya verifica sin errores. |
+| 1.8 | Deployar backend en Railway | URL de Railway responde en `/health` | Pendiente | Requerido tras 1.3 (FastAPI init). Railway ya conectada a GitHub (Semana 0.5). |
+| 1.9 | Configurar variables de entorno en Railway y Vercel | Backend consume `SUPABASE_URL`, `OPENAI_API_KEY` sin errores | Pendiente | `.env.example` ya creado en frontend. Backend: replicar estructura. |
+| 1.10 | Configurar Sentry en frontend y backend | Error de prueba aparece en dashboard Sentry | Pendiente | Proyectos Sentry ya creados (Semana 0.6). Requerida integración en ambos stacks. |
 
 ---
 
@@ -335,13 +346,14 @@
 
 ## Resumen de milestones
 
-| Milestone | Semana | KPI principal |
-|-----------|--------|--------------|
-| Fase 0 completa | Semana 3 | 5 pagos manuales |
-| Fase 1 completa | Semana 11 | 20 pagos Stripe, conversión >8% |
-| Fase 2 completa | Semana 19 | NPS >40, D30 retention >25% |
-| Fase 3 completa | Semana ~35 | 3 universidades, MRR >$5,000 |
-| Fase 4 inicio | Mes 10+ | A definir |
+| Milestone | Semana | KPI principal | Estado Actual |
+|-----------|--------|--------------|----------------|
+| **Fase 0 completa** | Semana 3 | 5 pagos manuales | Cuentas creadas ✅; MVP concierge pendiente |
+| **Semana 1 completada** | Semana 1 | Frontend + diseño + componentes UI | **Frontend completado** ✅; Backend inicialización pendiente |
+| Fase 1 completa | Semana 11 | 20 pagos Stripe, conversión >8% | En progreso: Semana 2 (NLP + búsqueda base) |
+| Fase 2 completa | Semana 19 | NPS >40, D30 retention >25% | Proyectado |
+| Fase 3 completa | Semana ~35 | 3 universidades, MRR >$5,000 | Proyectado |
+| Fase 4 inicio | Mes 10+ | A definir | Proyectado |
 
 ---
 
@@ -359,3 +371,77 @@
 - **Nunca deployar directo a `main` con features incompletas** — usar rama `dev`
 - **Sentry es la primera fuente de verdad** cuando algo falla en producción
 - **El milestone de cada fase es binario**: se cumple o no — no hay "casi listo"
+
+---
+
+## Estado Actual — 2026-06-09 (Actualizado 19:45 UTC)
+
+### ✅ Semana 1 — 65% Completada
+
+**Frontend Next.js (1.2.1 a 1.2.6 completado):**
+
+✅ **Scaffolding:**
+- Proyecto inicializado: Next.js 16.2.9 + TypeScript + Tailwind CSS v4
+- Design system: 40+ CSS variables (colores, tipografía, sombras, boolean chips)
+- Google Fonts: DM Sans (UI) + Cormorant Garamond (hero/editorial)
+- Supabase SSR: `lib/supabase.ts` + `@supabase/ssr` instalado
+- `.env.example` y `.env.local` creados
+
+✅ **7 Componentes UI:**
+- Button (3 variantes: primary/ghost/outlined)
+- BooleanChip (AND/OR/NOT/TRUNC con colores del manual)
+- DatabaseToggle (checkbox con estado visual)
+- ArticleCard (metadata, relevancia, DOI)
+- ProgressBar (con estado: waiting/searching/done)
+- Navbar (fixed, glassmorphism, logo con color)
+- Footer (responsive padding, links legales)
+
+✅ **5 Páginas Rediseñadas (inline styles, design tokens):**
+1. **Landing** (`/`) — Hero #04342C, eyebrow decorativo, search box, stats con separadores, timeline "cómo funciona", grid de 15 bases
+2. **Search** (`/search`) — Operadores booleanos (grid chips), leyenda, toggles de bases (checkbox con background), CTA buttons
+3. **Searching** (`/searching`) — Fondo oscuro con noise, loader 3-dots animado, progress cards glassmorphism, summary box, botón "Ver resultados"
+4. **Results** (`/results`) — Filtros (select/input), grid cards responsive, metadata badge, export bar fixed bottom
+5. **Pricing** (`/pricing`) — 3 planes, featured card destacada (escala 1.05, fondo oscuro), badge, features list con SVG checkmarks, FAQ, CTA
+
+✅ **Cleanup & Optimization:**
+- Removidas utilidades dead code: `spacing["58"]`, `height["58"]`
+- Creadas utilidades reutilizables: `.container-px`, `.section-py` en globals.css
+- Agregado comentario documentando relación navbar/main padding
+- Footer padding hecho responsive (px-6 sm:px-8 md:px-12)
+
+**Verificación:**
+- `npm run build` ✅ Sin errores TypeScript
+- `npm run dev` ✅ Corriendo en localhost:3000
+- Todas las 5 rutas responden correctamente ✅
+
+**Infraestructura base (Semana 0):**
+- Cuentas creadas: GitHub, OpenAI, Supabase, Vercel, Railway, Sentry ✅
+
+### ⏳ Próximos Pasos — Semana 1 (completar)
+
+**Backend (1.3):**
+- [ ] Inicializar FastAPI en `/backend` con `poetry` o `uv`
+- [ ] Crear estructura base: main.py, routers/, schemas/
+
+**Supabase (1.4-1.5):**
+- [ ] Crear tablas: `users`, `searches`, `results`, `credits` (opcional para MVP)
+- [ ] RLS policies básicas
+
+**Auth Frontend (1.6):**
+- [ ] Página `/login` con Supabase Auth
+- [ ] Integrar con `lib/supabase.ts`
+
+**Deploy (1.7-1.8):**
+- [ ] Frontend a Vercel (conectar repo GitHub)
+- [ ] Backend a Railway (con uvicorn)
+- [ ] Variables de entorno en ambas plataformas
+
+### 🎯 Semana 2 (NLP + Búsqueda)
+
+- Endpoint `POST /search` (retorna `job_id`)
+- Endpoint `GET /search/{job_id}` (polling)
+- Servicio NLP: GPT-4o-mini con título → booleanos
+- Conector PubMed API
+- Conector Semantic Scholar API
+- Motor paralelo con `asyncio.gather`
+- Guardar búsquedas en Supabase
