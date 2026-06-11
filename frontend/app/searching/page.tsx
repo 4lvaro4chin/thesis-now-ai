@@ -34,7 +34,7 @@ export default function SearchingPage() {
         const { job_id } = await response.json();
 
         // Poll until complete
-        let jobData = { status: 'pending' };
+        let jobData: any = { status: 'pending', error: null };
         const maxAttempts = 90; // 3 minutes with 2s polling
         let attempts = 0;
 
