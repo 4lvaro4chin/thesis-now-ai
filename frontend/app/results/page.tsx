@@ -90,6 +90,34 @@ export default function ResultsPage() {
     setExpandedAbstracts(newExpanded);
   };
 
+  const extractKeywords = (query: string): string[] => {
+    // Remove boolean operators and parentheses, extract unique terms
+    const cleaned = query
+      .replace(/\(|\)/g, ' ')
+      .replace(/\bAND\b|\bOR\b|\bNOT\b/gi, ' ')
+      .trim();
+
+    const terms = cleaned
+      .split(/\s+/)
+      .filter((t) => t.length > 2) // Only words > 2 chars
+      .map((t) => t.toLowerCase())
+      .filter((v, i, a) => a.indexOf(v) === i); // Unique
+
+    return terms;
+  };
+
+  const highlightKeywords = (text: string, keywords: string[]) => {
+    if (!text || keywords.length === 0) return text;
+
+    let result = text;
+    keywords.forEach((keyword) => {
+      const regex = new RegExp(`(${keyword})`, 'gi');
+      result = result.replace(regex, '<mark>$1</mark>');
+    });
+
+    return result;
+  };
+
   if (loading) {
     return (
       <div style={{ minHeight: '100vh', background: '#FFFFFF', paddingTop: '72px', paddingBottom: '100px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -213,12 +241,20 @@ export default function ResultsPage() {
                           {/* Abstract */}
                           {article.abstract && (
                             <div style={{ marginBottom: '12px' }}>
-                              <p style={{ fontSize: '13px', color: '#6B7280', marginBottom: '8px', lineHeight: 1.6 }}>
-                                {expandedAbstracts.has(`${source}-${idx}`)
-                                  ? article.abstract
-                                  : article.abstract.substring(0, 200)}
-                                {!expandedAbstracts.has(`${source}-${idx}`) && article.abstract.length > 200 ? '...' : ''}
-                              </p>
+                              <p
+                                style={{ fontSize: '13px', color: '#6B7280', marginBottom: '8px', lineHeight: 1.6 }}
+                                dangerouslySetInnerHTML={{
+                                  __html: highlightKeywords(
+                                    expandedAbstracts.has(`${source}-${idx}`)
+                                      ? article.abstract
+                                      : article.abstract.substring(0, 200),
+                                    extractKeywords(booleanQuery)
+                                  ),
+                                }}
+                              />
+                              {!expandedAbstracts.has(`${source}-${idx}`) && article.abstract.length > 200 && (
+                                <span style={{ color: '#6B7280' }}>...</span>
+                              )}
                               {article.abstract.length > 200 && (
                                 <button
                                   onClick={() => toggleAbstract(`${source}-${idx}`)}
@@ -230,13 +266,24 @@ export default function ResultsPage() {
                                     cursor: 'pointer',
                                     fontWeight: 600,
                                     padding: 0,
+                                    marginLeft: expandedAbstracts.has(`${source}-${idx}`) ? '0px' : '0px',
                                   }}
                                 >
-                                  {expandedAbstracts.has(`${source}-${idx}`) ? '▼ Read Less' : '▶ Read Full Abstract'}
+                                  {expandedAbstracts.has(`${source}-${idx}`) ? `▼ ${t('results.button.readLess')}` : `▶ ${t('results.button.readFull')}`}
                                 </button>
                               )}
                             </div>
                           )}
+
+                          <style>{`
+                            mark {
+                              background-color: #FEF08A;
+                              color: inherit;
+                              padding: 2px 4px;
+                              border-radius: 3px;
+                              font-weight: 600;
+                            }
+                          `}</style>
 
                           {/* Metadata */}
                           <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
@@ -249,7 +296,7 @@ export default function ResultsPage() {
                               fontSize: '11px',
                               fontWeight: 600,
                             }}>
-                              {Math.round(article.relevance_score * 100)}% relevant
+                              {Math.round(article.relevance_score * 100)}% {t('results.relevant')}
                             </div>
 
                             {/* DOI */}
@@ -282,7 +329,7 @@ export default function ResultsPage() {
                                   fontWeight: 500,
                                 }}
                               >
-                                View Online
+                                {t('results.viewOnline')}
                               </a>
                             )}
                           </div>

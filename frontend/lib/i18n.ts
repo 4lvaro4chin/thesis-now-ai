@@ -79,6 +79,10 @@ export const translations = {
     'results.button.load': 'Cargar más resultados',
     'results.export.selected': 'artículos seleccionados',
     'results.button.download': 'Descargar',
+    'results.button.readFull': 'Leer abstract completo',
+    'results.button.readLess': 'Leer menos',
+    'results.relevant': 'relevante',
+    'results.viewOnline': 'Ver en línea',
 
     // Home page
     'home.eyebrow': 'Revisión bibliográfica automatizada',
@@ -182,6 +186,10 @@ export const translations = {
     'results.button.load': 'Load more results',
     'results.export.selected': 'articles selected',
     'results.button.download': 'Download',
+    'results.button.readFull': 'Read Full Abstract',
+    'results.button.readLess': 'Read Less',
+    'results.relevant': 'relevant',
+    'results.viewOnline': 'View Online',
 
     // Home page
     'home.eyebrow': 'Automated bibliography review',
@@ -285,6 +293,10 @@ export const translations = {
     'results.button.load': 'Carregar mais resultados',
     'results.export.selected': 'artigos selecionados',
     'results.button.download': 'Baixar',
+    'results.button.readFull': 'Ler Resumo Completo',
+    'results.button.readLess': 'Ler Menos',
+    'results.relevant': 'relevante',
+    'results.viewOnline': 'Ver Online',
 
     // Home page
     'home.eyebrow': 'Revisão bibliográfica automatizada',
