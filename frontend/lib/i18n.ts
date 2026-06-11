@@ -64,6 +64,7 @@ export const translations = {
 
     // Results page
     'results.title': 'Resultados',
+    'results.back': 'Atrás a búsqueda',
     'results.subtitle': 'Se encontraron',
     'results.articles': 'artículos en 6 bases de datos',
     'results.relevance.high': 'Alta',
@@ -166,6 +167,7 @@ export const translations = {
 
     // Results page
     'results.title': 'Results',
+    'results.back': 'Back to Search',
     'results.subtitle': 'Found',
     'results.articles': 'articles in 6 databases',
     'results.relevance.high': 'High',
@@ -268,6 +270,7 @@ export const translations = {
 
     // Results page
     'results.title': 'Resultados',
+    'results.back': 'Voltar para Pesquisa',
     'results.subtitle': 'Encontrados',
     'results.articles': 'artigos em 6 bancos de dados',
     'results.relevance.high': 'Alta',

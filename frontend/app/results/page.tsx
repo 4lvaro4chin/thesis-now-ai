@@ -15,6 +15,7 @@ export default function ResultsPage() {
   const [booleanQuery, setBooleanQuery] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [expandedAbstracts, setExpandedAbstracts] = useState<Set<string>>(new Set());
 
   const jobId = searchParams.get('job_id');
 
@@ -79,6 +80,16 @@ export default function ResultsPage() {
     return { bg: '#FEF0EC', text: '#A33820' };
   };
 
+  const toggleAbstract = (key: string) => {
+    const newExpanded = new Set(expandedAbstracts);
+    if (newExpanded.has(key)) {
+      newExpanded.delete(key);
+    } else {
+      newExpanded.add(key);
+    }
+    setExpandedAbstracts(newExpanded);
+  };
+
   if (loading) {
     return (
       <div style={{ minHeight: '100vh', background: '#FFFFFF', paddingTop: '72px', paddingBottom: '100px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -102,6 +113,24 @@ export default function ResultsPage() {
           </div>
         ) : (
           <>
+            {/* Back Button */}
+            <a
+              href="/search"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '14px',
+                color: '#1D9E75',
+                textDecoration: 'none',
+                fontWeight: 500,
+                marginBottom: '24px',
+                cursor: 'pointer',
+              }}
+            >
+              ← {t('results.back') || 'Back to Search'}
+            </a>
+
             {/* Header */}
             <div style={{ marginBottom: '48px' }}>
               <h1 style={{
@@ -183,10 +212,30 @@ export default function ResultsPage() {
 
                           {/* Abstract */}
                           {article.abstract && (
-                            <p style={{ fontSize: '13px', color: '#6B7280', marginBottom: '12px', lineHeight: 1.6 }}>
-                              {article.abstract.substring(0, 200)}
-                              {article.abstract.length > 200 ? '...' : ''}
-                            </p>
+                            <div style={{ marginBottom: '12px' }}>
+                              <p style={{ fontSize: '13px', color: '#6B7280', marginBottom: '8px', lineHeight: 1.6 }}>
+                                {expandedAbstracts.has(`${source}-${idx}`)
+                                  ? article.abstract
+                                  : article.abstract.substring(0, 200)}
+                                {!expandedAbstracts.has(`${source}-${idx}`) && article.abstract.length > 200 ? '...' : ''}
+                              </p>
+                              {article.abstract.length > 200 && (
+                                <button
+                                  onClick={() => toggleAbstract(`${source}-${idx}`)}
+                                  style={{
+                                    fontSize: '12px',
+                                    color: '#1D9E75',
+                                    background: 'none',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    fontWeight: 600,
+                                    padding: 0,
+                                  }}
+                                >
+                                  {expandedAbstracts.has(`${source}-${idx}`) ? '▼ Read Less' : '▶ Read Full Abstract'}
+                                </button>
+                              )}
+                            </div>
                           )}
 
                           {/* Metadata */}
