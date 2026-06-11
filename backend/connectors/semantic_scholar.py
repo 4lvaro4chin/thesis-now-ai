@@ -1,6 +1,7 @@
 import httpx
 import logging
 import asyncio
+import os
 from typing import List
 from schemas import SearchResult
 
@@ -26,6 +27,11 @@ class SemanticScholarConnector:
                     "limit": min(max_results, 50),
                     "fields": "title,authors,year,abstract,url,doi,citationCount",
                 }
+
+                # Add API key if available
+                api_key = os.getenv("SEMANTIC_SCHOLAR_API_KEY")
+                if api_key:
+                    params["apiKey"] = api_key
 
                 logger.info(f"Semantic Scholar search: {query}")
 
