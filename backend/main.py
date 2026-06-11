@@ -69,6 +69,11 @@ async def start_search(request: SearchRequest, background_tasks: BackgroundTasks
     Returns immediately with a job_id for polling.
     """
     job_id = str(uuid.uuid4())
+    logger.info(f"\n{'='*80}")
+    logger.info(f"[{job_id}] NEW SEARCH REQUEST")
+    logger.info(f"Title: {request.title}")
+    logger.info(f"Databases: {request.databases}")
+    logger.info(f"{'='*80}\n")
 
     jobs[job_id] = {
         "id": job_id,
@@ -91,9 +96,12 @@ async def get_search_status(job_id: str):
     Poll for search status and results.
     """
     if job_id not in jobs:
+        logger.warning(f"[{job_id}] Search not found")
         raise HTTPException(status_code=404, detail="Search not found")
 
-    return jobs[job_id]
+    job = jobs[job_id]
+    logger.debug(f"[{job_id}] Status check: {job['status']}")
+    return job
 
 async def execute_search(job_id: str, request: SearchRequest):
     """
@@ -105,27 +113,35 @@ async def execute_search(job_id: str, request: SearchRequest):
     try:
         # Step 1: NLP - Generate boolean query
         jobs[job_id]["status"] = "generating_query"
-        logger.info(f"[{job_id}] Generating boolean query for: {request.title}")
+        logger.info(f"[{job_id}] ⏳ STEP 1: Generating boolean query...")
+        logger.info(f"[{job_id}] Input: {request.title}")
 
         boolean_query = await nlp_service.generate_query(request.title)
         jobs[job_id]["boolean_query"] = boolean_query
+        logger.info(f"[{job_id}] ✅ Query generated: {boolean_query}\n")
 
         # Step 2: Search
         jobs[job_id]["status"] = "searching"
-        logger.info(f"[{job_id}] Searching with query: {boolean_query}")
+        databases = request.databases or ["pubmed", "semantic_scholar"]
+        logger.info(f"[{job_id}] ⏳ STEP 2: Searching in databases...")
+        logger.info(f"[{job_id}] Target databases: {', '.join(databases)}")
+        logger.info(f"[{job_id}] Query: {boolean_query}\n")
 
         results = await search_service.search_all_databases(
             boolean_query,
-            request.databases or ["pubmed", "semantic_scholar"]
+            databases
         )
 
         jobs[job_id]["results"] = results
         jobs[job_id]["status"] = "completed"
         jobs[job_id]["completed_at"] = datetime.utcnow().isoformat()
-        logger.info(f"[{job_id}] Search completed. Found {len(results)} results.")
+        logger.info(f"\n[{job_id}] ✅ SEARCH COMPLETED!")
+        logger.info(f"[{job_id}] Total results: {len(results)}")
+        logger.info(f"[{job_id}] {'='*80}\n")
 
     except Exception as e:
-        logger.error(f"[{job_id}] Error: {str(e)}")
+        logger.error(f"\n[{job_id}] ❌ ERROR: {str(e)}")
+        logger.error(f"[{job_id}] {'='*80}\n")
         jobs[job_id]["status"] = "error"
         jobs[job_id]["error"] = str(e)
 
