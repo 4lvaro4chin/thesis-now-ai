@@ -74,6 +74,16 @@ export default function ResultsPage() {
     return labels[source] || source;
   };
 
+  const getSourceBadge = (source: string) => {
+    const sources: Record<string, { label: string; bg: string; color: string; emoji: string }> = {
+      pubmed: { label: 'PubMed', bg: '#FEF3E2', color: '#B45309', emoji: '🔬' },
+      semantic_scholar: { label: 'Semantic Scholar', bg: '#E0F2FE', color: '#0369A1', emoji: '📚' },
+      arxiv: { label: 'arXiv', bg: '#F3E8FF', color: '#6D28D9', emoji: '📄' },
+      sciencedirect: { label: 'ScienceDirect', bg: '#FECDD3', color: '#BE1238', emoji: '📖' },
+    };
+    return sources[source] || { label: source, bg: '#E5E7EB', color: '#374151', emoji: '📑' };
+  };
+
   const getRelevanceColor = (score: number) => {
     if (score >= 0.8) return { bg: '#E1F5EE', text: '#0F6E56' };
     if (score >= 0.5) return { bg: '#EBF4FD', text: '#1B6FA8' };
@@ -221,6 +231,25 @@ export default function ResultsPage() {
                             transition: 'all 0.18s',
                           }}
                         >
+                          {/* Database Badge */}
+                          {(() => {
+                            const badge = getSourceBadge(source);
+                            return (
+                              <div style={{
+                                display: 'inline-block',
+                                background: badge.bg,
+                                color: badge.color,
+                                padding: '4px 10px',
+                                borderRadius: '4px',
+                                fontSize: '11px',
+                                fontWeight: 600,
+                                marginBottom: '12px',
+                              }}>
+                                {badge.emoji} {badge.label}
+                              </div>
+                            );
+                          })()}
+
                           {/* Title */}
                           <h3 style={{
                             fontSize: '15px',
@@ -233,7 +262,7 @@ export default function ResultsPage() {
                           </h3>
 
                           {/* Authors & Year */}
-                          <p style={{ fontSize: '13px', color: '#6B7280', marginBottom: '8px' }}>
+                          <p style={{ fontSize: '13px', color: '#6B7280', marginBottom: '12px' }}>
                             {article.authors?.join(', ') || 'Unknown authors'}
                             {article.year && ` (${article.year})`}
                           </p>
