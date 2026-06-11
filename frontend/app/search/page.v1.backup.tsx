@@ -489,7 +489,7 @@ export default function SearchPage() {
       </div>
 
       {/* Query Builder - 3 separate sections */}
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 48px' }}>
+      <div style={{ maxWidth: '700px', margin: '0 auto', padding: '0 48px' }}>
         {/* Block 1: Query Booleana Generada */}
         <div
           style={{
@@ -954,66 +954,40 @@ export default function SearchPage() {
           )}
         </div>
 
-        {/* Block 3: Databases Selection - Premium Gallery View */}
+        {/* Block 3: Databases Selection - Gallery View */}
         <div
           style={{
-            background: 'linear-gradient(135deg, #F0FBF7 0%, #E1F5EE 100%)',
-            border: 'none',
-            borderRadius: '16px',
-            padding: '48px 40px',
+            background: '#FFFFFF',
+            border: '2px solid #1D9E75',
+            borderRadius: '12px',
+            padding: '24px',
             marginBottom: '40px',
-            position: 'relative',
-            overflow: 'hidden',
           }}
         >
-          {/* Decorative corner accent */}
+          <p
+            style={{
+              fontSize: '11px',
+              fontWeight: 600,
+              color: '#1D9E75',
+              marginBottom: '24px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px',
+            }}
+          >
+            🌍 Dónde buscar
+          </p>
+
           <div
             style={{
-              position: 'absolute',
-              top: '-40px',
-              right: '-40px',
-              width: '200px',
-              height: '200px',
-              background: 'rgba(29, 158, 117, 0.05)',
-              borderRadius: '50%',
-              pointerEvents: 'none',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+              gap: '20px',
+              marginBottom: '24px',
+              padding: '20px',
+              background: '#F9FAFB',
+              borderRadius: '10px',
             }}
-          />
-
-          <div style={{ position: 'relative', zIndex: 1 }}>
-            <p
-              style={{
-                fontSize: '12px',
-                fontWeight: 700,
-                color: '#0F6E56',
-                marginBottom: '12px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.8px',
-                margin: '0 0 8px 0',
-              }}
-            >
-              ● DÓNDE BUSCAR
-            </p>
-            <h3
-              style={{
-                fontSize: '28px',
-                fontWeight: 700,
-                color: '#1B2A4A',
-                marginBottom: '32px',
-                margin: '0 0 32px 0',
-                letterSpacing: '-0.5px',
-              }}
-            >
-              Selecciona tus bases de datos
-            </h3>
-
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-                gap: '24px',
-              }}
-            >
+          >
             {[
               { id: 'pubmed', label: 'PubMed', desc: 'Medicina, ciencias de la salud', available: true },
               { id: 'semantic_scholar', label: 'Semantic Scholar', desc: 'Multidisciplinario, académico', available: true },
@@ -1037,33 +1011,28 @@ export default function SearchPage() {
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: '16px',
+                    gap: '12px',
                     cursor: db.available ? 'pointer' : 'not-allowed',
-                    padding: '32px 28px',
-                    borderRadius: '14px',
-                    border: isSelected ? '2px solid #1D9E75' : db.available ? '2px solid #E1F5EE' : '2px solid #FECDD3',
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                    background: isSelected ? '#FFFFFF' : db.available ? '#FFFFFF' : '#FEF2F2',
-                    boxShadow: isSelected
-                      ? '0 8px 16px rgba(29, 158, 117, 0.12)'
-                      : db.available ? '0 2px 8px rgba(0, 0, 0, 0.04)' : 'none',
+                    padding: '20px',
+                    borderRadius: '12px',
+                    border: isSelected ? '2px solid #1D9E75' : db.available ? '1.5px solid #E8EDEB' : '1.5px solid #FECDD3',
+                    transition: 'all 0.3s',
+                    background: isSelected ? '#F0FBF7' : db.available ? '#FFFFFF' : '#FEF2F2',
                     textAlign: 'center',
                     filter: isSelected ? 'grayscale(0%)' : 'grayscale(100%)',
-                    opacity: isSelected ? 1 : db.available ? 0.65 : 0.5,
+                    opacity: isSelected ? 1 : db.available ? 0.6 : 0.5,
                     position: 'relative',
                   }}
                   onMouseEnter={(e) => {
                     if (!isSelected && db.available) {
-                      e.currentTarget.style.boxShadow = '0 12px 24px rgba(29, 158, 117, 0.15)';
-                      e.currentTarget.style.transform = 'translateY(-4px)';
-                      e.currentTarget.style.opacity = '0.9';
+                      e.currentTarget.style.background = '#F9FAFB';
+                      e.currentTarget.style.opacity = '0.8';
                     }
                   }}
                   onMouseLeave={(e) => {
                     if (!isSelected && db.available) {
-                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.04)';
-                      e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.opacity = '0.65';
+                      e.currentTarget.style.background = '#FFFFFF';
+                      e.currentTarget.style.opacity = '0.6';
                     }
                   }}
                 >
@@ -1089,7 +1058,7 @@ export default function SearchPage() {
                   )}
 
                   {/* Logo/Icon */}
-                  <div style={{ lineHeight: 1, transform: isSelected ? 'scale(1.05)' : 'scale(1)', transition: 'transform 0.3s' }}>
+                  <div style={{ lineHeight: 1 }}>
                     {logoMap[db.id] || db.id}
                   </div>
 
@@ -1104,8 +1073,8 @@ export default function SearchPage() {
                       }
                     }}
                     style={{
-                      width: '24px',
-                      height: '24px',
+                      width: '20px',
+                      height: '20px',
                       cursor: db.available ? 'pointer' : 'not-allowed',
                       accentColor: '#1D9E75',
                       opacity: db.available ? 1 : 0.5,
@@ -1113,22 +1082,22 @@ export default function SearchPage() {
                   />
 
                   {/* Label */}
-                  <div style={{ width: '100%' }}>
+                  <div>
                     <div
                       style={{
-                        fontSize: '15px',
+                        fontSize: '13px',
                         fontWeight: 700,
-                        color: isSelected ? '#0F6E56' : db.available ? '#1B2A4A' : '#A1A1A1',
-                        marginBottom: '6px',
+                        color: isSelected ? '#0F6E56' : db.available ? '#6B7280' : '#A1A1A1',
+                        marginBottom: '4px',
                       }}
                     >
                       {db.label}
                     </div>
                     <div
                       style={{
-                        fontSize: '12px',
-                        color: isSelected ? '#1D9E75' : db.available ? '#6B7280' : '#D1D5DB',
-                        lineHeight: 1.5,
+                        fontSize: '11px',
+                        color: isSelected ? '#1D9E75' : db.available ? '#9CA3AF' : '#D1D5DB',
+                        lineHeight: 1.4,
                       }}
                     >
                       {db.available ? db.desc : 'Disponible con pago'}
@@ -1137,7 +1106,6 @@ export default function SearchPage() {
                 </label>
               );
             })}
-            </div>
           </div>
         </div>
 
