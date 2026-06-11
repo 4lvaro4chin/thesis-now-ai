@@ -162,7 +162,6 @@ export default function ResultsPage() {
                             borderRadius: '8px',
                             padding: '20px',
                             transition: 'all 0.18s',
-                            hover: { boxShadow: '0 4px 12px rgba(0,0,0,0.1)' },
                           }}
                         >
                           {/* Title */}
