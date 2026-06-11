@@ -16,6 +16,7 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [showEmailForm, setShowEmailForm] = useState(false);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -311,27 +312,71 @@ export default function LoginPage() {
                 </svg>
                 LinkedIn
               </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setShowEmailForm(!showEmailForm);
+                  setError('');
+                }}
+                style={{
+                  width: "100%",
+                  padding: "11px 16px",
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "13px",
+                  fontWeight: 600,
+                  color: "#1F2937",
+                  background: "#F3F4F6",
+                  border: "1.5px solid #E5E7EB",
+                  borderRadius: "10px",
+                  cursor: "pointer",
+                  transition: "all 0.2s",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "#E5E7EB";
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "#F3F4F6";
+                  e.currentTarget.style.transform = "translateY(0)";
+                }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="#1F2937" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M20 6L12 13 4 6" stroke="#1F2937" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Email
+              </button>
             </div>
 
-            {/* Divider */}
-            <div style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "12px",
-              margin: "24px 0",
-              color: "#D1D5DB",
-              fontSize: "12px",
-              fontFamily: "'DM Sans', sans-serif"
-            }}>
-              <div style={{ flex: 1, height: "1px", background: "#E5E7EB" }} />
-              <span>o</span>
-              <div style={{ flex: 1, height: "1px", background: "#E5E7EB" }} />
-            </div>
+            {showEmailForm && (
+              <>
+                {/* Divider */}
+                <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px",
+                  margin: "24px 0",
+                  color: "#D1D5DB",
+                  fontSize: "12px",
+                  fontFamily: "'DM Sans', sans-serif"
+                }}>
+                  <div style={{ flex: 1, height: "1px", background: "#E5E7EB" }} />
+                  <span>o</span>
+                  <div style={{ flex: 1, height: "1px", background: "#E5E7EB" }} />
+                </div>
+              </>
+            )}
 
-            {/* Form */}
-            <form onSubmit={handleEmailAuth} style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-              {/* Email Input */}
-              <div>
+            {/* Email Form - Expandable */}
+            {showEmailForm && (
+              <form onSubmit={handleEmailAuth} style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+                {/* Email Input */}
+                <div>
                 <label style={{
                   display: "block",
                   fontFamily: "'DM Sans', sans-serif",
@@ -465,7 +510,7 @@ export default function LoginPage() {
                     : t('login.signUp')}
               </button>
             </form>
-
+            )}
 
             {/* Toggle Link */}
             <p style={{
