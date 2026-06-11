@@ -910,7 +910,7 @@ export default function SearchPage() {
           )}
         </div>
 
-        {/* Block 3: Databases Selection */}
+        {/* Block 3: Databases Selection - Gallery View */}
         <div
           style={{
             background: '#FFFFFF',
@@ -925,7 +925,7 @@ export default function SearchPage() {
               fontSize: '11px',
               fontWeight: 600,
               color: '#1D9E75',
-              marginBottom: '16px',
+              marginBottom: '24px',
               textTransform: 'uppercase',
               letterSpacing: '0.5px',
             }}
@@ -936,64 +936,91 @@ export default function SearchPage() {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-              gap: '12px',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+              gap: '16px',
               marginBottom: '24px',
             }}
           >
             {[
-              { id: 'pubmed', label: 'PubMed', desc: 'Medicina, ciencias de la salud' },
-              { id: 'semantic_scholar', label: 'Semantic Scholar', desc: 'Multidisciplinario, académico' },
-            ].map((db) => (
-              <label
-                key={db.id}
-                style={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: '12px',
-                  cursor: 'pointer',
-                  padding: '14px',
-                  borderRadius: '10px',
-                  border: selectedDatabases[db.id] ? '2px solid #1D9E75' : '1.5px solid #E8EDEB',
-                  transition: 'all 0.2s',
-                  background: selectedDatabases[db.id] ? '#F0FBF7' : '#FFFFFF',
-                }}
-              >
-                <input
-                  type="checkbox"
-                  checked={selectedDatabases[db.id]}
-                  onChange={(e) => toggleDatabase(db.id, e.target.checked)}
+              { id: 'pubmed', label: 'PubMed', desc: 'Medicina, ciencias de la salud', logo: '🔬' },
+              { id: 'semantic_scholar', label: 'Semantic Scholar', desc: 'Multidisciplinario, académico', logo: '📚' },
+            ].map((db) => {
+              const isSelected = selectedDatabases[db.id];
+              return (
+                <label
+                  key={db.id}
                   style={{
-                    width: '18px',
-                    height: '18px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '12px',
                     cursor: 'pointer',
-                    accentColor: '#1D9E75',
-                    marginTop: '3px',
-                    flexShrink: 0,
+                    padding: '20px',
+                    borderRadius: '12px',
+                    border: isSelected ? '2px solid #1D9E75' : '1.5px solid #E8EDEB',
+                    transition: 'all 0.3s',
+                    background: isSelected ? '#F0FBF7' : '#FFFFFF',
+                    textAlign: 'center',
+                    filter: isSelected ? 'grayscale(0%)' : 'grayscale(100%)',
+                    opacity: isSelected ? 1 : 0.6,
                   }}
-                />
-                <div>
-                  <div
-                    style={{
-                      fontSize: '14px',
-                      fontWeight: 600,
-                      color: selectedDatabases[db.id] ? '#0F6E56' : '#1B2A4A',
-                      marginBottom: '2px',
-                    }}
-                  >
-                    {db.label}
+                  onMouseEnter={(e) => {
+                    if (!isSelected) {
+                      e.currentTarget.style.background = '#F9FAFB';
+                      e.currentTarget.style.opacity = '0.8';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isSelected) {
+                      e.currentTarget.style.background = '#FFFFFF';
+                      e.currentTarget.style.opacity = '0.6';
+                    }
+                  }}
+                >
+                  {/* Logo/Icon */}
+                  <div style={{ fontSize: '48px', lineHeight: 1 }}>
+                    {db.logo}
                   </div>
-                  <div
+
+                  {/* Checkbox */}
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={(e) => toggleDatabase(db.id, e.target.checked)}
                     style={{
-                      fontSize: '12px',
-                      color: '#6B7280',
+                      width: '20px',
+                      height: '20px',
+                      cursor: 'pointer',
+                      accentColor: '#1D9E75',
                     }}
-                  >
-                    {db.desc}
+                  />
+
+                  {/* Label */}
+                  <div>
+                    <div
+                      style={{
+                        fontSize: '13px',
+                        fontWeight: 700,
+                        color: isSelected ? '#0F6E56' : '#6B7280',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      {db.label}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '11px',
+                        color: isSelected ? '#1D9E75' : '#9CA3AF',
+                        lineHeight: 1.4,
+                      }}
+                    >
+                      {db.desc}
+                    </div>
                   </div>
-                </div>
-              </label>
-            ))}
+                </label>
+              );
+            })}
           </div>
         </div>
 
