@@ -364,7 +364,7 @@ export default function SearchPage() {
           </p>
 
           {/* Title Input */}
-          <div style={{ marginBottom: '40px' }}>
+          <div style={{ marginBottom: '24px' }}>
             <label
               style={{
                 display: 'block',
@@ -405,6 +405,41 @@ export default function SearchPage() {
                 e.currentTarget.style.boxShadow = 'none';
               }}
             />
+            {/* Search Button Below Input */}
+            <button
+              onClick={handleSearch}
+              disabled={!canSearch}
+              style={{
+                marginTop: '16px',
+                padding: '12px 32px',
+                background: canSearch ? '#1D9E75' : '#D1D5DB',
+                border: 'none',
+                borderRadius: '8px',
+                color: 'white',
+                fontSize: '14px',
+                fontWeight: 600,
+                cursor: canSearch ? 'pointer' : 'not-allowed',
+                transition: 'all 0.2s',
+                boxShadow: canSearch ? '0 2px 8px rgba(15, 110, 86, 0.3)' : 'none',
+                fontFamily: "'DM Sans', sans-serif",
+              }}
+              onMouseEnter={(e) => {
+                if (canSearch) {
+                  e.currentTarget.style.background = '#0F6E56';
+                  e.currentTarget.style.boxShadow = '0 4px 20px rgba(15, 110, 86, 0.12)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (canSearch) {
+                  e.currentTarget.style.background = '#1D9E75';
+                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(15, 110, 86, 0.3)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }
+              }}
+            >
+              {t('search.button.execute')}
+            </button>
           </div>
         </div>
       </div>
