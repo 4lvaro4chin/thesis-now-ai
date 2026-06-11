@@ -134,10 +134,10 @@ export function Navbar({ user: initialUser }: NavbarProps) {
       </ul>
 
       {/* Language Switcher + Auth Buttons */}
-      <div style={{ display: 'flex', gap: '16px', alignItems: 'center', paddingRight: '8px' }} className="sm:pr-0">
+      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', paddingRight: '8px' }} className="sm:gap-4 sm:pr-0">
         {mounted && <LanguageSwitcher currentLang={lang} />}
 
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flex: 1 }} className="sm:gap-3 sm:flex-none">
         {user ? (
           <>
             <div style={{
@@ -167,9 +167,10 @@ export function Navbar({ user: initialUser }: NavbarProps) {
             <button
               onClick={handleLogout}
               style={{
-                padding: '10px 16px',
+                padding: '8px 12px',
+                minWidth: '90px',
                 fontFamily: "'DM Sans', sans-serif",
-                fontSize: '13px',
+                fontSize: 'clamp(11px, 2vw, 13px)',
                 fontWeight: 600,
                 color: '#DC2626',
                 background: 'rgba(239, 68, 68, 0.1)',
@@ -177,6 +178,8 @@ export function Navbar({ user: initialUser }: NavbarProps) {
                 borderRadius: '10px',
                 cursor: 'pointer',
                 transition: 'all 0.2s',
+                whiteSpace: 'nowrap',
+                textAlign: 'center'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = 'rgba(239, 68, 68, 0.15)';
@@ -197,9 +200,10 @@ export function Navbar({ user: initialUser }: NavbarProps) {
             <button
               onClick={handleLogin}
               style={{
-                padding: '10px 16px',
+                padding: '8px 12px',
+                minWidth: '110px',
                 fontFamily: "'DM Sans', sans-serif",
-                fontSize: '13px',
+                fontSize: 'clamp(11px, 2vw, 13px)',
                 fontWeight: 600,
                 color: '#1D9E75',
                 background: 'transparent',
@@ -207,6 +211,8 @@ export function Navbar({ user: initialUser }: NavbarProps) {
                 borderRadius: '10px',
                 cursor: 'pointer',
                 transition: 'all 0.2s',
+                whiteSpace: 'nowrap',
+                textAlign: 'center'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = 'rgba(29, 158, 117, 0.1)';
@@ -226,9 +232,10 @@ export function Navbar({ user: initialUser }: NavbarProps) {
             <button
               onClick={handleLogin}
               style={{
-                padding: '10px 20px',
+                padding: '8px 12px',
+                minWidth: '110px',
                 fontFamily: "'DM Sans', sans-serif",
-                fontSize: '13px',
+                fontSize: 'clamp(11px, 2vw, 13px)',
                 fontWeight: 600,
                 color: 'white',
                 background: '#1D9E75',
@@ -237,6 +244,8 @@ export function Navbar({ user: initialUser }: NavbarProps) {
                 cursor: 'pointer',
                 transition: 'all 0.2s',
                 boxShadow: '0 4px 12px rgba(29, 158, 117, 0.3)',
+                whiteSpace: 'nowrap',
+                textAlign: 'center'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = '#0F6E56';

@@ -1,353 +1,308 @@
 'use client';
 
-import { useAuthProtection } from "@/lib/useAuthProtection";
-import { useTranslation } from "@/lib/useTranslation";
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useAuthProtection } from '@/lib/useAuthProtection';
+import { useTranslation } from '@/lib/useTranslation';
+import type { SearchResult } from '@/lib/useSearch';
 
 export default function ResultsPage() {
   useAuthProtection();
   const { t } = useTranslation();
-  const mockArticles = [
-    {
-      id: 1,
-      title: "Climate Change and Human Migration: A Comprehensive Analysis",
-      authors: "Smith, J., Johnson, M., Williams, K.",
-      year: 2023,
-      database: "PubMed",
-      relevance: "high" as const,
-      abstract: "This study examines the relationship between climate change and human migration patterns across multiple continents...",
-      doi: "10.1234/climate.2023.001",
-    },
-    {
-      id: 2,
-      title: "Environmental Factors Driving Population Displacement",
-      authors: "Brown, A., Davis, L.",
-      year: 2022,
-      database: "ScienceDirect",
-      relevance: "high" as const,
-      abstract: "An investigation into the environmental determinants of forced migration and their global implications...",
-      doi: "10.5678/env.2022.045",
-    },
-    {
-      id: 3,
-      title: "Migration Patterns in the Anthropocene",
-      authors: "García, R., López, M., Chen, S.",
-      year: 2023,
-      database: "Google Scholar",
-      relevance: "medium" as const,
-      abstract: "This paper explores how human activities in the Anthropocene are reshaping migration dynamics...",
-    },
-  ];
+  const searchParams = useSearchParams();
 
-  const relevanceConfig = {
-    high: { bg: "#E1F5EE", text: "#0F6E56", label: t('results.relevance.high') },
-    medium: { bg: "#EBF4FD", text: "#1B6FA8", label: t('results.relevance.medium') },
-    low: { bg: "#FEF0EC", text: "#A33820", label: t('results.relevance.low') },
+  const [results, setResults] = useState<SearchResult[]>([]);
+  const [booleanQuery, setBooleanQuery] = useState<string>('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const jobId = searchParams.get('job_id');
+
+  useEffect(() => {
+    if (!jobId) {
+      setError('No search job found');
+      setLoading(false);
+      return;
+    }
+
+    // Load from sessionStorage or fetch from backend
+    const cached = sessionStorage.getItem(`search_${jobId}`);
+    if (cached) {
+      try {
+        const data = JSON.parse(cached);
+        setResults(data.results || []);
+        setBooleanQuery(data.boolean_query || '');
+        setLoading(false);
+      } catch {
+        setError('Failed to parse search results');
+        setLoading(false);
+      }
+    } else {
+      // Fallback: fetch from backend
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/search/${jobId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setResults(data.results || []);
+          setBooleanQuery(data.boolean_query || '');
+          setLoading(false);
+        })
+        .catch((err) => {
+          setError(err.message || 'Failed to fetch results');
+          setLoading(false);
+        });
+    }
+  }, [jobId]);
+
+  const groupedResults = results.reduce(
+    (acc, result) => {
+      const source = result.source || 'unknown';
+      if (!acc[source]) acc[source] = [];
+      acc[source].push(result);
+      return acc;
+    },
+    {} as Record<string, SearchResult[]>
+  );
+
+  const getSourceLabel = (source: string): string => {
+    const labels: Record<string, string> = {
+      pubmed: 'PubMed',
+      semantic_scholar: 'Semantic Scholar',
+      arxiv: 'arXiv',
+      sciencedirect: 'ScienceDirect',
+    };
+    return labels[source] || source;
   };
 
-  return (
-    <div style={{ minHeight: "100vh", background: "#FFFFFF", paddingTop: "72px", paddingBottom: "100px" }}>
-      <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 48px" }}>
-        {/* Header */}
-        <div style={{ marginBottom: "48px" }}>
-          <h1 style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: "clamp(26px, 3vw, 34px)",
-            fontWeight: 600,
-            color: "#1B2A4A",
-            letterSpacing: "-0.7px",
-            lineHeight: 1.2,
-            marginBottom: "8px"
-          }}>
-            {t('results.title')}
-          </h1>
-          <p style={{
-            fontSize: "14px",
-            color: "#6B7280"
-          }}>
-            {t('results.subtitle')} <span style={{ fontWeight: 600, color: "#1B2A4A" }}>847</span> {t('results.articles')}
-          </p>
-        </div>
+  const getRelevanceColor = (score: number) => {
+    if (score >= 0.8) return { bg: '#E1F5EE', text: '#0F6E56' };
+    if (score >= 0.5) return { bg: '#EBF4FD', text: '#1B6FA8' };
+    return { bg: '#FEF0EC', text: '#A33820' };
+  };
 
-        {/* Filter Bar */}
-        <div style={{
-          display: "flex",
-          gap: "12px",
-          marginBottom: "32px",
-          flexWrap: "wrap"
-        }}>
-          <select style={{
-            padding: "10px 14px",
-            border: "1px solid #E8EDEB",
-            borderRadius: "8px",
-            background: "white",
-            fontSize: "13px",
-            color: "#6B7280",
-            cursor: "pointer",
-            transition: "all 0.18s"
-          }}>
-            <option>{t('results.sort.relevance')}</option>
-            <option>{t('results.sort.newest')}</option>
-            <option>{t('results.sort.oldest')}</option>
-          </select>
-          <select style={{
-            padding: "10px 14px",
-            border: "1px solid #E8EDEB",
-            borderRadius: "8px",
-            background: "white",
-            fontSize: "13px",
-            color: "#6B7280",
-            cursor: "pointer",
-            transition: "all 0.18s"
-          }}>
-            <option>{t('results.filter.all')}</option>
-            <option>PubMed</option>
-            <option>ScienceDirect</option>
-            <option>Google Scholar</option>
-          </select>
-          <input
-            type="search"
-            placeholder={t('results.search.placeholder')}
-            style={{
-              flex: 1,
-              minWidth: "200px",
-              padding: "10px 14px",
-              border: "1px solid #E8EDEB",
-              borderRadius: "8px",
-              background: "white",
-              fontSize: "13px",
-              color: "#6B7280",
-              transition: "all 0.18s"
-            }}
-          />
-        </div>
-
-        {/* Articles Grid */}
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
-          gap: "20px",
-          marginBottom: "48px"
-        }}>
-          {mockArticles.map((article) => {
-            const config = relevanceConfig[article.relevance];
-            return (
-              <article
-                key={article.id}
-                style={{
-                  background: "white",
-                  border: "1px solid #E8EDEB",
-                  borderRadius: "8px",
-                  padding: "20px",
-                  transition: "all 0.2s",
-                  cursor: "pointer",
-                  display: "flex",
-                  flexDirection: "column",
-                  height: "100%"
-                }}
-              >
-                <div style={{ marginBottom: "16px" }}>
-                  <div style={{
-                    display: "flex",
-                    gap: "8px",
-                    flexWrap: "wrap",
-                    marginBottom: "12px",
-                    alignItems: "center"
-                  }}>
-                    <span
-                      style={{
-                        fontSize: "12px",
-                        fontWeight: 500,
-                        padding: "4px 10px",
-                        borderRadius: "4px",
-                        backgroundColor: config.bg,
-                        color: config.text
-                      }}
-                    >
-                      {config.label}
-                    </span>
-                    <span style={{
-                      fontSize: "12px",
-                      color: "rgba(107,114,128,1)",
-                      padding: "4px 10px",
-                      backgroundColor: "#F4F6F5",
-                      borderRadius: "4px"
-                    }}>
-                      {article.database}
-                    </span>
-                    <span style={{
-                      fontSize: "12px",
-                      color: "#9CA3AF",
-                      marginLeft: "auto"
-                    }}>
-                      {article.year}
-                    </span>
-                  </div>
-
-                  <h3 style={{
-                    fontWeight: 600,
-                    color: "#1B2A4A",
-                    fontSize: "14px",
-                    lineHeight: 1.5,
-                    marginBottom: "8px"
-                  }}>
-                    {article.title}
-                  </h3>
-
-                  <p style={{
-                    fontSize: "12px",
-                    color: "#6B7280",
-                    marginBottom: "8px"
-                  }}>
-                    {article.authors}
-                  </p>
-                </div>
-
-                {article.abstract && (
-                  <p style={{
-                    fontSize: "12px",
-                    color: "#6B7280",
-                    marginBottom: "12px",
-                    lineHeight: 1.5,
-                    display: "-webkit-box",
-                    WebkitLineClamp: 3,
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden"
-                  }}>
-                    {article.abstract}
-                  </p>
-                )}
-
-                <div style={{
-                  display: "flex",
-                  gap: "8px",
-                  marginTop: "auto",
-                  paddingTop: "12px",
-                  borderTop: "1px solid #f0f0f0"
-                }}>
-                  {article.doi && (
-                    <a
-                      href={`https://doi.org/${article.doi}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        fontSize: "12px",
-                        fontWeight: 500,
-                        color: "#0F6E56",
-                        textDecoration: "none",
-                        transition: "color 0.18s"
-                      }}
-                    >
-                      DOI
-                    </a>
-                  )}
-                  <button style={{
-                    fontSize: "12px",
-                    fontWeight: 500,
-                    color: "#0F6E56",
-                    background: "transparent",
-                    border: "none",
-                    cursor: "pointer",
-                    marginLeft: "auto",
-                    transition: "color 0.18s"
-                  }}>
-                    {t('results.button.more')}
-                  </button>
-                </div>
-              </article>
-            );
-          })}
-        </div>
-
-        {/* Pagination */}
-        <div style={{ textAlign: "center", marginBottom: "48px" }}>
-          <button style={{
-            padding: "12px 28px",
-            background: "transparent",
-            border: "1px solid #E8EDEB",
-            borderRadius: "8px",
-            fontSize: "14px",
-            fontWeight: 500,
-            color: "#6B7280",
-            cursor: "pointer",
-            transition: "all 0.18s"
-          }}>
-            {t('results.button.load')}
-          </button>
+  if (loading) {
+    return (
+      <div style={{ minHeight: '100vh', background: '#FFFFFF', paddingTop: '72px', paddingBottom: '100px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ color: '#6B7280' }}>Loading results...</p>
         </div>
       </div>
+    );
+  }
 
-      {/* Export Bar */}
-      <div style={{
-        position: "fixed",
-        bottom: 0,
-        left: 0,
-        right: 0,
-        background: "white",
-        borderTop: "1px solid #E8EDEB",
-        padding: "16px 0",
-        boxShadow: "0 -4px 20px rgba(15,110,86,0.08)"
-      }}>
-        <div style={{
-          maxWidth: "1100px",
-          margin: "0 auto",
-          padding: "0 48px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: "16px"
-        }}>
-          <p style={{
-            fontSize: "13px",
-            color: "#6B7280"
-          }}>
-            <span style={{ fontWeight: 600, color: "#1B2A4A" }}>5</span> {t('results.export.selected')}
-          </p>
-          <div style={{
-            display: "flex",
-            gap: "8px"
-          }}>
-            <button style={{
-              padding: "10px 20px",
-              background: "transparent",
-              border: "1px solid #E8EDEB",
-              borderRadius: "8px",
-              fontSize: "13px",
-              fontWeight: 500,
-              color: "#6B7280",
-              cursor: "pointer",
-              transition: "all 0.18s"
-            }}>
-              PDF
-            </button>
-            <button style={{
-              padding: "10px 20px",
-              background: "transparent",
-              border: "1px solid #E8EDEB",
-              borderRadius: "8px",
-              fontSize: "13px",
-              fontWeight: 500,
-              color: "#6B7280",
-              cursor: "pointer",
-              transition: "all 0.18s"
-            }}>
-              CSV
-            </button>
-            <button style={{
-              padding: "10px 20px",
-              background: "#1D9E75",
-              border: "none",
-              borderRadius: "8px",
-              fontSize: "13px",
-              fontWeight: 500,
-              color: "white",
-              cursor: "pointer",
-              transition: "background 0.18s"
-            }}>
-              {t('results.button.download')}
-            </button>
+  return (
+    <div style={{ minHeight: '100vh', background: '#FFFFFF', paddingTop: '72px', paddingBottom: '100px' }}>
+      <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 48px' }}>
+        {error ? (
+          <div style={{ textAlign: 'center', paddingTop: '48px' }}>
+            <h2 style={{ color: '#DC2626', marginBottom: '16px' }}>Error</h2>
+            <p style={{ color: '#6B7280' }}>{error}</p>
+            <a href="/search" style={{ marginTop: '24px', display: 'inline-block', padding: '10px 20px', background: '#1D9E75', color: 'white', textDecoration: 'none', borderRadius: '8px' }}>
+              Back to Search
+            </a>
           </div>
-        </div>
+        ) : (
+          <>
+            {/* Header */}
+            <div style={{ marginBottom: '48px' }}>
+              <h1 style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: 'clamp(26px, 3vw, 34px)',
+                fontWeight: 600,
+                color: '#1B2A4A',
+                letterSpacing: '-0.7px',
+                lineHeight: 1.2,
+                marginBottom: '8px',
+              }}>
+                {t('results.title')}
+              </h1>
+              <p style={{ fontSize: '14px', color: '#6B7280', marginBottom: '16px' }}>
+                {t('results.subtitle')} <span style={{ fontWeight: 600, color: '#1B2A4A' }}>{results.length}</span> {t('results.articles')}
+              </p>
+              {booleanQuery && (
+                <div style={{
+                  background: '#F0FBF7',
+                  border: '1px solid #E1F5EE',
+                  borderRadius: '8px',
+                  padding: '12px 16px',
+                  fontSize: '13px',
+                  color: '#0F6E56',
+                  fontFamily: 'monospace',
+                }}>
+                  <strong>Query:</strong> {booleanQuery}
+                </div>
+              )}
+            </div>
+
+            {results.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '48px 0' }}>
+                <p style={{ color: '#6B7280' }}>No results found. Try a different search.</p>
+              </div>
+            ) : (
+              Object.entries(groupedResults).map(([source, sourceResults]) => (
+                <div key={source} style={{ marginBottom: '48px' }}>
+                  <h2 style={{
+                    fontSize: '16px',
+                    fontWeight: 600,
+                    color: '#1B2A4A',
+                    marginBottom: '16px',
+                    paddingBottom: '12px',
+                    borderBottom: '2px solid #E8EDEB',
+                  }}>
+                    {getSourceLabel(source)} ({sourceResults.length})
+                  </h2>
+
+                  <div style={{ display: 'grid', gap: '16px' }}>
+                    {sourceResults.map((article, idx) => {
+                      const relevance = getRelevanceColor(article.relevance_score);
+                      return (
+                        <div
+                          key={`${source}-${idx}`}
+                          style={{
+                            border: '1px solid #E8EDEB',
+                            borderRadius: '8px',
+                            padding: '20px',
+                            transition: 'all 0.18s',
+                            hover: { boxShadow: '0 4px 12px rgba(0,0,0,0.1)' },
+                          }}
+                        >
+                          {/* Title */}
+                          <h3 style={{
+                            fontSize: '15px',
+                            fontWeight: 600,
+                            color: '#1B2A4A',
+                            marginBottom: '8px',
+                            lineHeight: 1.5,
+                          }}>
+                            {article.title}
+                          </h3>
+
+                          {/* Authors & Year */}
+                          <p style={{ fontSize: '13px', color: '#6B7280', marginBottom: '8px' }}>
+                            {article.authors?.join(', ') || 'Unknown authors'}
+                            {article.year && ` (${article.year})`}
+                          </p>
+
+                          {/* Abstract */}
+                          {article.abstract && (
+                            <p style={{ fontSize: '13px', color: '#6B7280', marginBottom: '12px', lineHeight: 1.6 }}>
+                              {article.abstract.substring(0, 200)}
+                              {article.abstract.length > 200 ? '...' : ''}
+                            </p>
+                          )}
+
+                          {/* Metadata */}
+                          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+                            {/* Relevance Score */}
+                            <div style={{
+                              background: relevance.bg,
+                              color: relevance.text,
+                              padding: '4px 12px',
+                              borderRadius: '4px',
+                              fontSize: '11px',
+                              fontWeight: 600,
+                            }}>
+                              {Math.round(article.relevance_score * 100)}% relevant
+                            </div>
+
+                            {/* DOI */}
+                            {article.doi && (
+                              <a
+                                href={`https://doi.org/${article.doi}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                  fontSize: '11px',
+                                  color: '#1D9E75',
+                                  textDecoration: 'none',
+                                  fontWeight: 500,
+                                }}
+                              >
+                                DOI: {article.doi}
+                              </a>
+                            )}
+
+                            {/* URL */}
+                            {article.url && (
+                              <a
+                                href={article.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                  fontSize: '11px',
+                                  color: '#1D9E75',
+                                  textDecoration: 'none',
+                                  fontWeight: 500,
+                                }}
+                              >
+                                View Online
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))
+            )}
+
+            {/* Export Bar */}
+            <div style={{
+              position: 'fixed',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              background: 'white',
+              borderTop: '1px solid #E8EDEB',
+              padding: '16px 48px',
+              display: 'flex',
+              gap: '12px',
+              justifyContent: 'center',
+              zIndex: 40,
+            }}>
+              <button style={{
+                padding: '10px 20px',
+                background: '#1D9E75',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '14px',
+                fontWeight: 500,
+                cursor: 'pointer',
+              }}>
+                Export PDF
+              </button>
+              <button style={{
+                padding: '10px 20px',
+                background: 'transparent',
+                color: '#1D9E75',
+                border: '1.5px solid #1D9E75',
+                borderRadius: '8px',
+                fontSize: '14px',
+                fontWeight: 500,
+                cursor: 'pointer',
+              }}>
+                Export Word
+              </button>
+              <a
+                href="/search"
+                style={{
+                  padding: '10px 20px',
+                  background: 'transparent',
+                  color: '#6B7280',
+                  border: '1px solid #E8EDEB',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  textDecoration: 'none',
+                  cursor: 'pointer',
+                }}
+              >
+                New Search
+              </a>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
