@@ -14,6 +14,29 @@ interface Token {
 let tokenIdCounter = 0;
 const newTokenId = () => `tk-${tokenIdCounter++}`;
 
+// Database logos
+const DatabaseLogos = {
+  pubmed: (
+    <svg viewBox="0 0 100 100" width="60" height="60" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" rx="12" fill="#0072BA" />
+      <text x="50" y="60" fontSize="36" fontWeight="bold" fill="white" textAnchor="middle" fontFamily="Arial">
+        P
+      </text>
+    </svg>
+  ),
+  semantic_scholar: (
+    <svg viewBox="0 0 100 100" width="60" height="60" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="50" fill="#0369A1" />
+      <circle cx="30" cy="35" r="12" fill="#EC4899" />
+      <circle cx="50" cy="25" r="12" fill="#8B5CF6" />
+      <circle cx="70" cy="35" r="12" fill="#06B6D4" />
+      <circle cx="40" cy="55" r="12" fill="#10B981" />
+      <circle cx="60" cy="55" r="12" fill="#F59E0B" />
+      <circle cx="50" cy="75" r="12" fill="#EF4444" />
+    </svg>
+  ),
+};
+
 // Convert backend query string into tokens (terms, operators, parens)
 const tokenize = (query: string): Token[] => {
   const tokens: Token[] = [];
@@ -942,10 +965,14 @@ export default function SearchPage() {
             }}
           >
             {[
-              { id: 'pubmed', label: 'PubMed', desc: 'Medicina, ciencias de la salud', logo: '🔬' },
-              { id: 'semantic_scholar', label: 'Semantic Scholar', desc: 'Multidisciplinario, académico', logo: '📚' },
+              { id: 'pubmed', label: 'PubMed', desc: 'Medicina, ciencias de la salud' },
+              { id: 'semantic_scholar', label: 'Semantic Scholar', desc: 'Multidisciplinario, académico' },
             ].map((db) => {
               const isSelected = selectedDatabases[db.id];
+              const logoMap: Record<string, React.ReactNode> = {
+                pubmed: DatabaseLogos.pubmed,
+                semantic_scholar: DatabaseLogos.semantic_scholar,
+              };
               return (
                 <label
                   key={db.id}
@@ -979,8 +1006,8 @@ export default function SearchPage() {
                   }}
                 >
                   {/* Logo/Icon */}
-                  <div style={{ fontSize: '48px', lineHeight: 1 }}>
-                    {db.logo}
+                  <div style={{ lineHeight: 1 }}>
+                    {logoMap[db.id] || db.id}
                   </div>
 
                   {/* Checkbox */}
