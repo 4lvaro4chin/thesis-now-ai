@@ -980,9 +980,12 @@ export default function SearchPage() {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
-              gap: '16px',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+              gap: '20px',
               marginBottom: '24px',
+              padding: '20px',
+              background: '#F9FAFB',
+              borderRadius: '10px',
             }}
           >
             {[

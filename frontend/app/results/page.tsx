@@ -16,6 +16,7 @@ export default function ResultsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedAbstracts, setExpandedAbstracts] = useState<Set<string>>(new Set());
+  const [loadingProgress, setLoadingProgress] = useState(0); // 0-100
 
   const jobId = searchParams.get('job_id');
 
@@ -26,14 +27,25 @@ export default function ResultsPage() {
       return;
     }
 
+    // Simulate progressive loading
+    const progressInterval = setInterval(() => {
+      setLoadingProgress((prev) => {
+        if (prev >= 90) return prev;
+        return prev + Math.random() * 30;
+      });
+    }, 300);
+
     // Load from sessionStorage or fetch from backend
     const cached = sessionStorage.getItem(`search_${jobId}`);
     if (cached) {
       try {
         const data = JSON.parse(cached);
-        setResults(data.results || []);
-        setBooleanQuery(data.boolean_query || '');
-        setLoading(false);
+        setLoadingProgress(100);
+        setTimeout(() => {
+          setResults(data.results || []);
+          setBooleanQuery(data.boolean_query || '');
+          setLoading(false);
+        }, 300);
       } catch {
         setError('Failed to parse search results');
         setLoading(false);
@@ -43,15 +55,20 @@ export default function ResultsPage() {
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/search/${jobId}`)
         .then((res) => res.json())
         .then((data) => {
-          setResults(data.results || []);
-          setBooleanQuery(data.boolean_query || '');
-          setLoading(false);
+          setLoadingProgress(100);
+          setTimeout(() => {
+            setResults(data.results || []);
+            setBooleanQuery(data.boolean_query || '');
+            setLoading(false);
+          }, 300);
         })
         .catch((err) => {
           setError(err.message || 'Failed to fetch results');
           setLoading(false);
         });
     }
+
+    return () => clearInterval(progressInterval);
   }, [jobId]);
 
   const groupedResults = results.reduce(
@@ -128,11 +145,103 @@ export default function ResultsPage() {
     return result;
   };
 
+  const SkeletonCard = () => (
+    <div
+      style={{
+        border: '1px solid #E8EDEB',
+        borderRadius: '8px',
+        padding: '20px',
+        animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      }}
+    >
+      <div style={{ height: '20px', background: '#E8EDEB', borderRadius: '4px', marginBottom: '12px' }} />
+      <div style={{ height: '14px', background: '#E8EDEB', borderRadius: '4px', marginBottom: '12px' }} />
+      <div style={{ height: '14px', background: '#E8EDEB', borderRadius: '4px', marginBottom: '12px', width: '80%' }} />
+      <div style={{ height: '60px', background: '#E8EDEB', borderRadius: '4px', marginBottom: '12px' }} />
+      <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ height: '24px', width: '80px', background: '#E8EDEB', borderRadius: '4px' }} />
+        <div style={{ height: '24px', width: '100px', background: '#E8EDEB', borderRadius: '4px' }} />
+      </div>
+    </div>
+  );
+
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', background: '#FFFFFF', paddingTop: '72px', paddingBottom: '100px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ textAlign: 'center' }}>
-          <p style={{ color: '#6B7280' }}>Loading results...</p>
+      <div style={{ minHeight: '100vh', background: '#FFFFFF', paddingTop: '72px', paddingBottom: '100px' }}>
+        <style>{`
+          @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+          }
+          @keyframes slideIn {
+            from { transform: scaleX(0); }
+            to { transform: scaleX(1); }
+          }
+        `}</style>
+
+        <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 48px' }}>
+          {/* Progress Bar */}
+          <div style={{ marginBottom: '48px' }}>
+            <div
+              style={{
+                height: '4px',
+                background: '#E8EDEB',
+                borderRadius: '2px',
+                overflow: 'hidden',
+                marginBottom: '16px',
+              }}
+            >
+              <div
+                style={{
+                  height: '100%',
+                  background: 'linear-gradient(90deg, #1D9E75, #0F6E56)',
+                  width: `${loadingProgress}%`,
+                  transition: 'width 0.3s ease-out',
+                  transformOrigin: 'left',
+                }}
+              />
+            </div>
+            <p style={{ fontSize: '13px', color: '#6B7280', margin: 0 }}>
+              Cargando resultados... {Math.round(loadingProgress)}%
+            </p>
+          </div>
+
+          {/* Skeleton Cards */}
+          <div style={{ marginBottom: '48px' }}>
+            <h2 style={{
+              fontSize: '16px',
+              fontWeight: 600,
+              color: '#1B2A4A',
+              marginBottom: '16px',
+              paddingBottom: '12px',
+              borderBottom: '2px solid #E8EDEB',
+            }}>
+              PubMed
+            </h2>
+            <div style={{ display: 'grid', gap: '16px' }}>
+              {[1, 2, 3].map((i) => (
+                <SkeletonCard key={i} />
+              ))}
+            </div>
+          </div>
+
+          <div style={{ marginBottom: '48px' }}>
+            <h2 style={{
+              fontSize: '16px',
+              fontWeight: 600,
+              color: '#1B2A4A',
+              marginBottom: '16px',
+              paddingBottom: '12px',
+              borderBottom: '2px solid #E8EDEB',
+            }}>
+              Semantic Scholar
+            </h2>
+            <div style={{ display: 'grid', gap: '16px' }}>
+              {[1, 2].map((i) => (
+                <SkeletonCard key={i} />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     );
