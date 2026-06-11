@@ -429,7 +429,7 @@ export default function LoginPage() {
                 onClick={() => {
                   const supabase = createClient();
                   supabase.auth.signInWithOAuth({
-                    provider: 'facebook',
+                    provider: 'linkedin',
                     options: { redirectTo: `${window.location.origin}/auth/callback` }
                   });
                 }}
@@ -459,10 +459,10 @@ export default function LoginPage() {
                   e.currentTarget.style.transform = "translateY(0)";
                 }}
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="#1877F2" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="#0A66C2" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.475-2.236-1.986-2.236-1.081 0-1.722.731-2.004 1.438-.103.25-.129.599-.129.948v5.419h-3.554s.05-8.736 0-9.646h3.554v1.364c.43-.66 1.191-1.599 2.905-1.599 2.121 0 3.71 1.388 3.71 4.374v5.507zM5.337 8.855c-1.144 0-1.915-.759-1.915-1.71 0-.951.77-1.71 1.954-1.71 1.182 0 1.915.759 1.915 1.71 0 .951-.733 1.71-1.954 1.71zm1.581 11.597H3.715V9.505h3.203v10.947zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
                 </svg>
-                Facebook
+                LinkedIn
               </button>
             </div>
 
