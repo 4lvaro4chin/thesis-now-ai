@@ -35,6 +35,27 @@ const DatabaseLogos = {
       <circle cx="50" cy="75" r="12" fill="#EF4444" />
     </svg>
   ),
+  sciencedirect: (
+    <svg viewBox="0 0 100 100" width="60" height="60" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" rx="12" fill="#E85C0D" />
+      <path d="M 30 40 L 50 30 L 70 40 L 70 70 Q 50 80 30 70 Z" fill="white" opacity="0.9" />
+    </svg>
+  ),
+  arxiv: (
+    <svg viewBox="0 0 100 100" width="60" height="60" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" rx="12" fill="#B91C1C" />
+      <text x="50" y="65" fontSize="32" fontWeight="bold" fill="white" textAnchor="middle" fontFamily="Georgia">
+        a
+      </text>
+    </svg>
+  ),
+  google_scholar: (
+    <svg viewBox="0 0 100 100" width="60" height="60" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" rx="12" fill="#4285F4" />
+      <path d="M 50 25 L 65 40 L 65 70 Q 50 78 35 70 L 35 40 Z" fill="white" />
+      <circle cx="50" cy="35" r="6" fill="#EA4335" />
+    </svg>
+  ),
 };
 
 // Convert backend query string into tokens (terms, operators, parens)
@@ -965,13 +986,19 @@ export default function SearchPage() {
             }}
           >
             {[
-              { id: 'pubmed', label: 'PubMed', desc: 'Medicina, ciencias de la salud' },
-              { id: 'semantic_scholar', label: 'Semantic Scholar', desc: 'Multidisciplinario, académico' },
+              { id: 'pubmed', label: 'PubMed', desc: 'Medicina, ciencias de la salud', available: true },
+              { id: 'semantic_scholar', label: 'Semantic Scholar', desc: 'Multidisciplinario, académico', available: true },
+              { id: 'sciencedirect', label: 'ScienceDirect', desc: 'Ciencias, tecnología', available: false },
+              { id: 'arxiv', label: 'arXiv', desc: 'Física, matemáticas', available: false },
+              { id: 'google_scholar', label: 'Google Scholar', desc: 'Búsqueda académica global', available: false },
             ].map((db) => {
               const isSelected = selectedDatabases[db.id];
               const logoMap: Record<string, React.ReactNode> = {
                 pubmed: DatabaseLogos.pubmed,
                 semantic_scholar: DatabaseLogos.semantic_scholar,
+                sciencedirect: DatabaseLogos.sciencedirect,
+                arxiv: DatabaseLogos.arxiv,
+                google_scholar: DatabaseLogos.google_scholar,
               };
               return (
                 <label
@@ -982,29 +1009,51 @@ export default function SearchPage() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: '12px',
-                    cursor: 'pointer',
+                    cursor: db.available ? 'pointer' : 'not-allowed',
                     padding: '20px',
                     borderRadius: '12px',
-                    border: isSelected ? '2px solid #1D9E75' : '1.5px solid #E8EDEB',
+                    border: isSelected ? '2px solid #1D9E75' : db.available ? '1.5px solid #E8EDEB' : '1.5px solid #FECDD3',
                     transition: 'all 0.3s',
-                    background: isSelected ? '#F0FBF7' : '#FFFFFF',
+                    background: isSelected ? '#F0FBF7' : db.available ? '#FFFFFF' : '#FEF2F2',
                     textAlign: 'center',
                     filter: isSelected ? 'grayscale(0%)' : 'grayscale(100%)',
-                    opacity: isSelected ? 1 : 0.6,
+                    opacity: isSelected ? 1 : db.available ? 0.6 : 0.5,
+                    position: 'relative',
                   }}
                   onMouseEnter={(e) => {
-                    if (!isSelected) {
+                    if (!isSelected && db.available) {
                       e.currentTarget.style.background = '#F9FAFB';
                       e.currentTarget.style.opacity = '0.8';
                     }
                   }}
                   onMouseLeave={(e) => {
-                    if (!isSelected) {
+                    if (!isSelected && db.available) {
                       e.currentTarget.style.background = '#FFFFFF';
                       e.currentTarget.style.opacity = '0.6';
                     }
                   }}
                 >
+                  {/* Premium Badge */}
+                  {!db.available && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '8px',
+                        right: '8px',
+                        background: '#DC2626',
+                        color: 'white',
+                        padding: '4px 8px',
+                        borderRadius: '4px',
+                        fontSize: '9px',
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                      }}
+                    >
+                      Premium
+                    </div>
+                  )}
+
                   {/* Logo/Icon */}
                   <div style={{ lineHeight: 1 }}>
                     {logoMap[db.id] || db.id}
@@ -1013,13 +1062,19 @@ export default function SearchPage() {
                   {/* Checkbox */}
                   <input
                     type="checkbox"
+                    disabled={!db.available}
                     checked={isSelected}
-                    onChange={(e) => toggleDatabase(db.id, e.target.checked)}
+                    onChange={(e) => {
+                      if (db.available) {
+                        toggleDatabase(db.id, e.target.checked);
+                      }
+                    }}
                     style={{
                       width: '20px',
                       height: '20px',
-                      cursor: 'pointer',
+                      cursor: db.available ? 'pointer' : 'not-allowed',
                       accentColor: '#1D9E75',
+                      opacity: db.available ? 1 : 0.5,
                     }}
                   />
 
@@ -1029,7 +1084,7 @@ export default function SearchPage() {
                       style={{
                         fontSize: '13px',
                         fontWeight: 700,
-                        color: isSelected ? '#0F6E56' : '#6B7280',
+                        color: isSelected ? '#0F6E56' : db.available ? '#6B7280' : '#A1A1A1',
                         marginBottom: '4px',
                       }}
                     >
@@ -1038,11 +1093,11 @@ export default function SearchPage() {
                     <div
                       style={{
                         fontSize: '11px',
-                        color: isSelected ? '#1D9E75' : '#9CA3AF',
+                        color: isSelected ? '#1D9E75' : db.available ? '#9CA3AF' : '#D1D5DB',
                         lineHeight: 1.4,
                       }}
                     >
-                      {db.desc}
+                      {db.available ? db.desc : 'Disponible con pago'}
                     </div>
                   </div>
                 </label>
