@@ -69,7 +69,7 @@ class NLPService:
         """
         Extraer palabras significativas del título.
         - Remover stopwords comunes
-        - Lemmatizar básicamente (muy simple)
+        - Soporta caracteres acentuados y unicode
         """
         stopwords = {
             "a", "an", "and", "are", "as", "at", "be", "but", "by",
@@ -78,8 +78,8 @@ class NLPService:
             "el", "la", "de", "y", "en", "una", "un",
         }
 
-        # Convertir a lowercase y separar por no-palabras
-        words = re.findall(r'\b[a-z]+\b', title.lower())
+        # Convertir a lowercase y separar por no-palabras (incluyendo caracteres acentuados)
+        words = re.findall(r'\b[\w\-á-ý]+\b', title.lower(), re.UNICODE)
 
         # Filtrar stopwords y palabras muy cortas
         keywords = [
