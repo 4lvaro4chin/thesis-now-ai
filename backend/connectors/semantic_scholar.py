@@ -28,10 +28,12 @@ class SemanticScholarConnector:
                     "fields": "title,authors,year,abstract,url,doi,citationCount",
                 }
 
-                # Add API key if available
+                # Prepare headers with API key if available
+                headers = {}
                 api_key = os.getenv("SEMANTIC_SCHOLAR_API_KEY")
                 if api_key:
-                    params["apiKey"] = api_key
+                    headers["x-api-key"] = api_key
+                    logger.info(f"Using Semantic Scholar API key")
 
                 logger.info(f"Semantic Scholar search: {query}")
 
@@ -39,7 +41,7 @@ class SemanticScholarConnector:
                 max_retries = 3
                 for attempt in range(max_retries):
                     try:
-                        response = await client.get(search_url, params=params)
+                        response = await client.get(search_url, params=params, headers=headers if headers else None)
 
                         if response.status_code == 429:
                             # Rate limit - wait and retry with increased backoff
