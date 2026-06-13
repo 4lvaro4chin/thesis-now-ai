@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ThesisNow — Design Preview v2</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Colores core */
+            --green-500: #1D9E75;
+            --green-700: #0F6E56;
+            --green-900: #04342C;
+            --navy: #1B2A4A;
+            --text: #2D3748;
+            --text-muted: #6B7280;
+            --border: #E8EDEB;
+            --bg: #F4F6F5;
+            --white: #FFFFFF;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text);
+            background: var(--white);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header Navigation */
+        header {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .logo-thesis {
+            color: var(--navy);
+        }
+
+        .logo-now {
+            color: var(--green-500);
+        }
+
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            margin-left: 32px;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--navy);
+        }
+
+        /* Sections */
+        section {
+            padding: 80px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        section:last-child {
+            border-bottom: none;
+        }
+
+        h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 64px;
+            font-weight: 700;
+            color: var(--navy);
+            line-height: 1.15;
+            margin-bottom: 24px;
+            letter-spacing: -1px;
+        }
+
+        h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--navy);
+            line-height: 1.2;
+            margin-bottom: 32px;
+            letter-spacing: -0.7px;
+        }
+
+        h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 12px;
+        }
+
+        p {
+            font-size: 16px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            max-width: 70ch;
+        }
+
+        /* Hero Section */
+        #hero {
+            background: var(--white);
+            padding: 120px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-size: 72px;
+            margin-bottom: 32px;
+        }
+
+        .hero-text p {
+            font-size: 18px;
+            max-width: 55ch;
+            margin-bottom: 40px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 36px;
+            background: var(--green-500);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+            letter-spacing: 0.3px;
+        }
+
+        .btn:hover {
+            background: var(--green-700);
+            transform: translateY(-2px);
+        }
+
+        .hero-visual {
+            background: linear-gradient(135deg, var(--bg) 0%, var(--border) 100%);
+            border-radius: 8px;
+            padding: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 88px;
+            min-height: 400px;
+        }
+
+        /* Typography Section */
+        .typography-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            margin-top: 40px;
+        }
+
+        .typography-item {
+            padding: 32px;
+            background: var(--bg);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .typography-item h3 {
+            margin-bottom: 24px;
+        }
+
+        .demo-cormorant {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--navy);
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        .demo-dm {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 16px;
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        /* Color Palette */
+        .palette {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .color-item {
+            text-align: center;
+        }
+
+        .color-swatch {
+            width: 100%;
+            height: 120px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .color-name {
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        .color-hex {
+            font-family: monospace;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Components Section */
+        .components-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        .component-card {
+            padding: 32px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .component-card h3 {
+            margin-bottom: 20px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .btn-secondary {
+            padding: 12px 24px;
+            background: var(--white);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--green-500);
+            color: var(--green-500);
+        }
+
+        .input-demo {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            margin: 12px 0;
+            transition: border-color 0.2s;
+        }
+
+        .input-demo:focus {
+            outline: none;
+            border-color: var(--green-500);
+        }
+
+        .card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            margin: 12px 0;
+        }
+
+        .card h4 {
+            color: var(--navy);
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .card p {
+            font-size: 14px;
+            margin-bottom: 0;
+        }
+
+        /* Principles Section */
+        .principles {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        .principle {
+            padding: 32px;
+            background: var(--bg);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .principle h3 {
+            color: var(--green-500);
+            margin-bottom: 12px;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--navy);
+            color: var(--white);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        footer p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 48px;
+            }
+
+            h2 {
+                font-size: 36px;
+            }
+
+            .hero-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .typography-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .components-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .principles {
+                grid-template-columns: 1fr;
+            }
+
+            nav {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-thesis">Thesis</span><span class="logo-now">Now</span>
+                </div>
+                <nav>
+                    <a href="#hero">Hero</a>
+                    <a href="#typography">Tipografía</a>
+                    <a href="#palette">Colores</a>
+                    <a href="#components">Componentes</a>
+                    <a href="#principles">Principios</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Elegancia Académica + Modernidad Audaz</h1>
+                    <p class="subtitle">Una identidad visual que funciona para estudiantes y académicos. Sofisticada sin ser aburrida. Moderna sin ser superficial.</p>
+                    <button class="btn">Ver Propuesta Completa</button>
+                </div>
+                <div class="hero-visual">📚</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Typography Section -->
+    <section id="typography">
+        <div class="container">
+            <h2>Tipografía: Dos Caras de una Marca</h2>
+            <p class="subtitle">Cormorant Garamond para títulos (elegancia histórica) + DM Sans para interfaz (moderno, legible).</p>
+
+            <div class="typography-grid">
+                <div class="typography-item">
+                    <h3>Cormorant Garamond (Serif)</h3>
+                    <div class="demo-cormorant">Encuentra Papers Sin Perder Horas</div>
+                    <p style="margin-top: 20px; color: var(--text-muted); font-size: 14px;">
+                        Uso: H1, H2, títulos de sección, branding. <br>
+                        Efecto: Autoridad, tradición académica, sofisticación.
+                    </p>
+                </div>
+                <div class="typography-item">
+                    <h3>DM Sans (Sans-Serif)</h3>
+                    <div class="demo-dm">
+                        Búsqueda inteligente en menos de 3 minutos. Selecciona las bases, ingresa tu título, y recibe un reporte organizado listo para citar.
+                    </div>
+                    <p style="margin-top: 20px; color: var(--text-muted); font-size: 14px;">
+                        Uso: Body text, botones, labels, navegación. <br>
+                        Efecto: Claridad, accesibilidad, modernidad.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Color Palette -->
+    <section id="palette">
+        <div class="container">
+            <h2>Paleta de Colores: 8 Esenciales</h2>
+            <p class="subtitle">Simplificado y práctico. Tres verdes + cinco neutrales. Sin redundancias.</p>
+
+            <div class="palette">
+                <!-- Greens -->
+                <div class="color-item">
+                    <div class="color-swatch" style="background: #1D9E75;"></div>
+                    <div class="color-name">Green 500</div>
+                    <div class="color-hex">#1D9E75</div>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">CTAs, botones</p>
+                </div>
+                <div class="color-item">
+                    <div class="color-swatch" style="background: #0F6E56;"></div>
+                    <div class="color-name">Green 700</div>
+                    <div class="color-hex">#0F6E56</div>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">Hover states</p>
+                </div>
+                <div class="color-item">
+                    <div class="color-swatch" style="background: #04342C;"></div>
+                    <div class="color-name">Green 900</div>
+                    <div class="color-hex">#04342C</div>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">Hero, navbar</p>
+                </div>
+
+                <!-- Navy -->
+                <div class="color-item">
+                    <div class="color-swatch" style="background: #1B2A4A;"></div>
+                    <div class="color-name">Navy</div>
+                    <div class="color-hex">#1B2A4A</div>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">Títulos, headings</p>
+                </div>
+
+                <!-- Neutrals -->
+                <div class="color-item">
+                    <div class="color-swatch" style="background: #2D3748; border: 1px solid var(--border);"></div>
+                    <div class="color-name">Text</div>
+                    <div class="color-hex">#2D3748</div>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">Body text</p>
+                </div>
+                <div class="color-item">
+                    <div class="color-swatch" style="background: #6B7280;"></div>
+                    <div class="color-name">Text Muted</div>
+                    <div class="color-hex">#6B7280</div>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">Subtítulos</p>
+                </div>
+                <div class="color-item">
+                    <div class="color-swatch" style="background: #E8EDEB;"></div>
+                    <div class="color-name">Border</div>
+                    <div class="color-hex">#E8EDEB</div>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">Bordes, líneas</p>
+                </div>
+                <div class="color-item">
+                    <div class="color-swatch" style="background: #FFFFFF; border: 1px solid var(--border);"></div>
+                    <div class="color-name">White</div>
+                    <div class="color-hex">#FFFFFF</div>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">Fondos cards</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Components Section -->
+    <section id="components">
+        <div class="container">
+            <h2>Componentes UI</h2>
+            <p class="subtitle">Patrones reutilizables. Sutiles pero audaces. Sin excesos decorativos.</p>
+
+            <div class="components-grid">
+                <!-- Buttons -->
+                <div class="component-card">
+                    <h3>Botones</h3>
+                    <div style="margin-top: 20px;">
+                        <button class="btn" style="display: block; margin-bottom: 12px;">Primario (CTA)</button>
+                        <button class="btn-secondary">Secundario</button>
+                    </div>
+                </div>
+
+                <!-- Input -->
+                <div class="component-card">
+                    <h3>Input</h3>
+                    <input type="text" class="input-demo" placeholder="Ingresa tu pregunta de investigación">
+                    <p style="font-size: 12px; color: var(--text-muted); margin-top: 12px;">Focus: border-color verde, sin shadow</p>
+                </div>
+
+                <!-- Card -->
+                <div class="component-card">
+                    <h3>Tarjeta de Artículo</h3>
+                    <div class="card">
+                        <h4>Effectiveness of Mindfulness in Reducing Anxiety</h4>
+                        <p>Smith, J. et al. (2023) • PubMed • Relevancia: 85%</p>
+                    </div>
+                </div>
+
+                <!-- Progress -->
+                <div class="component-card">
+                    <h3>Barra de Progreso</h3>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Buscando en 2 bases... 68%</p>
+                    <div style="height: 4px; background: var(--border); border-radius: 2px; overflow: hidden;">
+                        <div style="height: 100%; width: 68%; background: var(--green-500);"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Principles Section -->
+    <section id="principles">
+        <div class="container">
+            <h2>Principios de Diseño</h2>
+            <p class="subtitle">Cómo funciona la marca. Qué hace que sea diferente.</p>
+
+            <div class="principles">
+                <div class="principle">
+                    <h3>Tipografía Protagonista</h3>
+                    <p style="color: var(--text);">Cormorant grande en títulos. Jerarquía clara sin complejidad. La tipografía habla antes que el color.</p>
+                </div>
+                <div class="principle">
+                    <h3>Color Estratégico</h3>
+                    <p style="color: var(--text);">Verde solo en CTAs y acentos. Navy para títulos. Neutrales dominan. Menos es más.</p>
+                </div>
+                <div class="principle">
+                    <h3>Micro-Interacciones</h3>
+                    <p style="color: var(--text);">Hover sutil (+2px, 200ms). Sin glows, sin blur. Feedback claro pero no invasivo.</p>
+                </div>
+                <div class="principle">
+                    <h3>Espacio Respirable</h3>
+                    <p style="color: var(--text);">Padding grande entre secciones. Bordes sutiles, no paredes. Diseño para leer, no para saltar.</p>
+                </div>
+                <div class="principle">
+                    <h3>Honestidad Visual</h3>
+                    <p style="color: var(--text);">No promete más de lo que puede. 2 bases reales, no 15 ficticias. Diferenciador en un mercado de mentiras.</p>
+                </div>
+                <div class="principle">
+                    <h3>Contenido > Forma</h3>
+                    <p style="color: var(--text);">La herramienta es la estrella. El diseño se quita del camino. Funcionalidad primero, belleza después.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>ThesisNow Design System v2.0 • Elegancia académica + Modernidad audaz • 2026</p>
+        </div>
+    </footer>
+</body>
+</html>
