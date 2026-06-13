@@ -8,22 +8,12 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        green: {
-          50: "#F0FBF7",
-          100: "#E1F5EE",
-          300: "#9FE1CB",
-          400: "#5DCAA5",
-          500: "#1D9E75",
-          700: "#0F6E56",
-          900: "#04342C",
-        },
+        "green-primary": "#1D9E75",
+        "green-hover": "#0F6E56",
+        "green-dark": "#04342C",
         navy: "#1B2A4A",
-        text: {
-          DEFAULT: "#2D3748",
-          mid: "#374151",
-          muted: "#6B7280",
-          light: "#9CA3AF",
-        },
+        text: "#2D3748",
+        "text-muted": "#6B7280",
         border: "#E8EDEB",
         bg: "#F4F6F5",
       },

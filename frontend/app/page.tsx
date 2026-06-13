@@ -14,162 +14,217 @@ export default function Home() {
   ];
 
   const stats = [
-    { value: "15+", label: t('home.stats.databases') },
-    { value: "<3 min", label: t('home.stats.search') },
+    { value: "2", label: t('home.stats.databases') },
+    { value: "<3m", label: t('home.stats.search') },
     { value: "100%", label: t('home.stats.automated') }
   ];
 
   return (
     <>
-      {/* Hero Section */}
-      <section className="relative bg-green-900 overflow-hidden pt-20 pb-16 md:pt-24 md:pb-20" style={{ minHeight: "100dvh", display: "flex", alignItems: "center" }}>
-        {/* Noise texture overlay */}
-        <div className="absolute inset-0 opacity-60 pointer-events-none" style={{
-          backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E\")",
-          backgroundSize: "512px"
-        }} />
+      {/* HERO — Elegancia académica + modernidad audaz */}
+      <section className="relative overflow-hidden pt-32 pb-24 md:pt-40 md:pb-32" style={{
+        minHeight: "100dvh",
+        display: "flex",
+        alignItems: "center",
+        background: "var(--white)"
+      }}>
+        {/* Fondo sutil: línea vertical decorativa derecha */}
+        <div className="absolute right-0 top-0 bottom-0 w-px" style={{ background: "var(--border)" }} />
 
-        {/* Radial glows */}
-        <div className="absolute top-0 right-0 w-96 h-96 rounded-full pointer-events-none opacity-20" style={{
-          background: "radial-gradient(circle, rgba(29,158,117,0.3) 0%, transparent 65%)",
-          transform: "translate(80px, -100px)"
-        }} />
-        <div className="absolute bottom-0 left-0 w-72 h-72 rounded-full pointer-events-none opacity-15" style={{
-          background: "radial-gradient(circle, rgba(93,202,165,0.2) 0%, transparent 65%)",
-          transform: "translate(-60px, 80px)"
-        }} />
+        <div className="relative z-10 max-w-7xl mx-auto w-full px-6 md:px-12">
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "60px", alignItems: "center" }}>
 
-        {/* Content */}
-        <div className="relative z-10 w-full text-center" style={{ maxWidth: "720px", margin: "0 auto", padding: "0 24px" }}>
-          {/* Eyebrow */}
-          <div className="flex items-center justify-center gap-2 mb-8" style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(159,225,203,1)" }}>
-            <div className="w-5 h-px bg-green-400" />
-            <span>{t('home.eyebrow')}</span>
-            <div className="w-5 h-px bg-green-400" />
-          </div>
+            {/* LEFT: Texto dramático */}
+            <div>
+              {/* Eyebrow: pequeño, elegante */}
+              <p style={{
+                fontSize: "12px",
+                fontWeight: 600,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "var(--text-muted)",
+                marginBottom: "24px"
+              }}>
+                {t('home.eyebrow')}
+              </p>
 
-          {/* H1 */}
-          <h1 style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: "clamp(44px, 6vw, 68px)",
-            fontWeight: 600,
-            color: "white",
-            lineHeight: 1.05,
-            letterSpacing: "-2px",
-            marginBottom: "16px",
-            textWrap: "balance"
-          }}>
-            {t('home.title')}
-          </h1>
+              {/* H1: Cormorant GRANDE, navy, dramático */}
+              <h1 style={{
+                fontFamily: "var(--font-serif)",
+                fontSize: "clamp(52px, 7vw, 96px)",
+                fontWeight: 700,
+                color: "var(--navy)",
+                lineHeight: 1.1,
+                letterSpacing: "-2px",
+                marginBottom: "28px",
+                textWrap: "balance"
+              }}>
+                {t('home.title')}
+              </h1>
 
-          {/* Tagline */}
-          <p style={{
-            fontFamily: "'Cormorant Garamond', serif",
-            fontStyle: "italic",
-            fontSize: "24px",
-            color: "rgba(255,255,255,0.5)",
-            marginBottom: "44px",
-            lineHeight: 1.4,
-            textWrap: "pretty"
-          }}>
-            {t('home.tagline')}
-          </p>
+              {/* Descripción: text-muted, legible */}
+              <p style={{
+                fontSize: "18px",
+                color: "var(--text-muted)",
+                lineHeight: 1.7,
+                marginBottom: "40px",
+                maxWidth: "52ch"
+              }}>
+                {t('home.tagline')}
+              </p>
 
-          {/* Search Box */}
-          <div className="mb-6" style={{
-            maxWidth: "600px",
-            margin: "0 auto 14px",
-            display: "flex",
-            background: "white",
-            borderRadius: "12px",
-            overflow: "hidden",
-            border: "1.5px solid transparent",
-            transition: "box-shadow 0.2s, border-color 0.2s",
-            boxShadow: "0 4px 24px rgba(0,0,0,0.2)"
-          }}>
-            <input
-              type="text"
-              placeholder={t('home.input.placeholder')}
-              style={{
-                flex: 1,
+              {/* CTA Button: verde, audaz, sin excesos */}
+              <Link href="/search" style={{
+                display: "inline-block",
+                padding: "16px 40px",
+                background: "var(--green-primary)",
+                color: "var(--white)",
+                fontSize: "15px",
+                fontWeight: 600,
+                textDecoration: "none",
+                borderRadius: "6px",
+                transition: "all 0.2s ease",
                 border: "none",
-                outline: "none",
-                padding: "15px 20px",
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: "14px",
-                color: "#2D3748",
-                background: "transparent"
-              }}
-            />
-            <Link
-              href="/search"
-              style={{
-                padding: "13px 24px",
-                background: "#1D9E75",
-                border: "none",
-                color: "white",
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: "14px",
-                fontWeight: 500,
                 cursor: "pointer",
-                transition: "background 0.18s",
-                whiteSpace: "nowrap",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                textDecoration: "none"
+                letterSpacing: "0.3px"
               }}
-            >
-              {t('home.button.start')}
-            </Link>
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "var(--green-hover)";
+                e.currentTarget.style.transform = "translateY(-2px)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "var(--green-primary)";
+                e.currentTarget.style.transform = "translateY(0)";
+              }}>
+                {t('home.button.start')} →
+              </Link>
+            </div>
+
+            {/* RIGHT: Espacio + stats */}
+            <div style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              gap: "48px"
+            }}>
+              {/* Hint: discreto */}
+              <div style={{
+                padding: "24px",
+                background: "var(--bg)",
+                borderRadius: "8px",
+                border: "1px solid var(--border)"
+              }}>
+                <p style={{
+                  fontSize: "13px",
+                  color: "var(--text-muted)",
+                  lineHeight: 1.6,
+                  margin: 0
+                }}>
+                  <strong style={{ color: "var(--navy)" }}>Ejemplo:</strong> {t('home.hint.example')}
+                </p>
+              </div>
+
+              {/* Stats: grandes, claros */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+                {stats.map((stat, i) => (
+                  <div key={i} style={{ display: "flex", alignItems: "baseline", gap: "16px" }}>
+                    <span style={{
+                      fontSize: "clamp(28px, 5vw, 48px)",
+                      fontWeight: 700,
+                      color: "var(--green-primary)",
+                      fontVariantNumeric: "tabular-nums",
+                      lineHeight: 1
+                    }}>
+                      {stat.value}
+                    </span>
+                    <span style={{
+                      fontSize: "14px",
+                      color: "var(--text-muted)",
+                      letterSpacing: "0.05em"
+                    }}>
+                      {stat.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* HOW IT WORKS — Clean, vertical steps */}
+      <section id="features" className="bg-white" style={{ padding: "96px 0" }}>
+        <div className="max-w-4xl mx-auto px-6 md:px-12">
+          {/* Header */}
+          <div style={{ marginBottom: "80px" }}>
+            <p style={{
+              fontSize: "12px",
+              fontWeight: 600,
+              textTransform: "uppercase",
+              letterSpacing: "0.12em",
+              color: "var(--text-muted)",
+              marginBottom: "16px"
+            }}>
+              {t('home.process.label')}
+            </p>
+            <h2 style={{
+              fontFamily: "var(--font-serif)",
+              fontSize: "clamp(36px, 5vw, 56px)",
+              fontWeight: 700,
+              color: "var(--navy)",
+              lineHeight: 1.2,
+              letterSpacing: "-1px",
+              textWrap: "balance"
+            }}>
+              {t('home.process.title')}
+            </h2>
           </div>
 
-          {/* Hint */}
-          <p style={{
-            fontSize: "12px",
-            color: "rgba(255,255,255,0.3)",
-            letterSpacing: "0.03em",
-            marginBottom: "60px"
-          }}>
-            {t('home.hint.prefix')} <strong style={{ color: "rgba(159,225,203,1)", fontWeight: 500 }}>{t('home.hint.example')}</strong>
-          </p>
-
-          {/* Stats */}
-          <div style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: 0,
-            paddingTop: "36px",
-            borderTop: "1px solid rgba(255,255,255,0.08)"
-          }}>
-            {stats.map((stat, i) => (
+          {/* Steps: Vertical, minimal */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+            {steps.map((step, idx) => (
               <div
-                key={i}
+                key={step.num}
                 style={{
-                  flex: 1,
-                  textAlign: "center",
-                  padding: "0 24px",
-                  borderRight: i < 2 ? "1px solid rgba(255,255,255,0.08)" : "none"
+                  display: "grid",
+                  gridTemplateColumns: "80px 1fr",
+                  gap: "40px",
+                  padding: "40px 0",
+                  borderBottom: idx < steps.length - 1 ? "1px solid var(--border)" : "none",
+                  alignItems: "start"
                 }}
               >
+                {/* Number: verde grande */}
                 <div style={{
-                  fontSize: "32px",
-                  fontWeight: 600,
-                  color: "white",
-                  letterSpacing: "-1px",
-                  display: "block",
+                  fontSize: "64px",
+                  fontWeight: 700,
+                  color: "var(--green-primary)",
+                  lineHeight: 1,
+                  letterSpacing: "-2px",
                   fontVariantNumeric: "tabular-nums"
                 }}>
-                  {stat.value}
+                  {step.num}
                 </div>
-                <div style={{
-                  fontSize: "11px",
-                  color: "rgba(255,255,255,0.35)",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.08em",
-                  marginTop: "2px"
-                }}>
-                  {stat.label}
+
+                {/* Content */}
+                <div style={{ paddingTop: "8px" }}>
+                  <h3 style={{
+                    fontSize: "20px",
+                    fontWeight: 600,
+                    color: "var(--navy)",
+                    marginBottom: "12px",
+                    letterSpacing: "-0.3px"
+                  }}>
+                    {step.title}
+                  </h3>
+                  <p style={{
+                    fontSize: "15px",
+                    color: "var(--text-muted)",
+                    lineHeight: 1.7,
+                    maxWidth: "60ch"
+                  }}>
+                    {step.desc}
+                  </p>
                 </div>
               </div>
             ))}
@@ -177,142 +232,83 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section id="features" className="bg-white" style={{ maxWidth: "1100px", margin: "0 auto", padding: "72px 48px" }}>
-        <div style={{ marginBottom: "48px" }}>
-          <p style={{
-            fontSize: "11px",
-            fontWeight: 600,
-            textTransform: "uppercase",
-            letterSpacing: "0.12em",
-            color: "#1D9E75",
-            marginBottom: "10px"
-          }}>
-            {t('home.process.label')}
-          </p>
-          <h2 style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: "clamp(26px, 3vw, 34px)",
-            fontWeight: 600,
-            color: "#1B2A4A",
-            letterSpacing: "-0.7px",
-            lineHeight: 1.2,
-            textWrap: "balance"
-          }}>
-            {t('home.process.title')}
-          </h2>
-        </div>
+      {/* DATABASES — Transparent approach */}
+      <section id="databases" className="bg-white" style={{ padding: "96px 0", borderTop: "1px solid var(--border)" }}>
+        <div className="max-w-4xl mx-auto px-6 md:px-12">
+          {/* Header */}
+          <div style={{ marginBottom: "60px" }}>
+            <p style={{
+              fontSize: "12px",
+              fontWeight: 600,
+              textTransform: "uppercase",
+              letterSpacing: "0.12em",
+              color: "var(--text-muted)",
+              marginBottom: "16px"
+            }}>
+              {t('home.databases.label')}
+            </p>
+            <h2 style={{
+              fontFamily: "var(--font-serif)",
+              fontSize: "clamp(36px, 5vw, 56px)",
+              fontWeight: 700,
+              color: "var(--navy)",
+              lineHeight: 1.2,
+              letterSpacing: "-1px",
+              marginBottom: "20px",
+              textWrap: "balance"
+            }}>
+              {t('home.databases.title')}
+            </h2>
+            <p style={{
+              fontSize: "15px",
+              color: "var(--text-muted)",
+              lineHeight: 1.7,
+              maxWidth: "60ch"
+            }}>
+              Actualmente funcional: <strong style={{ color: "var(--navy)" }}>PubMed</strong> y <strong style={{ color: "var(--navy)" }}>Semantic Scholar</strong>. Más bases próximamente.
+            </p>
+          </div>
 
-        {/* Timeline */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-          {steps.map((step) => (
-            <div
-              key={step.num}
-              style={{
-                display: "grid",
-                gridTemplateColumns: "80px 1fr",
-                gap: "0 32px",
-                padding: "32px 0",
-                borderBottom: "1px solid #E8EDEB",
-                alignItems: "start",
-                transition: "background 0.2s"
-              }}
-            >
-              <div style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: "52px",
-                fontWeight: 600,
-                color: "#E8EDEB",
-                lineHeight: 1,
-                letterSpacing: "-2px",
-                transition: "color 0.25s",
-                fontVariantNumeric: "tabular-nums",
-                paddingTop: "2px",
-                cursor: "default"
-              }} className="hover:text-green-500">
-                {step.num}
-              </div>
-              <div style={{ paddingTop: "4px" }}>
-                <h3 style={{
+          {/* Logos: 2 main databases */}
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+            gap: "32px"
+          }}>
+            {[
+              { name: "PubMed", desc: "15M+ artículos biomédicos indexados" },
+              { name: "Semantic Scholar", desc: "100M+ papers · IA-powered search" }
+            ].map((db) => (
+              <div
+                key={db.name}
+                style={{
+                  padding: "32px",
+                  background: "var(--white)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "8px",
+                  textAlign: "center",
+                  transition: "all 0.2s ease"
+                }}
+              >
+                <div style={{
                   fontSize: "18px",
                   fontWeight: 600,
-                  color: "#1B2A4A",
-                  marginBottom: "8px",
-                  letterSpacing: "-0.3px"
+                  color: "var(--navy)",
+                  marginBottom: "12px"
                 }}>
-                  {step.title}
-                </h3>
+                  {db.name}
+                </div>
                 <p style={{
-                  fontSize: "14px",
-                  color: "#6B7280",
-                  lineHeight: 1.7,
-                  maxWidth: "56ch"
+                  fontSize: "13px",
+                  color: "var(--text-muted)",
+                  lineHeight: 1.6
+
                 }}>
-                  {step.desc}
+                  {db.desc}
                 </p>
               </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Databases Section */}
-      <section id="databases" className="bg-green-50" style={{ maxWidth: "1100px", margin: "0 auto", padding: "72px 48px" }}>
-        <div style={{ marginBottom: "48px" }}>
-          <p style={{
-            fontSize: "11px",
-            fontWeight: 600,
-            textTransform: "uppercase",
-            letterSpacing: "0.12em",
-            color: "#1D9E75",
-            marginBottom: "10px"
-          }}>
-            {t('home.databases.label')}
-          </p>
-          <h2 style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: "clamp(26px, 3vw, 34px)",
-            fontWeight: 600,
-            color: "#1B2A4A",
-            letterSpacing: "-0.7px",
-            lineHeight: 1.2,
-            textWrap: "balance"
-          }}>
-            {t('home.databases.title')}
-          </h2>
-        </div>
-
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
-          gap: "12px"
-        }}>
-          {[
-            "PubMed", "ScienceDirect", "Google Scholar",
-            "JSTOR", "arXiv", "Web of Science",
-            "Scopus", "EBSCO", "IEEE Xplore",
-            "ProQuest", "SpringerLink", "Taylor & Francis",
-            "SSRN", "ResearchGate", "Semantic Scholar"
-          ].map((db) => (
-            <div
-              key={db}
-              style={{
-                padding: "12px 16px",
-                background: "white",
-                border: "1px solid #E8EDEB",
-                borderRadius: "8px",
-                textAlign: "center",
-                fontSize: "13px",
-                fontWeight: 500,
-                color: "#374151",
-                transition: "all 0.2s",
-                cursor: "default"
-              }}
-              className="hover:shadow-sm hover:border-green-300"
-            >
-              {db}
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
     </>
