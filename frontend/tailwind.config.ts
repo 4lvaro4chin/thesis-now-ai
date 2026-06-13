@@ -9,10 +9,6 @@ const config: Config = {
     extend: {
       colors: {
         green: {
-          50: "#F0FBF7",
-          100: "#E1F5EE",
-          300: "#9FE1CB",
-          400: "#5DCAA5",
           500: "#1D9E75",
           700: "#0F6E56",
           900: "#04342C",
@@ -20,9 +16,7 @@ const config: Config = {
         navy: "#1B2A4A",
         text: {
           DEFAULT: "#2D3748",
-          mid: "#374151",
           muted: "#6B7280",
-          light: "#9CA3AF",
         },
         border: "#E8EDEB",
         bg: "#F4F6F5",

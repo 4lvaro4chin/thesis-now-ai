@@ -3,36 +3,20 @@
 @import "tailwindcss";
 
 :root {
-  /* Greens */
-  --green-900: #04342C;
-  --green-700: #0F6E56;
+  /* VERDES CORE (3) */
   --green-500: #1D9E75;
-  --green-400: #5DCAA5;
-  --green-300: #9FE1CB;
-  --green-100: #E1F5EE;
-  --green-50:  #F0FBF7;
+  --green-700: #0F6E56;
+  --green-900: #04342C;
 
-  /* Navy & text */
+  /* NEUTRALES CORE (5) */
   --navy:       #1B2A4A;
   --text:       #2D3748;
-  --text-mid:   #374151;
   --text-muted: #6B7280;
-  --text-light: #9CA3AF;
-
-  /* Neutrals */
   --border:     #E8EDEB;
-  --bg:         #F4F6F5;
   --white:      #FFFFFF;
 
-  /* Shadows — tinted in green */
-  --shadow-green:    0 4px 20px rgba(15,110,86,0.12);
-  --shadow-green-lg: 0 8px 40px rgba(15,110,86,0.16);
-
-  /* Boolean chips */
-  --and-bg: #E1F5EE; --and-text: #0F6E56;
-  --or-bg:  #EBF4FD; --or-text:  #1B6FA8;
-  --not-bg: #FEF0EC; --not-text: #A33820;
-  --trc-bg: #FDF4E3; --trc-text: #8A5100;
+  /* BG */
+  --bg:         #F4F6F5;
 
   /* Fonts */
   --font-sans: 'DM Sans', sans-serif;
