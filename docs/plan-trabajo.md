@@ -5,6 +5,50 @@
 
 ---
 
+## 🧠 Decisiones Técnicas — Scoring de Relevancia (2026-06-12)
+
+### Problema
+- Semantic Scholar devolvía scores basados solo en `citationCount / 100` (variable 0–100%)
+- PubMed devolvía score hardcodeado a 80% (mentira — todos los resultados aparecían igual)
+- Resultados no estaban ordenados por relevancia real, sino por orden de llegada de APIs
+
+### Solución: Scoring Híbrido (Opción B Simple)
+**Fórmula:** `relevance = 0.3 × year_score + 0.7 × citation_score`
+
+**Justificación:**
+- **70% citas** → impacto científico (papers citados son más relevantes)
+- **30% recencia** → papers recientes importan más (evita que papers clásicos dominen)
+
+**Implementación:**
+1. **Módulo centralizado** `backend/services/scoring.py` — reutilizable en Fase 1+ con 5 bases
+2. **Schema update** — agregado `citation_count: int` a `SearchResult`
+3. **Semantic Scholar** — extrae `citationCount` de API (ya estaba disponible)
+4. **PubMed** — `citation_count = 0` por ahora (Crossref lookup comentado; Fase 1)
+5. **Search Service** — aplica `RelevanceScorer.score()` tras deduplicación, ordena descendente
+
+**Rendimiento:** O(n) en-memory, zero overhead post-fetch. Scalable a 5 bases sin cambios.
+
+### Comportamiento Esperado
+**Orden típico en resultados:**
+1. Papers recientes (2023+) con 80+ citas → Score ~80-85%
+2. Papers clásicos (2015-2020) con 150+ citas → Score ~65-75%
+3. Papers nuevos (2024) con <10 citas → Score <35%
+
+**Racionalidad:** En búsqueda académica, un paper muy citado (antiguo) vale más que uno nuevo pero poco leído. Las citas reflejan impacto real.
+
+### Fase 1: Mejoras
+- [ ] **Crossref lookup** para PubMed: extrae citation_count real (API gratuita)
+- [ ] **Text similarity** embeddings: relevancia textual vs query
+- [ ] **Calibración de pesos** post-usuarios reales (A/B testing)
+- [ ] **Recalibrar pesos** si usuarios reclaman que papers nuevos desaparecen (ajustar a 40/60 o 50/50)
+
+### Por qué NO text similarity en MVP
+- Latencia: 50 papers × 100ms = +5 seg → rompe SLA <3 min
+- Sin datos reales de usuario; justificación débil
+- Scoring simple es defensible, matemático, sin magia
+
+---
+
 ## 📊 Sesión 2026-06-12 — ✅ SEMANA 2 COMPLETADA
 
 ✅ **Fase 0 MVP Funcional: Búsqueda en Producción**
@@ -155,11 +199,14 @@
 
 ---
 
-### Semana 3 — PDF básico + pagos manuales + beta usuarios
-**Entregable:** Usuario puede descargar PDF, sistema de créditos activado, 20 beta users reclutados
+### Semana 3 — Scoring + PDF básico + pagos manuales + beta usuarios
+**Entregable:** Usuario puede descargar PDF, sistema de créditos activado, 20 beta users reclutados, scoring inteligente activo
 
 | # | Actividad | Verificación | Estado | Observaciones |
 |---|-----------|-------------|--------|---------------|
+| 3.0.1 | **[NUEVO] Algoritmo de scoring híbrido: 30% recencia + 70% citas** | Resultados ordenados por relevancia (score 0-1), no por orden de llegada | ✅ Implementado (2026-06-12) | Módulo `backend/services/scoring.py` creado. Fórmula: `score = 0.3 * year_score + 0.7 * citation_score`. Year score = (year - min_year) / (max_year - min_year). Citation score = min(1.0, citation_count / 100). Semantic Scholar: devuelve citationCount de API. PubMed: citation_count = 0 por ahora (Crossref lookup comentado para Fase 1). |
+| 3.0.2 | **[NUEVO] Schema SearchResult con citation_count** | Campo citation_count en responses | ✅ Implementado (2026-06-12) | Agregado `citation_count: Optional[int]` a schemas.py. Semantic Scholar extrae citationCount. PubMed usa 0 de momento. |
+| 3.0.3 | **[NUEVO] Aplicar scoring en search_service** | POST /search → resultados ordenados por relevancia descending | ✅ Implementado (2026-06-12) | `RelevanceScorer.score()` llamado tras deduplicación. Resultados no aparecen en orden de llegada sino por score real. Logging indica "Scoring applied: results sorted by relevance". |
 | 3.1 | Reactivar OpenAI API key | Llamada GPT-4o-mini retorna queries con 95% calidad (sin fallback) | ⏳ Pendiente | Agregar créditos en platform.openai.com. Cambiar NLP_MODE de "dictionary" a "gpt". |
 | 3.2 | Generación PDF básica con WeasyPrint (lista de artículos por base) | PDF descargable con al menos 10 artículos correctamente formateados | ⏳ Pendiente | Estructura: header (título búsqueda, fecha, metadata), índice por base, secciones de artículos con abstract. |
 | 3.3 | Endpoint `GET /report/{job_id}/pdf` → descarga PDF | Postman descarga archivo `.pdf` válido | ⏳ Pendiente | Backend: usar WeasyPrint para HTML → PDF. Template basado en preview-design.html. |

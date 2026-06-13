@@ -65,9 +65,7 @@ class SemanticScholarConnector:
                         results = []
                         for paper in papers:
                             try:
-                                # Relevance score based on citation count
                                 citation_count = paper.get("citationCount", 0) or 0
-                                relevance_score = min(1.0, (citation_count + 1) / 100)
 
                                 result = SearchResult(
                                     source="semantic_scholar",
@@ -80,7 +78,8 @@ class SemanticScholarConnector:
                                     doi=paper.get("doi"),
                                     url=paper.get("url"),
                                     abstract=paper.get("abstract"),
-                                    relevance_score=relevance_score,
+                                    citation_count=citation_count,
+                                    relevance_score=0.5,
                                 )
                                 results.append(result)
                             except Exception as e:

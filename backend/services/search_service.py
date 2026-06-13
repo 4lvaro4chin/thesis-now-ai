@@ -2,6 +2,7 @@ import asyncio
 import logging
 from typing import List
 from schemas import SearchResult
+from services.scoring import RelevanceScorer
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +42,11 @@ class SearchService:
         deduplicated = self._deduplicate(all_results)
         logger.info(f"After deduplication: {len(deduplicated)} unique results")
 
-        return deduplicated
+        # Apply hybrid scoring: 30% recency + 70% citations
+        scored = RelevanceScorer.score(deduplicated)
+        logger.info(f"Scoring applied: results sorted by relevance")
+
+        return scored
 
     def _deduplicate(self, results: List[tuple]) -> List[SearchResult]:
         """

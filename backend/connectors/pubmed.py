@@ -76,6 +76,21 @@ class PubMedConnector:
             logger.error(f"PubMed error: {str(e)}")
             return []
 
+    async def _fetch_crossref_citations(self, doi: str) -> int:
+        """Fetch citation count from Crossref API (free, no auth required)."""
+        if not doi:
+            return 0
+        try:
+            async with httpx.AsyncClient(timeout=5) as client:
+                url = f"https://api.crossref.org/works/{doi}"
+                response = await client.get(url)
+                response.raise_for_status()
+                data = response.json()
+                return data.get("message", {}).get("is-referenced-by-count", 0) or 0
+        except Exception as e:
+            logger.warning(f"Crossref lookup failed for {doi}: {str(e)}")
+            return 0
+
     def _parse_pubmed_xml(self, xml_str: str) -> List[SearchResult]:
         """Parse PubMed XML response"""
         results = []
@@ -143,7 +158,8 @@ class PubMedConnector:
                         pmid=pmid,
                         url=f"https://pubmed.ncbi.nlm.nih.gov/{pmid}/" if pmid else None,
                         abstract=abstract,
-                        relevance_score=0.8,
+                        citation_count=0,
+                        relevance_score=0.5,
                     )
                     results.append(result)
 

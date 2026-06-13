@@ -25,6 +25,7 @@ class SearchResult(BaseModel):
     pmid: Optional[str]
     url: Optional[str]
     abstract: Optional[str]
+    citation_count: Optional[int] = Field(default=0)
     relevance_score: float = Field(default=0.5, ge=0, le=1)
 
 class SearchStatus(BaseModel):
