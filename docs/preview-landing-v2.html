@@ -212,29 +212,43 @@
             font-weight: 500;
         }
 
-        /* HOW IT WORKS */
+        /* HOW IT WORKS — Dark section */
         #how-it-works {
             padding: 80px 0;
-            background: var(--white);
+            background: var(--green-900);
         }
 
         .section-eyebrow {
             font-size: 12px;
             font-weight: 600;
-            color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.12em;
             margin-bottom: 16px;
+        }
+
+        #how-it-works .section-eyebrow {
+            color: rgba(255, 255, 255, 0.6);
         }
 
         .section-title {
             font-family: 'Cormorant Garamond', serif;
             font-size: clamp(42px, 5vw, 56px);
             font-weight: 700;
-            color: var(--navy);
             line-height: 1.2;
             letter-spacing: -0.7px;
             margin-bottom: 48px;
+        }
+
+        #how-it-works .section-title {
+            color: var(--white);
+        }
+
+        #databases .section-eyebrow {
+            color: var(--text-muted);
+        }
+
+        #databases .section-title {
+            color: var(--navy);
         }
 
         .steps {
@@ -256,12 +270,20 @@
             border-bottom: none;
         }
 
+        #how-it-works .step {
+            border-bottom-color: rgba(255, 255, 255, 0.1);
+        }
+
         .step-number {
             font-size: 56px;
             font-weight: 700;
             color: var(--green-500);
             line-height: 1;
             font-variant-numeric: tabular-nums;
+        }
+
+        #how-it-works .step-number {
+            color: rgba(255, 255, 255, 0.8);
         }
 
         .step-content h3 {
@@ -271,6 +293,10 @@
             margin-bottom: 12px;
         }
 
+        #how-it-works .step-content h3 {
+            color: var(--white);
+        }
+
         .step-content p {
             font-size: 15px;
             color: var(--text-muted);
@@ -278,10 +304,14 @@
             max-width: 60ch;
         }
 
-        /* DATABASES */
+        #how-it-works .step-content p {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* DATABASES — Light section (white background) */
         #databases {
             padding: 80px 0;
-            background: var(--bg);
+            background: var(--white);
         }
 
         .db-grid {
@@ -292,7 +322,7 @@
         }
 
         .db-card {
-            background: var(--white);
+            background: var(--bg);
             padding: 32px;
             border-radius: 8px;
             border: 1px solid var(--border);
