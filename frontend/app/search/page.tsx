@@ -241,6 +241,8 @@ export default function SearchPage() {
         setTokens(tokenize(data.query || title.trim()));
         setExplanation(data.explanation || '');
         setQueryGenerated(true);
+        setCurrentStep(2);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
         setTokens([{ id: newTokenId(), type: 'term', value: title.trim() }]);
         setExplanation('');
@@ -1262,11 +1264,12 @@ export default function SearchPage() {
           </div>
         </div>
 
-        {/* Execute Button - Outside blocks */}
+        {/* Execute Button - Only in Step 3 */}
         <button
           onClick={handleSearch}
           disabled={!canSearch}
           style={{
+            display: currentStep !== 3 ? 'none' : 'block',
             padding: '14px 40px',
             background: canSearch ? '#1D9E75' : '#D1D5DB',
             border: 'none',
