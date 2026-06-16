@@ -146,27 +146,55 @@ export default function BoardPage() {
                 <label style={{ fontSize: '12px', fontWeight: 600, color: '#1B2A4A', display: 'block', marginBottom: '8px', textTransform: 'uppercase' }}>
                   Filtrar por tesis
                 </label>
-                <select
-                  value={selectedThesis}
-                  onChange={(e) => setSelectedThesis(e.target.value)}
-                  style={{
-                    width: '100%',
-                    maxWidth: '400px',
-                    padding: '12px 16px',
-                    border: '1px solid #E8EDEB',
-                    borderRadius: '8px',
-                    fontSize: '14px',
-                    fontFamily: "'DM Sans', sans-serif",
-                    color: '#1B2A4A',
-                    cursor: 'pointer',
-                  }}
-                >
-                  {theses.map((thesis) => (
-                    <option key={thesis} value={thesis}>
-                      {thesis}
-                    </option>
-                  ))}
-                </select>
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-end' }}>
+                  <select
+                    value={selectedThesis}
+                    onChange={(e) => setSelectedThesis(e.target.value)}
+                    style={{
+                      flex: 1,
+                      maxWidth: '400px',
+                      padding: '12px 16px',
+                      border: '1px solid #E8EDEB',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontFamily: "'DM Sans', sans-serif",
+                      color: '#1B2A4A',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {theses.map((thesis) => (
+                      <option key={thesis} value={thesis}>
+                        {thesis}
+                      </option>
+                    ))}
+                  </select>
+                  <Link
+                    href={`/search?initialTitle=${encodeURIComponent(selectedThesis)}`}
+                    style={{
+                      padding: '12px 20px',
+                      background: '#1D9E75',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      textDecoration: 'none',
+                      fontSize: '14px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      whiteSpace: 'nowrap',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = '#0F6E56';
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = '#1D9E75';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                    }}
+                  >
+                    🔍 Buscar más
+                  </Link>
+                </div>
               </div>
             )}
 
