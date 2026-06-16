@@ -12,6 +12,7 @@ export interface SearchResult {
   url?: string;
   abstract?: string;
   relevance_score: number;
+  citation_count?: number;
 }
 
 export interface SearchJob {
