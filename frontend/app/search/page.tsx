@@ -190,7 +190,7 @@ const RED = { bg: 'rgba(163, 56, 32, 0.25)', bgHover: 'rgba(163, 56, 32, 0.35)',
 export default function SearchPage() {
   useAuthProtection();
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
   const searchParams = useSearchParams();
 
   const [title, setTitle] = useState('');
@@ -230,7 +230,7 @@ export default function SearchPage() {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/nlp/generate-query`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title: title.trim() }),
+          body: JSON.stringify({ title: title.trim(), lang }),
         });
 
         if (response.ok) {
