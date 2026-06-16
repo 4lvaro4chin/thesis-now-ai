@@ -367,62 +367,6 @@ export function Navbar({ user: initialUser }: NavbarProps) {
             }
           `}</style>
 
-          {/* Navigation Links */}
-          <a
-            href="/#features"
-            onClick={() => setMenuOpen(false)}
-            style={{
-              padding: '12px 8px',
-              fontSize: '14px',
-              color: '#1B2A4A',
-              textDecoration: 'none',
-              fontWeight: 500,
-              borderRadius: '6px',
-              transition: 'background 0.2s',
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = '#F3F4F6'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
-          >
-            Cómo funciona
-          </a>
-          <a
-            href="/#databases"
-            onClick={() => setMenuOpen(false)}
-            style={{
-              padding: '12px 8px',
-              fontSize: '14px',
-              color: '#1B2A4A',
-              textDecoration: 'none',
-              fontWeight: 500,
-              borderRadius: '6px',
-              transition: 'background 0.2s',
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = '#F3F4F6'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
-          >
-            Bases de datos
-          </a>
-          <a
-            href="/pricing"
-            onClick={() => setMenuOpen(false)}
-            style={{
-              padding: '12px 8px',
-              fontSize: '14px',
-              color: '#1B2A4A',
-              textDecoration: 'none',
-              fontWeight: 500,
-              borderRadius: '6px',
-              transition: 'background 0.2s',
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = '#F3F4F6'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
-          >
-            Precios
-          </a>
-
-          {/* Divider */}
-          <hr style={{ margin: '8px 0', border: 'none', borderTop: '1px solid #E8EDEB' }} />
-
           {/* Auth Section */}
           {user ? (
             <>
