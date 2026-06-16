@@ -1375,34 +1375,29 @@ export default function SearchPage() {
         {currentStep < 3 && currentStep !== 1 && (
           <button
             onClick={handleNextStep}
-            disabled={currentStep === 1 && !queryGenerated}
             style={{
               padding: '12px 32px',
-              background: currentStep === 1 && !queryGenerated ? 'var(--disabled)' : 'var(--green-500)',
-              color: currentStep === 1 && !queryGenerated ? 'var(--text-muted)' : 'white',
+              background: 'var(--green-500)',
+              color: 'white',
               border: 'none',
               borderRadius: '8px',
               fontSize: '14px',
               fontWeight: 600,
-              cursor: currentStep === 1 && !queryGenerated ? 'not-allowed' : 'pointer',
+              cursor: 'pointer',
               transition: 'all 0.2s',
               fontFamily: "'DM Sans', sans-serif",
-              boxShadow: currentStep === 1 && !queryGenerated ? 'none' : '0 2px 8px rgba(15, 110, 86, 0.3)',
+              boxShadow: '0 2px 8px rgba(15, 110, 86, 0.3)',
               outline: 'none',
             }}
             onMouseEnter={(e) => {
-              if (!(currentStep === 1 && !queryGenerated)) {
-                e.currentTarget.style.background = 'var(--green-700)';
-                e.currentTarget.style.boxShadow = '0 4px 20px rgba(15, 110, 86, 0.12)';
-                e.currentTarget.style.transform = 'translateY(-2px)';
-              }
+              e.currentTarget.style.background = 'var(--green-700)';
+              e.currentTarget.style.boxShadow = '0 4px 20px rgba(15, 110, 86, 0.12)';
+              e.currentTarget.style.transform = 'translateY(-2px)';
             }}
             onMouseLeave={(e) => {
-              if (!(currentStep === 1 && !queryGenerated)) {
-                e.currentTarget.style.background = 'var(--green-500)';
-                e.currentTarget.style.boxShadow = '0 2px 8px rgba(15, 110, 86, 0.3)';
-                e.currentTarget.style.transform = 'translateY(0)';
-              }
+              e.currentTarget.style.background = 'var(--green-500)';
+              e.currentTarget.style.boxShadow = '0 2px 8px rgba(15, 110, 86, 0.3)';
+              e.currentTarget.style.transform = 'translateY(0)';
             }}
           >
             {t('search.button.next')}
