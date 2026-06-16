@@ -17,6 +17,7 @@ export default function BoardPage() {
   const [selectedThesis, setSelectedThesis] = useState<string>('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingRating, setEditingRating] = useState(0);
+  const [sortBy, setSortBy] = useState<'rating' | 'year' | 'date' | 'source' | 'title'>('rating');
 
   useEffect(() => {
     const loadPublications = async () => {
@@ -55,6 +56,29 @@ export default function BoardPage() {
       setPublications((prev) => prev.filter((p) => p.id !== id));
     } catch (err) {
       console.error('Failed to remove publication:', err);
+    }
+  };
+
+  const sortPublications = (items: SavedPublication[]): SavedPublication[] => {
+    const sorted = [...items];
+    switch (sortBy) {
+      case 'rating':
+        return sorted.sort((a, b) => {
+          const aRating = a.star_rating || 0;
+          const bRating = b.star_rating || 0;
+          if (bRating !== aRating) return bRating - aRating;
+          return new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime();
+        });
+      case 'year':
+        return sorted.sort((a, b) => (b.year || 0) - (a.year || 0));
+      case 'date':
+        return sorted.sort((a, b) => new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime());
+      case 'source':
+        return sorted.sort((a, b) => (a.source || '').localeCompare(b.source || ''));
+      case 'title':
+        return sorted.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+      default:
+        return sorted;
     }
   };
 
@@ -140,18 +164,19 @@ export default function BoardPage() {
           </div>
         ) : (
           <>
-            {/* Thesis Filter */}
+            {/* Thesis Filter & Sort */}
             {theses.length > 1 && (
               <div style={{ marginBottom: '40px' }}>
                 <label style={{ fontSize: '12px', fontWeight: 600, color: '#1B2A4A', display: 'block', marginBottom: '8px', textTransform: 'uppercase' }}>
                   Filtrar por tesis
                 </label>
-                <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-end' }}>
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-end', flexWrap: 'wrap' }}>
                   <select
                     value={selectedThesis}
                     onChange={(e) => setSelectedThesis(e.target.value)}
                     style={{
                       flex: 1,
+                      minWidth: '280px',
                       maxWidth: '400px',
                       padding: '12px 16px',
                       border: '1px solid #E8EDEB',
@@ -198,6 +223,36 @@ export default function BoardPage() {
               </div>
             )}
 
+            {/* Sort Options */}
+            {selectedThesis && filteredPublications.length > 1 && (
+              <div style={{ marginBottom: '24px', paddingBottom: '16px', borderBottom: '1px solid #E8EDEB' }}>
+                <label style={{ fontSize: '12px', fontWeight: 600, color: '#1B2A4A', display: 'block', marginBottom: '8px', textTransform: 'uppercase' }}>
+                  Ordenar por
+                </label>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as any)}
+                  style={{
+                    padding: '10px 14px',
+                    border: '1px solid #E8EDEB',
+                    borderRadius: '6px',
+                    fontSize: '13px',
+                    fontFamily: "'DM Sans', sans-serif",
+                    color: '#1B2A4A',
+                    cursor: 'pointer',
+                    backgroundColor: '#FFFFFF',
+                    fontWeight: 500,
+                  }}
+                >
+                  <option value="rating">Calificación (mayor primero)</option>
+                  <option value="year">Año (más reciente primero)</option>
+                  <option value="date">Fecha guardada (más reciente primero)</option>
+                  <option value="source">Fuente (A-Z)</option>
+                  <option value="title">Título (A-Z)</option>
+                </select>
+              </div>
+            )}
+
             {/* Thesis Section */}
             {selectedThesis && (
               <div>
@@ -211,7 +266,7 @@ export default function BoardPage() {
                 </div>
 
                 <div style={{ display: 'grid', gap: '16px' }}>
-                  {filteredPublications.map((pub) => (
+                  {sortPublications(filteredPublications).map((pub) => (
                     <div
                       key={pub.id}
                       style={{

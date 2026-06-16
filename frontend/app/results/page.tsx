@@ -24,6 +24,7 @@ export default function ResultsPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalArticle, setModalArticle] = useState<SearchResult | null>(null);
   const [modalRating, setModalRating] = useState(0);
+  const [sortBy, setSortBy] = useState<'relevance' | 'citations' | 'year' | 'title'>('relevance');
 
   const { getSavedIds: fetchSavedIds, savePublication, removePublication } = useSavedPublications();
   const jobId = searchParams.get('job_id');
@@ -226,6 +227,37 @@ export default function ResultsPage() {
     return (article.doi && savedIds.has(article.doi)) || (article.url && savedIds.has(article.url)) || false;
   };
 
+  const sortResults = (items: SearchResult[]): SearchResult[] => {
+    const sorted = [...items];
+    switch (sortBy) {
+      case 'relevance':
+        return sorted.sort((a, b) => (b.relevance_score || 0) - (a.relevance_score || 0));
+      case 'citations':
+        return sorted.sort((a, b) => (b.citation_count || 0) - (a.citation_count || 0));
+      case 'year':
+        return sorted.sort((a, b) => (b.year || 0) - (a.year || 0));
+      case 'title':
+        return sorted.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+      default:
+        return sorted;
+    }
+  };
+
+  const getSortLabel = (): string => {
+    switch (sortBy) {
+      case 'relevance':
+        return 'Ordenar por: Relevancia ↓';
+      case 'citations':
+        return 'Ordenar por: Citaciones ↓';
+      case 'year':
+        return 'Ordenar por: Año reciente ↓';
+      case 'title':
+        return 'Ordenar por: Título A-Z';
+      default:
+        return 'Ordenar por';
+    }
+  };
+
   const SkeletonCard = () => (
     <div
       style={{
@@ -384,10 +416,33 @@ export default function ResultsPage() {
                   fontSize: '13px',
                   color: '#0F6E56',
                   fontFamily: 'monospace',
+                  marginBottom: '16px',
                 }}>
                   <strong>Query:</strong> {booleanQuery}
                 </div>
               )}
+
+              {/* Sort Dropdown */}
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as any)}
+                style={{
+                  padding: '10px 14px',
+                  border: '1px solid #E8EDEB',
+                  borderRadius: '6px',
+                  fontSize: '13px',
+                  fontFamily: "'DM Sans', sans-serif",
+                  color: '#1B2A4A',
+                  cursor: 'pointer',
+                  backgroundColor: '#FFFFFF',
+                  fontWeight: 500,
+                }}
+              >
+                <option value="relevance">Relevancia (más alta primero)</option>
+                <option value="citations">Citaciones (más citadas primero)</option>
+                <option value="year">Año (más reciente primero)</option>
+                <option value="title">Título (A-Z)</option>
+              </select>
             </div>
 
             {results.length === 0 ? (
@@ -409,7 +464,7 @@ export default function ResultsPage() {
                   </h2>
 
                   <div style={{ display: 'grid', gap: '16px' }}>
-                    {sourceResults.map((article, idx) => {
+                    {sortResults(sourceResults).map((article, idx) => {
                       const relevance = getRelevanceColor(article.relevance_score);
                       return (
                         <div
