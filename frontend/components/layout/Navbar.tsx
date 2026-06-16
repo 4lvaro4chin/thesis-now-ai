@@ -16,6 +16,7 @@ export function Navbar({ user: initialUser }: NavbarProps) {
   const supabase = createClient();
   const [user, setUser] = useState(initialUser);
   const [mounted, setMounted] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const { t, lang } = useTranslation();
 
   useEffect(() => {
@@ -25,6 +26,7 @@ export function Navbar({ user: initialUser }: NavbarProps) {
     const subscription = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user || null);
       if (event === 'SIGNED_OUT') {
+        setMenuOpen(false);
         router.push('/');
       }
     });
@@ -36,6 +38,7 @@ export function Navbar({ user: initialUser }: NavbarProps) {
 
   const handleLogout = async () => {
     try {
+      setMenuOpen(false);
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
     } catch (err) {
@@ -44,6 +47,7 @@ export function Navbar({ user: initialUser }: NavbarProps) {
   };
 
   const handleLogin = () => {
+    setMenuOpen(false);
     router.push('/login');
   };
 
@@ -133,11 +137,34 @@ export function Navbar({ user: initialUser }: NavbarProps) {
         </li>
       </ul>
 
+      {/* Hamburger Button - Mobile only */}
+      <button
+        onClick={() => setMenuOpen(!menuOpen)}
+        className="md:hidden"
+        style={{
+          background: 'none',
+          border: 'none',
+          fontSize: '24px',
+          color: '#1B2A4A',
+          cursor: 'pointer',
+          padding: '8px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transition: 'color 0.2s',
+        }}
+        onMouseEnter={(e) => { e.currentTarget.style.color = '#1D9E75'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.color = '#1B2A4A'; }}
+        aria-label="Toggle menu"
+      >
+        {menuOpen ? '✕' : '☰'}
+      </button>
+
       {/* Language Switcher + Auth Buttons */}
       <div style={{ display: 'flex', gap: '8px', alignItems: 'center', paddingRight: '8px' }} className="sm:gap-4 sm:pr-0">
         {mounted && <LanguageSwitcher currentLang={lang} />}
 
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flex: 1 }} className="sm:gap-3 sm:flex-none">
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flex: 1 }} className="hidden md:flex sm:gap-3 sm:flex-none">
         {user ? (
           <>
             <a
@@ -297,6 +324,195 @@ export function Navbar({ user: initialUser }: NavbarProps) {
         )}
         </div>
       </div>
+
+      {/* Mobile Menu Overlay */}
+      {menuOpen && (
+        <div
+          className="md:hidden"
+          onClick={() => setMenuOpen(false)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            top: '64px',
+            background: 'rgba(0,0,0,0.2)',
+            zIndex: 48,
+          }}
+        />
+      )}
+
+      {/* Mobile Menu Panel */}
+      {menuOpen && (
+        <div
+          className="md:hidden"
+          style={{
+            position: 'fixed',
+            top: '64px',
+            left: 0,
+            right: 0,
+            background: '#FFFFFF',
+            borderBottom: '1px solid #E8EDEB',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
+            zIndex: 49,
+            padding: '16px 24px 24px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+            animation: 'slideDown 0.2s ease-out',
+          }}
+        >
+          <style>{`
+            @keyframes slideDown {
+              from { opacity: 0; transform: translateY(-8px); }
+              to { opacity: 1; transform: translateY(0); }
+            }
+          `}</style>
+
+          {/* Navigation Links */}
+          <a
+            href="/#features"
+            onClick={() => setMenuOpen(false)}
+            style={{
+              padding: '12px 8px',
+              fontSize: '14px',
+              color: '#1B2A4A',
+              textDecoration: 'none',
+              fontWeight: 500,
+              borderRadius: '6px',
+              transition: 'background 0.2s',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = '#F3F4F6'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+          >
+            Cómo funciona
+          </a>
+          <a
+            href="/#databases"
+            onClick={() => setMenuOpen(false)}
+            style={{
+              padding: '12px 8px',
+              fontSize: '14px',
+              color: '#1B2A4A',
+              textDecoration: 'none',
+              fontWeight: 500,
+              borderRadius: '6px',
+              transition: 'background 0.2s',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = '#F3F4F6'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+          >
+            Bases de datos
+          </a>
+          <a
+            href="/pricing"
+            onClick={() => setMenuOpen(false)}
+            style={{
+              padding: '12px 8px',
+              fontSize: '14px',
+              color: '#1B2A4A',
+              textDecoration: 'none',
+              fontWeight: 500,
+              borderRadius: '6px',
+              transition: 'background 0.2s',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = '#F3F4F6'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+          >
+            Precios
+          </a>
+
+          {/* Divider */}
+          <hr style={{ margin: '8px 0', border: 'none', borderTop: '1px solid #E8EDEB' }} />
+
+          {/* Auth Section */}
+          {user ? (
+            <>
+              <a
+                href="/board"
+                onClick={() => setMenuOpen(false)}
+                style={{
+                  padding: '12px 8px',
+                  fontSize: '14px',
+                  color: '#1D9E75',
+                  textDecoration: 'none',
+                  fontWeight: 600,
+                  borderRadius: '6px',
+                  transition: 'background 0.2s',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(29, 158, 117, 0.1)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+              >
+                Mi Tablero
+              </a>
+              <div style={{ padding: '12px 8px', fontSize: '12px', color: '#6B7280', fontWeight: 500 }}>
+                {user.email?.split('@')[0]}
+              </div>
+              <button
+                onClick={handleLogout}
+                style={{
+                  padding: '12px 8px',
+                  fontSize: '14px',
+                  color: '#DC2626',
+                  background: 'transparent',
+                  border: 'none',
+                  textAlign: 'left',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  borderRadius: '6px',
+                  transition: 'background 0.2s',
+                  fontFamily: "'DM Sans', sans-serif",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = '#FEE8E8'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+              >
+                Cerrar sesión
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={handleLogin}
+                style={{
+                  padding: '12px 8px',
+                  fontSize: '14px',
+                  color: '#1D9E75',
+                  background: 'transparent',
+                  border: 'none',
+                  textAlign: 'left',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  borderRadius: '6px',
+                  transition: 'background 0.2s',
+                  fontFamily: "'DM Sans', sans-serif",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(29, 158, 117, 0.1)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+              >
+                Iniciar sesión
+              </button>
+              <button
+                onClick={handleLogin}
+                style={{
+                  padding: '12px 8px',
+                  fontSize: '14px',
+                  color: 'white',
+                  background: '#1D9E75',
+                  border: 'none',
+                  textAlign: 'center',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  borderRadius: '6px',
+                  transition: 'background 0.2s',
+                  fontFamily: "'DM Sans', sans-serif",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = '#0F6E56'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = '#1D9E75'; }}
+              >
+                Empezar gratis
+              </button>
+            </>
+          )}
+        </div>
+      )}
     </nav>
   );
 }
