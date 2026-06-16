@@ -202,6 +202,7 @@ export default function SearchPage() {
     arxiv: true,
   });
   const [tokens, setTokens] = useState<Token[]>([]);
+  const [explanation, setExplanation] = useState<string>('');
   const [loadingQuery, setLoadingQuery] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingValue, setEditingValue] = useState('');
@@ -236,8 +237,10 @@ export default function SearchPage() {
         if (response.ok) {
           const data = await response.json();
           setTokens(tokenize(data.query || title.trim()));
+          setExplanation(data.explanation || '');
         } else {
           setTokens([{ id: newTokenId(), type: 'term', value: title.trim() }]);
+          setExplanation('');
         }
       } catch (error) {
         console.error('Error generating query:', error);
@@ -263,6 +266,12 @@ export default function SearchPage() {
   };
 
   const getNaturalDescription = (): string => {
+    // Use explanation from GPT if available
+    if (explanation) {
+      return explanation;
+    }
+
+    // Fallback to local description if no explanation from backend
     const toks = sanitizeTokens(tokens);
     if (toks.length === 0) return '';
 
