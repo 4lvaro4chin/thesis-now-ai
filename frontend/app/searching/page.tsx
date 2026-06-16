@@ -10,7 +10,7 @@ export default function SearchingPage() {
   useAuthProtection();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
   const { job, waitForCompletion } = useSearch();
 
   const [isSearching, setIsSearching] = useState(true);
@@ -26,7 +26,7 @@ export default function SearchingPage() {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/search`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title, databases }),
+          body: JSON.stringify({ title, databases, lang }),
         });
 
         if (!response.ok) throw new Error('Failed to start search');

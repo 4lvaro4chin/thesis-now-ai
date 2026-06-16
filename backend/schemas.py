@@ -4,11 +4,13 @@ from pydantic import BaseModel, Field
 class SearchRequest(BaseModel):
     title: str = Field(..., min_length=3, max_length=500)
     databases: Optional[List[str]] = None
+    lang: Optional[str] = "es"
 
     class Config:
         example = {
             "title": "Mindfulness interventions in adolescents",
-            "databases": ["pubmed", "semantic_scholar", "openalex", "crossref", "arxiv"]
+            "databases": ["pubmed", "semantic_scholar", "openalex", "crossref", "arxiv"],
+            "lang": "es"
         }
 
 class BooleanQuery(BaseModel):
@@ -33,6 +35,7 @@ class SearchStatus(BaseModel):
     title: str
     status: str
     boolean_query: Optional[str]
+    explanation: Optional[str]
     results: Optional[List[SearchResult]]
     error: Optional[str]
     created_at: str

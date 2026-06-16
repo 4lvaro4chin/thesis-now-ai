@@ -25,6 +25,7 @@ export default function ResultsPage() {
   const [modalArticle, setModalArticle] = useState<SearchResult | null>(null);
   const [modalRating, setModalRating] = useState(0);
   const [sortBy, setSortBy] = useState<'relevance' | 'citations' | 'year' | 'title'>('relevance');
+  const [explanation, setExplanation] = useState<string>('');
 
   const { getSavedIds: fetchSavedIds, savePublication, removePublication } = useSavedPublications();
   const jobId = searchParams.get('job_id');
@@ -51,6 +52,7 @@ export default function ResultsPage() {
       setThesisTitle(title);
       setResults(data.results || []);
       setBooleanQuery(data.boolean_query || '');
+      setExplanation(data.explanation || '');
 
       // Load saved IDs for this thesis
       if (title) {
@@ -419,6 +421,21 @@ export default function ResultsPage() {
                   marginBottom: '16px',
                 }}>
                   <strong>Query:</strong> {booleanQuery}
+                </div>
+              )}
+
+              {explanation && (
+                <div style={{
+                  background: '#F9FAFB',
+                  border: '1px solid #E8EDEB',
+                  borderRadius: '8px',
+                  padding: '12px 16px',
+                  fontSize: '13px',
+                  color: '#4B5563',
+                  lineHeight: 1.6,
+                  marginTop: '8px',
+                }}>
+                  {explanation}
                 </div>
               )}
 

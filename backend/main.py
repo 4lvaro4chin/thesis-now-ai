@@ -56,8 +56,8 @@ async def generate_query_only(request: SearchRequest):
     Used for preview/validation before full search.
     """
     try:
-        query = await nlp_service.generate_query(request.title)
-        return {"query": query}
+        result = await nlp_service.generate_query_full(request.title, request.lang or "es")
+        return {"query": result.get("boolean_query", ""), "explanation": result.get("explanation", "")}
     except Exception as e:
         logger.error(f"Error generating query: {str(e)}")
         return {"query": f'"{request.title}"', "error": str(e)}
@@ -80,6 +80,7 @@ async def start_search(request: SearchRequest, background_tasks: BackgroundTasks
         "title": request.title,
         "status": "pending",
         "boolean_query": None,
+        "explanation": None,
         "results": None,
         "error": None,
         "created_at": datetime.utcnow().isoformat(),
@@ -116,19 +117,20 @@ async def execute_search(job_id: str, request: SearchRequest):
         logger.info(f"[{job_id}] ⏳ STEP 1: Generating boolean query...")
         logger.info(f"[{job_id}] Input: {request.title}")
 
-        boolean_query = await nlp_service.generate_query(request.title)
-        jobs[job_id]["boolean_query"] = boolean_query
-        logger.info(f"[{job_id}] ✅ Query generated: {boolean_query}\n")
+        nlp_result = await nlp_service.generate_query_full(request.title, request.lang or "es")
+        jobs[job_id]["boolean_query"] = nlp_result.get("boolean_query", "")
+        jobs[job_id]["explanation"] = nlp_result.get("explanation", "")
+        logger.info(f"[{job_id}] ✅ Query generated: {nlp_result.get('boolean_query', '')}\n")
 
         # Step 2: Search
         jobs[job_id]["status"] = "searching"
         databases = request.databases or ["pubmed", "semantic_scholar"]
         logger.info(f"[{job_id}] ⏳ STEP 2: Searching in databases...")
         logger.info(f"[{job_id}] Target databases: {', '.join(databases)}")
-        logger.info(f"[{job_id}] Query: {boolean_query}\n")
+        logger.info(f"[{job_id}] Query: {nlp_result.get('boolean_query', '')}\n")
 
         results = await search_service.search_all_databases(
-            boolean_query,
+            nlp_result.get("boolean_query", ""),
             databases
         )
 
@@ -139,6 +141,11 @@ async def execute_search(job_id: str, request: SearchRequest):
         logger.info(f"[{job_id}] Total results: {len(results)}")
         logger.info(f"[{job_id}] {'='*80}\n")
 
+    except ValueError as e:
+        logger.error(f"\n[{job_id}] ❌ ERROR: {str(e)}")
+        logger.error(f"[{job_id}] {'='*80}\n")
+        jobs[job_id]["status"] = "error"
+        jobs[job_id]["error"] = str(e)
     except Exception as e:
         logger.error(f"\n[{job_id}] ❌ ERROR: {str(e)}")
         logger.error(f"[{job_id}] {'='*80}\n")

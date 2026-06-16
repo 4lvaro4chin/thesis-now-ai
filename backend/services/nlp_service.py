@@ -1,167 +1,129 @@
+import os
+import json
 import logging
-import re
-from typing import Dict, List, Set
+from openai import AsyncOpenAI
 
 logger = logging.getLogger(__name__)
 
+LANG_NAMES = {
+    "es": "Spanish",
+    "en": "English",
+    "pt": "Portuguese",
+}
+
+ERROR_MESSAGES = {
+    "es": "No se pudo generar la query. Verifica que la clave de OpenAI tenga crédito disponible.",
+    "en": "Could not generate the query. Please verify that the OpenAI API key has available credits.",
+    "pt": "Não foi possível gerar a query. Verifique se a chave da OpenAI tem créditos disponíveis.",
+}
+
+PROMPT_TEMPLATE = """You are a senior academic librarian and systematic literature review specialist with expertise in evidence synthesis, research methodology, and academic database search strategies (PubMed, Scopus, Web of Science, Embase, and PsycINFO).
+
+Your task is to analyze a thesis title and generate an optimized academic search strategy for systematic or semi-systematic literature reviews.
+
+INPUT:
+THESIS TITLE: "{{THESIS_TITLE}}"
+
+OBJECTIVE:
+Based on the thesis title, perform the following tasks.
+
+TASK 1 — BOOLEAN SEARCH QUERY
+
+Generate a precise but comprehensive Boolean search query suitable for academic databases such as PubMed, Scopus, and Web of Science.
+
+Search strategy rules:
+
+Identify the core research concepts from the thesis title.
+Expand each concept using relevant synonyms, spelling variations, related academic terminology, and controlled vocabulary where appropriate.
+Use:
+AND → to connect main concepts
+OR → to group synonyms within the same concept
+Use parentheses correctly to preserve Boolean logic.
+Use truncation (*) when useful to capture term variations.
+Avoid unnecessary noise terms.
+Do NOT use exclusion filters (NOT) unless absolutely necessary.
+Keep the query academically rigorous, balanced between precision and recall.
+Prioritize terminology commonly used in peer-reviewed literature.
+
+TASK 2 — NATURAL LANGUAGE EXPLANATION
+
+Provide a brief explanation in plain {{SELECTED_LANGUAGE}} (2–3 sentences) aimed at the student who wrote the thesis.
+
+The explanation must:
+
+Describe what the search is intended to find.
+Explain why those keywords and synonyms were selected.
+Clarify what kind of academic literature the student should expect to retrieve.
+
+OUTPUT REQUIREMENTS:
+
+Respond ONLY in valid JSON.
+Do not include markdown, comments, explanations outside JSON, or additional text.
+Ensure the JSON is syntactically valid.
+
+JSON FORMAT:
+
+{
+"thesis_title": "{{THESIS_TITLE}}",
+"boolean_query": "((term1 OR term2 OR term3*) AND (term4 OR term5) AND (term6 OR term7*))",
+"explanation": "Explicación breve en {{SELECTED_LANGUAGE}} para el estudiante."
+}
+
+QUALITY CHECK BEFORE RESPONDING:
+
+Verify that all major concepts from the thesis title are represented.
+Verify correct Boolean nesting with parentheses.
+Verify the query is compatible with PubMed, Scopus, and Web of Science.
+Verify the response is valid JSON."""
+
+
 class NLPService:
-    """
-    Generador de queries booleanas sin dependencias externas.
-    Puede ser reemplazado por GPT-4o-mini en el futuro (Fase 1+).
-    """
-
-    # Diccionario de sinonimias comunes en búsqueda académica
-    SYNONYMS = {
-        "mindfulness": ["meditation", "mindful", "awareness", "present moment"],
-        "anxiety": ["anxious", "anxiety disorder", "generalized anxiety"],
-        "depression": ["depressive", "depressed", "major depression", "mood"],
-        "adolescents": ["adolescent", "teen", "teenagers", "youth", "young"],
-        "children": ["child", "pediatric", "childhood"],
-        "intervention": ["intervention", "treatment", "therapy", "program"],
-        "therapy": ["therapeutic", "treatment", "counseling", "psychotherapy"],
-        "stress": ["stressor", "stressful", "psychological stress"],
-        "mental health": ["psychological", "psychiatric", "mental disorder"],
-        "school": ["educational", "academic", "student"],
-        "clinical trial": ["randomized", "RCT", "controlled trial"],
-    }
-
-    # Palabras a excluir (generalmente mejoran precisión)
-    EXCLUSIONS = {
-        "adult": ["adult", "elderly", "aging"],
-        "animal": ["animal", "mice", "rat", "laboratory"],
-        "review": ["review", "editorial", "opinion"],
-    }
+    """Generate Boolean search queries using GPT-4o-mini."""
 
     def __init__(self):
-        logger.info("NLP Service initialized (non-GPT mode - MVP)")
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            logger.warning("OPENAI_API_KEY not configured")
+        self.client = AsyncOpenAI(api_key=api_key)
 
-    async def generate_query(self, title: str) -> str:
+    async def generate_query_full(self, title: str, lang: str = "es") -> dict:
         """
-        Generar query booleana a partir del título.
-
-        Ejemplo:
-            Input: "Mindfulness interventions in adolescents with anxiety"
-            Output: "(mindfulness OR meditation OR mindful) AND
-                     (adolescent* OR teen* OR youth) AND
-                     (anxiety OR anxious) NOT adult"
+        Generate boolean query and explanation using GPT-4o-mini.
+        Returns: {"boolean_query": str, "explanation": str}
         """
-        logger.info(f"Generating boolean query for: {title}")
+        logger.info(f"Generating query for: {title} (lang={lang})")
 
-        # Step 1: Extraer palabras clave
-        keywords = self._extract_keywords(title)
-        logger.info(f"Keywords: {keywords}")
+        language_name = LANG_NAMES.get(lang, "Spanish")
+        prompt = PROMPT_TEMPLATE.replace("{{THESIS_TITLE}}", title).replace(
+            "{{SELECTED_LANGUAGE}}", language_name
+        )
 
-        if not keywords:
-            # Fallback: usar el título literal entre comillas
-            return f'"{title}"'
+        try:
+            response = await self.client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.2,
+                response_format={"type": "json_object"},
+            )
 
-        # Step 2: Agrupar por concepto
-        concepts = self._group_concepts(keywords, title)
-        logger.info(f"Concepts: {concepts}")
+            result = json.loads(response.choices[0].message.content)
+            logger.info(f"Generated query: {result.get('boolean_query', '')}")
+            return result
 
-        # Step 3: Construir query booleana
-        query = self._build_boolean_query(concepts)
-        logger.info(f"Boolean query: {query}")
+        except Exception as e:
+            logger.error(f"OpenAI error: {e}")
+            raise ValueError(
+                ERROR_MESSAGES.get(lang, ERROR_MESSAGES["es"])
+            )
 
-        return query
-
-    def _extract_keywords(self, title: str) -> List[str]:
-        """
-        Extraer palabras significativas del título.
-        - Remover stopwords comunes
-        - Soporta caracteres acentuados y unicode
-        """
-        stopwords = {
-            "a", "an", "and", "are", "as", "at", "be", "but", "by",
-            "for", "from", "has", "he", "in", "is", "it", "its", "of",
-            "on", "or", "that", "the", "to", "was", "will", "with",
-            "el", "la", "de", "y", "en", "una", "un",
-        }
-
-        # Convertir a lowercase y separar por no-palabras (incluyendo caracteres acentuados)
-        words = re.findall(r'\b[\w\-á-ý]+\b', title.lower(), re.UNICODE)
-
-        # Filtrar stopwords y palabras muy cortas
-        keywords = [
-            w for w in words
-            if w not in stopwords and len(w) > 2
-        ]
-
-        return list(dict.fromkeys(keywords))  # Remove duplicates, preserve order
-
-    def _group_concepts(self, keywords: List[str], title: str) -> Dict[str, List[str]]:
-        """
-        Agrupar palabras en conceptos (ej: mindfulness + meditation = concepto 1).
-        Usa el diccionario de sinonimias.
-        """
-        concepts = {}
-        used = set()
-
-        # Buscar matches en el diccionario de sinonimias
-        for key, synonyms in self.SYNONYMS.items():
-            for keyword in keywords:
-                if keyword in used:
-                    continue
-
-                # Match directo o palabra clave contiene el sinonimo
-                if keyword == key or any(keyword in syn for syn in synonyms):
-                    if key not in concepts:
-                        concepts[key] = []
-                    concepts[key].append(keyword)
-                    used.add(keyword)
-                    break
-
-        # Palabras no clasificadas forman su propio concepto
-        for keyword in keywords:
-            if keyword not in used:
-                concepts[keyword] = [keyword]
-
-        return concepts
-
-    def _build_boolean_query(self, concepts: Dict[str, List[str]]) -> str:
-        """
-        Construir la query booleana final.
-        Formato: (concepto1 OR sinonimo1 OR sinonimo2*) AND (concepto2 OR...)
-        """
-        if not concepts:
-            return ""
-
-        # Convertir cada concepto en una rama OR
-        branches = []
-
-        for concept, variations in concepts.items():
-            # Usar wildcards para variaciones
-            terms = []
-            for var in variations:
-                # Si la palabra es un adjetivo/verbo, agregar wildcard
-                if var.endswith(("ing", "tion", "ment", "ness", "able")):
-                    terms.append(f"{var}*")
-                else:
-                    terms.append(var)
-
-            # Deduplicate and format
-            terms = list(dict.fromkeys(terms))
-            branch = " OR ".join(terms)
-
-            if len(terms) > 1:
-                branch = f"({branch})"
-
-            branches.append(branch)
-
-        # Combinar con AND
-        query = " AND ".join(branches)
-
-        return query
+    async def generate_query(self, title: str, lang: str = "es") -> str:
+        """Backward-compatible: returns only the boolean query string."""
+        result = await self.generate_query_full(title, lang)
+        return result.get("boolean_query", "")
 
     async def extract_terms(self, title: str) -> dict:
-        """
-        Extraer conceptos del título (para UI manual builder).
-        """
-        keywords = self._extract_keywords(title)
-        concepts = self._group_concepts(keywords, title)
-
+        """Extract terms from title (for manual query builder UI)."""
         return {
-            "main_concepts": list(concepts.keys()),
-            "synonyms": concepts,
-            "exclusions": []
+            "main_title": title,
+            "note": "Use generate_query_full() for GPT-powered query generation",
         }
