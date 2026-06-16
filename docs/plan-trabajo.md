@@ -507,7 +507,87 @@
 
 ---
 
-## Estado Actual — 2026-06-11 (Actualizado 14:30 UTC)
+## Estado Actual — 2026-06-15 (Actualizado - Sesión en progreso)
+
+### ✅ Semana 2 — 100% COMPLETADA + 3 Nuevos Conectores (Fase 1 Adelantada)
+
+**Hitos completados hoy (2026-06-15):**
+
+**Backend — 5 Conectores Paralelos Funcionando:**
+✅ **OpenAlex** (50 resultados):
+  - API gratuita, sin rate limits
+  - Query simplification (booleanos → keywords simples)
+  - Abstract inverted index reconstruction
+  - Tiempo: ~1.4 segundos
+  - Commit: feat: implement OpenAlex as third search connector
+
+✅ **Crossref** (50 resultados):
+  - Índice global de DOIs (130M+ papers)
+  - API gratuita, sin autenticación
+  - Citation counts nativos
+  - Tiempo: ~2 segundos
+  - Commit: feat: implement Crossref as fourth search connector
+
+✅ **arXiv** (50 resultados):
+  - 2.5M preprints en STEM
+  - Atom XML feed parsing
+  - HTTPS (no HTTP) para conectividad
+  - Abstract metadata completo
+  - Tiempo: ~3 segundos
+  - Commit: feat: implement arXiv as fifth search connector
+
+**Frontend — 5 Bases Habilitadas:**
+- ✅ PubMed (20 resultados) — habilitado por defecto
+- ✅ Semantic Scholar — habilitado (0 resultados por rate limit)
+- ✅ OpenAlex — habilitado por defecto
+- ✅ Crossref — habilitado por defecto
+- ✅ arXiv — habilitado por defecto
+
+**Resultados Totales (test de integración 2026-06-15):**
+```
+Título: "machine learning education"
+Query: education* AND machine AND learning* NOT (adult OR elderly OR animal OR review)
+
+Total: 170 resultados deduplicados en <10 segundos
+  - OpenAlex: 50
+  - Crossref: 50
+  - arXiv: 50
+  - PubMed: 20
+  - Semantic Scholar: 0 (rate limit)
+```
+
+**Arquitectura Connector Pattern:**
+```
+backend/connectors/
+  ├── pubmed.py (XML E-utilities)
+  ├── semantic_scholar.py (JSON + retry backoff)
+  ├── openalex.py (JSON + query simplification)  ← NEW
+  ├── crossref.py (JSON + DOI index)              ← NEW
+  └── arxiv.py (Atom XML + HTTPS)                 ← NEW
+```
+
+**Performance Metrics:**
+- Parallelization: `asyncio.gather()` en 5 bases
+- Deduplication: por DOI > PMID > título normalizado
+- Timeout: 30s por conector
+- Retry: exponential backoff 3s→6s→12s en 429
+
+**Testing Verificado:**
+- ✅ `curl -X POST /search` con 5 bases
+- ✅ Polling `/search/{job_id}` hasta completion
+- ✅ JSON response con metadata correcta
+- ✅ Deduplicación funciona (no hay duplicados entre bases)
+- ✅ Frontend muestra 5 logos en selector de bases
+
+**Próximos pasos (Fase 1 Week 4):**
+1. PDF export (WeasyPrint) — tarea 3.2
+2. Créditos + Stripe — tarea 3.5/3.6
+3. Reclutar 20 usuarios beta — tarea 3.9
+4. Rate limiting global — tarea 10.7
+
+---
+
+## Estado Anterior — 2026-06-11 (Sesión anterior completada)
 
 ### ✅ Semana 1 — 95% Completada
 
