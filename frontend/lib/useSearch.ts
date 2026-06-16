@@ -3,7 +3,7 @@ import { useState, useCallback } from 'react';
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 export interface SearchResult {
-  source: 'pubmed' | 'semantic_scholar' | 'openalex';
+  source: 'pubmed' | 'semantic_scholar' | 'openalex' | 'crossref';
   title: string;
   authors?: string[];
   year?: number;

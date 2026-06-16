@@ -11,11 +11,13 @@ class SearchService:
         from connectors.pubmed import PubMedConnector
         from connectors.semantic_scholar import SemanticScholarConnector
         from connectors.openalex import OpenAlexConnector
+        from connectors.crossref import CrossrefConnector
 
         self.connectors = {
             "pubmed": PubMedConnector(),
             "semantic_scholar": SemanticScholarConnector(),
             "openalex": OpenAlexConnector(),
+            "crossref": CrossrefConnector(),
         }
 
     async def search_all_databases(self, query: str, databases: List[str]) -> List[SearchResult]:

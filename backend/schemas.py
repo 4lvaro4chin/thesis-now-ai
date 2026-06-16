@@ -8,7 +8,7 @@ class SearchRequest(BaseModel):
     class Config:
         example = {
             "title": "Mindfulness interventions in adolescents",
-            "databases": ["pubmed", "semantic_scholar", "openalex"]
+            "databases": ["pubmed", "semantic_scholar", "openalex", "crossref"]
         }
 
 class BooleanQuery(BaseModel):
