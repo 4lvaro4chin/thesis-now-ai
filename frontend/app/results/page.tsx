@@ -375,6 +375,21 @@ export default function ResultsPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#FFFFFF', paddingTop: '72px', paddingBottom: '100px' }}>
+      <style>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(8px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .fade-in {
+          animation: fadeIn 0.3s ease-out;
+        }
+      `}</style>
       <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 48px' }}>
         {error ? (
           <div style={{ textAlign: 'center', paddingTop: '48px' }}>
@@ -405,7 +420,7 @@ export default function ResultsPage() {
             </a>
 
             {/* Header */}
-            <div style={{ marginBottom: '48px' }}>
+            <div className="fade-in" style={{ marginBottom: '48px' }}>
               <h1 style={{
                 fontFamily: "'DM Sans', sans-serif",
                 fontSize: 'clamp(26px, 3vw, 34px)',
@@ -451,26 +466,31 @@ export default function ResultsPage() {
               )}
 
               {/* Sort Dropdown */}
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
-                style={{
-                  padding: '10px 14px',
-                  border: '1px solid #E8EDEB',
-                  borderRadius: '6px',
-                  fontSize: '13px',
-                  fontFamily: "'DM Sans', sans-serif",
-                  color: '#1B2A4A',
-                  cursor: 'pointer',
-                  backgroundColor: '#FFFFFF',
-                  fontWeight: 500,
-                }}
-              >
+              <div style={{ marginTop: '32px', paddingTop: '24px', borderTop: '1px solid #E8EDEB' }}>
+                <label style={{ fontSize: '12px', fontWeight: 600, color: '#1B2A4A', display: 'block', marginBottom: '8px', textTransform: 'uppercase' }}>
+                  Ordenar por
+                </label>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as any)}
+                  style={{
+                    padding: '10px 14px',
+                    border: '1px solid #E8EDEB',
+                    borderRadius: '6px',
+                    fontSize: '13px',
+                    fontFamily: "'DM Sans', sans-serif",
+                    color: '#1B2A4A',
+                    cursor: 'pointer',
+                    backgroundColor: '#FFFFFF',
+                    fontWeight: 500,
+                  }}
+                >
                 <option value="relevance">Relevancia (más alta primero)</option>
                 <option value="citations">Citaciones (más citadas primero)</option>
                 <option value="year">Año (más reciente primero)</option>
                 <option value="title">Título (A-Z)</option>
               </select>
+              </div>
             </div>
 
             {results.length === 0 ? (
@@ -479,7 +499,7 @@ export default function ResultsPage() {
               </div>
             ) : (
               Object.entries(groupedResults).map(([source, sourceResults]) => (
-                <div key={source} style={{ marginBottom: '48px' }}>
+                <div key={source} className="fade-in" style={{ marginBottom: '48px' }}>
                   <div style={{
                     display: 'flex',
                     alignItems: 'center',
