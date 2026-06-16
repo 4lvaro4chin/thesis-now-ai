@@ -198,6 +198,7 @@ export default function SearchPage() {
     semantic_scholar: true,
     openalex: true,
     crossref: true,
+    arxiv: true,
   });
   const [tokens, setTokens] = useState<Token[]>([]);
   const [loadingQuery, setLoadingQuery] = useState(false);
@@ -1037,8 +1038,8 @@ export default function SearchPage() {
               { id: 'semantic_scholar', label: 'Semantic Scholar', desc: 'Multidisciplinario, académico', available: true },
               { id: 'openalex', label: 'OpenAlex', desc: 'Multidisciplinario, acceso abierto', available: true },
               { id: 'crossref', label: 'Crossref', desc: 'Índice global de DOIs - 130M+ artículos', available: true },
+              { id: 'arxiv', label: 'arXiv', desc: 'Preprints: Física, Matemáticas, CS', available: true },
               { id: 'sciencedirect', label: 'ScienceDirect', desc: 'Ciencias, tecnología', available: false },
-              { id: 'arxiv', label: 'arXiv', desc: 'Física, matemáticas', available: false },
               { id: 'google_scholar', label: 'Google Scholar', desc: 'Búsqueda académica global', available: false },
             ].map((db) => {
               const isSelected = selectedDatabases[db.id];
@@ -1047,8 +1048,8 @@ export default function SearchPage() {
                 semantic_scholar: DatabaseLogos.semantic_scholar,
                 openalex: DatabaseLogos.openalex,
                 crossref: DatabaseLogos.crossref,
-                sciencedirect: DatabaseLogos.sciencedirect,
                 arxiv: DatabaseLogos.arxiv,
+                sciencedirect: DatabaseLogos.sciencedirect,
                 google_scholar: DatabaseLogos.google_scholar,
               };
               return (

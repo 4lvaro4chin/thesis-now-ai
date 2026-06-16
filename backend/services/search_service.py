@@ -12,12 +12,14 @@ class SearchService:
         from connectors.semantic_scholar import SemanticScholarConnector
         from connectors.openalex import OpenAlexConnector
         from connectors.crossref import CrossrefConnector
+        from connectors.arxiv import ArxivConnector
 
         self.connectors = {
             "pubmed": PubMedConnector(),
             "semantic_scholar": SemanticScholarConnector(),
             "openalex": OpenAlexConnector(),
             "crossref": CrossrefConnector(),
+            "arxiv": ArxivConnector(),
         }
 
     async def search_all_databases(self, query: str, databases: List[str]) -> List[SearchResult]:
