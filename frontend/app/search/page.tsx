@@ -477,6 +477,7 @@ export default function SearchPage() {
       {/* STEP 1: THESIS TITLE */}
       <div
         style={{
+          display: currentStep !== 1 ? 'none' : 'block',
           background: 'linear-gradient(135deg, #F0FBF7 0%, #E8F8F4 100%)',
           borderBottom: '1px solid #E1F5EE',
           padding: '64px 48px',
@@ -603,9 +604,10 @@ export default function SearchPage() {
 
       {/* Query Builder - 3 separate sections */}
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 48px' }}>
-        {/* Block 1: Query Booleana Generada */}
+        {/* Block 1: Query Booleana Generada - STEP 2 */}
         <div
           style={{
+            display: currentStep !== 2 ? 'none' : 'block',
             background: '#04342C',
             border: '1px solid #0F6E56',
             borderRadius: '12px',
@@ -1014,9 +1016,10 @@ export default function SearchPage() {
           </p>
         </div>
 
-        {/* Block 2: Query Ejecutará + Lenguaje Natural */}
+        {/* Block 2: Query Ejecutará + Lenguaje Natural - STEP 2 */}
         <div
           style={{
+            display: currentStep !== 2 ? 'none' : 'block',
             background: '#FFFFFF',
             border: '2px solid #1D9E75',
             borderRadius: '12px',
@@ -1067,9 +1070,10 @@ export default function SearchPage() {
           )}
         </div>
 
-        {/* Block 3: Databases Selection - Premium Gallery View */}
+        {/* Block 3: Databases Selection - Premium Gallery View - STEP 3 */}
         <div
           style={{
+            display: currentStep !== 3 ? 'none' : 'block',
             background: 'linear-gradient(135deg, #F0FBF7 0%, #E1F5EE 100%)',
             border: 'none',
             borderRadius: '16px',
@@ -1293,6 +1297,72 @@ export default function SearchPage() {
         >
           {t('search.button.execute')}
         </button>
+      </div>
+
+      {/* Step Navigation Buttons */}
+      <div style={{ maxWidth: '1200px', margin: '40px auto 0', padding: '0 48px', display: 'flex', gap: '16px', justifyContent: 'flex-end' }}>
+        {currentStep > 1 && (
+          <button
+            onClick={handlePreviousStep}
+            style={{
+              padding: '12px 32px',
+              background: '#FFFFFF',
+              border: '2px solid #1D9E75',
+              color: '#1D9E75',
+              borderRadius: '8px',
+              fontSize: '14px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              fontFamily: "'DM Sans', sans-serif",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(29, 158, 117, 0.1)';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#FFFFFF';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+          >
+            ← Atrás
+          </button>
+        )}
+        {currentStep < 3 && (
+          <button
+            onClick={handleNextStep}
+            disabled={currentStep === 1 && !queryGenerated}
+            style={{
+              padding: '12px 32px',
+              background: currentStep === 1 && !queryGenerated ? '#D1D5DB' : '#1D9E75',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              fontSize: '14px',
+              fontWeight: 600',
+              cursor: currentStep === 1 && !queryGenerated ? 'not-allowed' : 'pointer',
+              transition: 'all 0.2s',
+              fontFamily: "'DM Sans', sans-serif",
+              boxShadow: currentStep === 1 && !queryGenerated ? 'none' : '0 2px 8px rgba(15, 110, 86, 0.3)',
+            }}
+            onMouseEnter={(e) => {
+              if (!(currentStep === 1 && !queryGenerated)) {
+                e.currentTarget.style.background = '#0F6E56';
+                e.currentTarget.style.boxShadow = '0 4px 20px rgba(15, 110, 86, 0.12)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!(currentStep === 1 && !queryGenerated)) {
+                e.currentTarget.style.background = '#1D9E75';
+                e.currentTarget.style.boxShadow = '0 2px 8px rgba(15, 110, 86, 0.3)';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }
+            }}
+          >
+            Siguiente →
+          </button>
+        )}
       </div>
     </div>
   );
