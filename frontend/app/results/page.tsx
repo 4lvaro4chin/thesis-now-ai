@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useAuthProtection } from '@/lib/useAuthProtection';
 import { useTranslation } from '@/lib/useTranslation';
+import { useSavedPublications } from '@/lib/useSavedPublications';
+import { StarRating } from '@/components/ui/StarRating';
 import type { SearchResult } from '@/lib/useSearch';
 
 export default function ResultsPage() {
@@ -17,7 +19,13 @@ export default function ResultsPage() {
   const [error, setError] = useState<string | null>(null);
   const [expandedAbstracts, setExpandedAbstracts] = useState<Set<string>>(new Set());
   const [loadingProgress, setLoadingProgress] = useState(0); // 0-100
+  const [thesisTitle, setThesisTitle] = useState<string>('');
+  const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalArticle, setModalArticle] = useState<SearchResult | null>(null);
+  const [modalRating, setModalRating] = useState(0);
 
+  const { getSavedIds: fetchSavedIds, savePublication, removePublication } = useSavedPublications();
   const jobId = searchParams.get('job_id');
 
   useEffect(() => {
@@ -37,14 +45,25 @@ export default function ResultsPage() {
 
     // Load from sessionStorage or fetch from backend
     const cached = sessionStorage.getItem(`search_${jobId}`);
+    const loadAndPrepare = (data: any) => {
+      const title = data.title || '';
+      setThesisTitle(title);
+      setResults(data.results || []);
+      setBooleanQuery(data.boolean_query || '');
+
+      // Load saved IDs for this thesis
+      if (title) {
+        fetchSavedIds(title).then(setSavedIds);
+      }
+      setLoading(false);
+    };
+
     if (cached) {
       try {
         const data = JSON.parse(cached);
         setLoadingProgress(100);
         setTimeout(() => {
-          setResults(data.results || []);
-          setBooleanQuery(data.boolean_query || '');
-          setLoading(false);
+          loadAndPrepare(data);
         }, 300);
       } catch {
         setError('Failed to parse search results');
@@ -57,9 +76,7 @@ export default function ResultsPage() {
         .then((data) => {
           setLoadingProgress(100);
           setTimeout(() => {
-            setResults(data.results || []);
-            setBooleanQuery(data.boolean_query || '');
-            setLoading(false);
+            loadAndPrepare(data);
           }, 300);
         })
         .catch((err) => {
@@ -69,7 +86,7 @@ export default function ResultsPage() {
     }
 
     return () => clearInterval(progressInterval);
-  }, [jobId]);
+  }, [jobId, fetchSavedIds]);
 
   const groupedResults = results.reduce(
     (acc, result) => {
@@ -143,6 +160,70 @@ export default function ResultsPage() {
     });
 
     return result;
+  };
+
+  const handleSaveClick = (article: SearchResult) => {
+    setModalArticle(article);
+    setModalRating(0);
+    setModalOpen(true);
+  };
+
+  const handleConfirmSave = async () => {
+    if (!modalArticle || !thesisTitle) return;
+
+    try {
+      await savePublication({
+        ...modalArticle,
+        thesis_title: thesisTitle,
+        star_rating: modalRating || 1,
+      });
+
+      const newSavedIds = new Set(savedIds);
+      if (modalArticle.doi) newSavedIds.add(modalArticle.doi);
+      if (modalArticle.url) newSavedIds.add(modalArticle.url);
+      setSavedIds(newSavedIds);
+
+      setModalOpen(false);
+      setModalArticle(null);
+      setModalRating(0);
+    } catch (err) {
+      console.error('Failed to save publication:', err);
+    }
+  };
+
+  const handleRemoveSave = async (article: SearchResult) => {
+    if (!thesisTitle) return;
+
+    const id = savedIds.has(article.doi || '') ? article.doi : article.url;
+    if (!id) return;
+
+    try {
+      // Get the database ID from Supabase
+      const { supabase } = require('@/lib/supabase');
+      const client = supabase.createClient();
+      const { data, error } = await client
+        .from('saved_publications')
+        .select('id')
+        .eq('thesis_title', thesisTitle)
+        .eq(article.doi ? 'doi' : 'url', id)
+        .limit(1)
+        .single();
+
+      if (error || !data) throw new Error('Publication not found');
+
+      await removePublication(data.id);
+
+      const newSavedIds = new Set(savedIds);
+      if (article.doi) newSavedIds.delete(article.doi);
+      if (article.url) newSavedIds.delete(article.url);
+      setSavedIds(newSavedIds);
+    } catch (err) {
+      console.error('Failed to remove publication:', err);
+    }
+  };
+
+  const isSaved = (article: SearchResult): boolean => {
+    return (article.doi && savedIds.has(article.doi)) || (article.url && savedIds.has(article.url)) || false;
   };
 
   const SkeletonCard = () => (
@@ -424,52 +505,79 @@ export default function ResultsPage() {
                           `}</style>
 
                           {/* Metadata */}
-                          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
-                            {/* Relevance Score */}
-                            <div style={{
-                              background: relevance.bg,
-                              color: relevance.text,
-                              padding: '4px 12px',
-                              borderRadius: '4px',
-                              fontSize: '11px',
-                              fontWeight: 600,
-                            }}>
-                              {Math.round(article.relevance_score * 100)}% {t('results.relevant')}
+                          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+                              {/* Relevance Score */}
+                              <div style={{
+                                background: relevance.bg,
+                                color: relevance.text,
+                                padding: '4px 12px',
+                                borderRadius: '4px',
+                                fontSize: '11px',
+                                fontWeight: 600,
+                              }}>
+                                {Math.round(article.relevance_score * 100)}% {t('results.relevant')}
+                              </div>
+
+                              {/* DOI */}
+                              {article.doi && (
+                                <a
+                                  href={`https://doi.org/${article.doi}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{
+                                    fontSize: '11px',
+                                    color: '#1D9E75',
+                                    textDecoration: 'none',
+                                    fontWeight: 500,
+                                  }}
+                                >
+                                  DOI: {article.doi}
+                                </a>
+                              )}
+
+                              {/* URL */}
+                              {article.url && (
+                                <a
+                                  href={article.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{
+                                    fontSize: '11px',
+                                    color: '#1D9E75',
+                                    textDecoration: 'none',
+                                    fontWeight: 500,
+                                  }}
+                                >
+                                  {t('results.viewOnline')}
+                                </a>
+                              )}
                             </div>
 
-                            {/* DOI */}
-                            {article.doi && (
-                              <a
-                                href={`https://doi.org/${article.doi}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{
-                                  fontSize: '11px',
-                                  color: '#1D9E75',
-                                  textDecoration: 'none',
-                                  fontWeight: 500,
-                                }}
-                              >
-                                DOI: {article.doi}
-                              </a>
-                            )}
-
-                            {/* URL */}
-                            {article.url && (
-                              <a
-                                href={article.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{
-                                  fontSize: '11px',
-                                  color: '#1D9E75',
-                                  textDecoration: 'none',
-                                  fontWeight: 500,
-                                }}
-                              >
-                                {t('results.viewOnline')}
-                              </a>
-                            )}
+                            {/* Save Button */}
+                            <button
+                              onClick={() => isSaved(article) ? handleRemoveSave(article) : handleSaveClick(article)}
+                              style={{
+                                background: isSaved(article) ? '#1D9E75' : 'white',
+                                border: isSaved(article) ? 'none' : '1px solid #E8EDEB',
+                                color: isSaved(article) ? 'white' : '#1D9E75',
+                                padding: '4px 12px',
+                                borderRadius: '4px',
+                                fontSize: '11px',
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                transition: 'all 0.18s',
+                                whiteSpace: 'nowrap',
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.background = isSaved(article) ? '#0F6E56' : '#F3F4F6';
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.background = isSaved(article) ? '#1D9E75' : 'white';
+                              }}
+                            >
+                              {isSaved(article) ? '📌 Guardado' : '+ Guardar'}
+                            </button>
                           </div>
                         </div>
                       );
@@ -534,6 +642,91 @@ export default function ResultsPage() {
                 New Search
               </a>
             </div>
+
+            {/* Modal de calificación */}
+            {modalOpen && modalArticle && (
+              <div style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'rgba(0, 0, 0, 0.5)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 50,
+              }}>
+                <div style={{
+                  background: 'white',
+                  borderRadius: '12px',
+                  padding: '32px',
+                  maxWidth: '500px',
+                  width: '90%',
+                  boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+                }}>
+                  <h2 style={{
+                    fontSize: '18px',
+                    fontWeight: 600,
+                    marginBottom: '8px',
+                    color: '#1B2A4A',
+                  }}>
+                    Calificar publicación
+                  </h2>
+                  <p style={{
+                    fontSize: '13px',
+                    color: '#6B7280',
+                    marginBottom: '24px',
+                    lineHeight: 1.5,
+                  }}>
+                    {modalArticle.title}
+                  </p>
+
+                  <div style={{ marginBottom: '24px' }}>
+                    <p style={{ fontSize: '12px', color: '#6B7280', marginBottom: '12px', fontWeight: 500 }}>
+                      ¿Cuán relevante es para tu tesis?
+                    </p>
+                    <StarRating value={modalRating} onChange={setModalRating} size="large" />
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                    <button
+                      onClick={() => {
+                        setModalOpen(false);
+                        setModalArticle(null);
+                      }}
+                      style={{
+                        padding: '10px 20px',
+                        background: 'transparent',
+                        color: '#6B7280',
+                        border: '1px solid #E8EDEB',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: 500,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      onClick={handleConfirmSave}
+                      style={{
+                        padding: '10px 20px',
+                        background: '#1D9E75',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: 500,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Guardar en tablero
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </>
         )}
       </div>

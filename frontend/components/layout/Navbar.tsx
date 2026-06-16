@@ -140,6 +140,39 @@ export function Navbar({ user: initialUser }: NavbarProps) {
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flex: 1 }} className="sm:gap-3 sm:flex-none">
         {user ? (
           <>
+            <a
+              href="/board"
+              style={{
+                padding: '8px 12px',
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: 'clamp(11px, 2vw, 13px)',
+                fontWeight: 600,
+                color: '#1D9E75',
+                background: 'transparent',
+                border: '1.5px solid #1D9E75',
+                borderRadius: '10px',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                whiteSpace: 'nowrap',
+                textDecoration: 'none',
+                textAlign: 'center',
+                display: 'inline-block'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(29, 158, 117, 0.1)';
+                e.currentTarget.style.borderColor = '#0F6E56';
+                e.currentTarget.style.color = '#0F6E56';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'transparent';
+                e.currentTarget.style.borderColor = '#1D9E75';
+                e.currentTarget.style.color = '#1D9E75';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              Mi Tablero
+            </a>
             <div style={{
               display: 'flex',
               alignItems: 'center',

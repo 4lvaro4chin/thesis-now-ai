@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useTranslation } from "@/lib/useTranslation";
+import { useState } from "react";
 
 export default function Home() {
   const { t } = useTranslation();
+  const [title, setTitle] = useState('');
 
   const steps = [
     { num: "1", title: t('home.step1.title'), desc: t('home.step1.desc') },
@@ -90,6 +92,13 @@ export default function Home() {
             <input
               type="text"
               placeholder={t('home.input.placeholder')}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && title.trim()) {
+                  window.location.href = `/search?initialTitle=${encodeURIComponent(title)}`;
+                }
+              }}
               style={{
                 flex: 1,
                 border: "none",
@@ -102,22 +111,23 @@ export default function Home() {
               }}
             />
             <Link
-              href="/search"
+              href={title.trim() ? `/search?initialTitle=${encodeURIComponent(title)}` : "/search"}
               style={{
                 padding: "13px 24px",
-                background: "#1D9E75",
+                background: title.trim() ? "#1D9E75" : "#9CA3AF",
                 border: "none",
                 color: "white",
                 fontFamily: "'DM Sans', sans-serif",
                 fontSize: "14px",
                 fontWeight: 500,
-                cursor: "pointer",
+                cursor: title.trim() ? "pointer" : "not-allowed",
                 transition: "background 0.18s",
                 whiteSpace: "nowrap",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                textDecoration: "none"
+                textDecoration: "none",
+                opacity: title.trim() ? 1 : 0.6
               }}
             >
               {t('home.button.start')}

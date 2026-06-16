@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthProtection } from '@/lib/useAuthProtection';
 import { useTranslation } from '@/lib/useTranslation';
 
@@ -191,6 +191,7 @@ export default function SearchPage() {
   useAuthProtection();
   const router = useRouter();
   const { t } = useTranslation();
+  const searchParams = useSearchParams();
 
   const [title, setTitle] = useState('');
   const [selectedDatabases, setSelectedDatabases] = useState<Record<string, boolean>>({
@@ -207,6 +208,14 @@ export default function SearchPage() {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  // Load initial title from URL parameter
+  useEffect(() => {
+    const initialTitle = searchParams.get('initialTitle');
+    if (initialTitle) {
+      setTitle(decodeURIComponent(initialTitle));
+    }
+  }, [searchParams]);
 
   // Generate query when title changes
   useEffect(() => {
