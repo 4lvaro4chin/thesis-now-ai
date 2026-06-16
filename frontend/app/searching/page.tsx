@@ -59,8 +59,13 @@ export default function SearchingPage() {
         }
 
         if (jobData.status === 'completed') {
-          // Store results in sessionStorage or pass via URL
-          sessionStorage.setItem(`search_${job_id}`, JSON.stringify(jobData));
+          // Best-effort cache: large result sets can exceed the sessionStorage
+          // quota. If it fails, the results page falls back to fetching by job_id.
+          try {
+            sessionStorage.setItem(`search_${job_id}`, JSON.stringify(jobData));
+          } catch {
+            // quota exceeded — skip the cache, results page will refetch
+          }
           router.push(`/results?job_id=${job_id}`);
         } else {
           setError('Search timeout');
