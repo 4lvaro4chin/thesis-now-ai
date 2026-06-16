@@ -204,6 +204,8 @@ export default function SearchPage() {
   const [tokens, setTokens] = useState<Token[]>([]);
   const [explanation, setExplanation] = useState<string>('');
   const [loadingQuery, setLoadingQuery] = useState(false);
+  const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
+  const [queryGenerated, setQueryGenerated] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingValue, setEditingValue] = useState('');
   const [hoveredId, setHoveredId] = useState<string | null>(null);
@@ -238,16 +240,41 @@ export default function SearchPage() {
         const data = await response.json();
         setTokens(tokenize(data.query || title.trim()));
         setExplanation(data.explanation || '');
+        setQueryGenerated(true);
       } else {
         setTokens([{ id: newTokenId(), type: 'term', value: title.trim() }]);
         setExplanation('');
+        setQueryGenerated(false);
       }
     } catch (error) {
       console.error('Error generating query:', error);
       setTokens([{ id: newTokenId(), type: 'term', value: title.trim() }]);
       setExplanation('');
+      setQueryGenerated(false);
     } finally {
       setLoadingQuery(false);
+    }
+  };
+
+  // Step navigation handlers
+  const handleNextStep = () => {
+    if (currentStep === 1 && !queryGenerated) {
+      alert('Please generate a query first');
+      return;
+    }
+    if (currentStep < 3) {
+      setCurrentStep((currentStep + 1) as 1 | 2 | 3);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handlePreviousStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep((currentStep - 1) as 1 | 2 | 3);
+      if (currentStep === 2) {
+        setQueryGenerated(false);
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -393,9 +420,61 @@ export default function SearchPage() {
   const negated = computeNegation(tokens);
   const canSearch = title.trim() && getFinalQuery().length > 0;
 
+  // Step indicator component
+  const StepIndicator = () => (
+    <div style={{ background: '#F9FAFB', padding: '20px 48px', borderBottom: '1px solid #E8EDEB', marginBottom: '40px' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+          {(['Thesis Title', 'Boolean Query', 'Select Databases'] as const).map((label, idx) => {
+            const stepNum = idx + 1 as 1 | 2 | 3;
+            const isActive = currentStep === stepNum;
+            const isCompleted = currentStep > stepNum;
+
+            return (
+              <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
+                <div
+                  style={{
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '50%',
+                    background: isActive || isCompleted ? '#1D9E75' : '#E5E7EB',
+                    color: 'white',
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    minWidth: '36px',
+                  }}
+                >
+                  {isCompleted ? '✓' : stepNum}
+                </div>
+                <span style={{ fontSize: '13px', fontWeight: 500, color: isActive ? '#1D9E75' : '#6B7280' }}>
+                  {label}
+                </span>
+                {idx < 2 && (
+                  <div
+                    style={{
+                      height: '2px',
+                      background: isCompleted ? '#1D9E75' : '#E5E7EB',
+                      flex: 1,
+                      marginLeft: '12px',
+                    }}
+                  />
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div style={{ minHeight: '100vh', background: '#FFFFFF', paddingTop: '72px', paddingBottom: '100px' }}>
-      {/* Hero Section */}
+      <StepIndicator />
+
+      {/* STEP 1: THESIS TITLE */}
       <div
         style={{
           background: 'linear-gradient(135deg, #F0FBF7 0%, #E8F8F4 100%)',
