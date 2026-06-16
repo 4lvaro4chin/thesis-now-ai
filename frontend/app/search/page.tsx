@@ -56,6 +56,14 @@ const DatabaseLogos = {
       <circle cx="50" cy="35" r="6" fill="#EA4335" />
     </svg>
   ),
+  openalex: (
+    <svg viewBox="0 0 100 100" width="60" height="60" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" rx="12" fill="#003366" />
+      <text x="50" y="65" fontSize="28" fontWeight="bold" fill="white" textAnchor="middle" fontFamily="Arial">
+        OA
+      </text>
+    </svg>
+  ),
 };
 
 // Convert backend query string into tokens (terms, operators, parens)
@@ -180,6 +188,7 @@ export default function SearchPage() {
   const [selectedDatabases, setSelectedDatabases] = useState<Record<string, boolean>>({
     pubmed: true,
     semantic_scholar: true,
+    openalex: true,
   });
   const [tokens, setTokens] = useState<Token[]>([]);
   const [loadingQuery, setLoadingQuery] = useState(false);
@@ -1017,6 +1026,7 @@ export default function SearchPage() {
             {[
               { id: 'pubmed', label: 'PubMed', desc: 'Medicina, ciencias de la salud', available: true },
               { id: 'semantic_scholar', label: 'Semantic Scholar', desc: 'Multidisciplinario, académico', available: true },
+              { id: 'openalex', label: 'OpenAlex', desc: 'Multidisciplinario, acceso abierto', available: true },
               { id: 'sciencedirect', label: 'ScienceDirect', desc: 'Ciencias, tecnología', available: false },
               { id: 'arxiv', label: 'arXiv', desc: 'Física, matemáticas', available: false },
               { id: 'google_scholar', label: 'Google Scholar', desc: 'Búsqueda académica global', available: false },
@@ -1025,6 +1035,7 @@ export default function SearchPage() {
               const logoMap: Record<string, React.ReactNode> = {
                 pubmed: DatabaseLogos.pubmed,
                 semantic_scholar: DatabaseLogos.semantic_scholar,
+                openalex: DatabaseLogos.openalex,
                 sciencedirect: DatabaseLogos.sciencedirect,
                 arxiv: DatabaseLogos.arxiv,
                 google_scholar: DatabaseLogos.google_scholar,

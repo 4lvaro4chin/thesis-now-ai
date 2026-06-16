@@ -10,10 +10,12 @@ class SearchService:
     def __init__(self):
         from connectors.pubmed import PubMedConnector
         from connectors.semantic_scholar import SemanticScholarConnector
+        from connectors.openalex import OpenAlexConnector
 
         self.connectors = {
             "pubmed": PubMedConnector(),
             "semantic_scholar": SemanticScholarConnector(),
+            "openalex": OpenAlexConnector(),
         }
 
     async def search_all_databases(self, query: str, databases: List[str]) -> List[SearchResult]:
