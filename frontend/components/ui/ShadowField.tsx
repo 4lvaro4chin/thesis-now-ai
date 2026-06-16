@@ -61,8 +61,22 @@ export function ShadowField() {
     };
     window.addEventListener('mousemove', onMove);
 
-    // Per-shape smoothed state.
-    const state = SHAPES.map(() => ({ px: 0, py: 0, rot: 0, op: BASE_OPACITY }));
+    // Per-shape state: actual drifting position (x, y), velocity (vx, vy), and
+    // the smoothed flee offset / rotation / opacity layered on top.
+    const items = SHAPES.map((shape, i) => {
+      const angle = i * 1.7; // spread initial directions around the circle
+      const speed = 0.3 + (i % 5) * 0.09; // px per frame, slow and calm
+      return {
+        x: (shape.left / 100) * vw,
+        y: (shape.top / 100) * vh,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        px: 0,
+        py: 0,
+        rot: 0,
+        op: BASE_OPACITY,
+      };
+    });
 
     let frame: number;
     const animate = () => {
@@ -70,10 +84,20 @@ export function ShadowField() {
         const node = nodesRef.current[i];
         if (!node) continue;
 
-        const anchorX = (SHAPES[i].left / 100) * vw;
-        const anchorY = (SHAPES[i].top / 100) * vh;
-        const dx = anchorX - mouseX;
-        const dy = anchorY - mouseY;
+        const it = items[i];
+
+        // Gravitate slowly across the whole screen, bouncing off the edges.
+        it.x += it.vx;
+        it.y += it.vy;
+        const m = SHAPES[i].size * 0.2;
+        if (it.x < m) { it.x = m; it.vx = Math.abs(it.vx); }
+        else if (it.x > vw - m) { it.x = vw - m; it.vx = -Math.abs(it.vx); }
+        if (it.y < m) { it.y = m; it.vy = Math.abs(it.vy); }
+        else if (it.y > vh - m) { it.y = vh - m; it.vy = -Math.abs(it.vy); }
+
+        // Flee + spin + fade from the flashlight, based on the current position.
+        const dx = it.x - mouseX;
+        const dy = it.y - mouseY;
         const dist = Math.hypot(dx, dy) || 1;
 
         let targetPX = 0;
@@ -89,14 +113,19 @@ export function ShadowField() {
           targetOp = BASE_OPACITY * (1 - force); // fade into the dark as the light nears
         }
 
-        const s = state[i];
-        s.px += (targetPX - s.px) * EASE;
-        s.py += (targetPY - s.py) * EASE;
-        s.rot += (targetRot - s.rot) * EASE;
-        s.op += (targetOp - s.op) * EASE;
+        it.px += (targetPX - it.px) * EASE;
+        it.py += (targetPY - it.py) * EASE;
+        it.rot += (targetRot - it.rot) * EASE;
+        it.op += (targetOp - it.op) * EASE;
 
-        node.style.transform = `translate3d(${s.px}px, ${s.py}px, 0) rotate(${s.rot}deg)`;
-        node.style.opacity = String(s.op);
+        // Transform is relative to the element's CSS anchor (top/left %).
+        const anchorX = (SHAPES[i].left / 100) * vw;
+        const anchorY = (SHAPES[i].top / 100) * vh;
+        const tx = it.x - anchorX + it.px;
+        const ty = it.y - anchorY + it.py;
+
+        node.style.transform = `translate3d(${tx}px, ${ty}px, 0) rotate(${it.rot}deg)`;
+        node.style.opacity = String(it.op);
       }
       frame = requestAnimationFrame(animate);
     };

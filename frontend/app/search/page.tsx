@@ -1304,106 +1304,134 @@ export default function SearchPage() {
           </div>
         </div>
 
-        {/* Execute Button - Only in Step 3 */}
-        <button
-          onClick={handleSearch}
-          disabled={!canSearch}
-          style={{
-            display: currentStep !== 3 ? 'none' : 'block',
-            padding: '14px 40px',
-            background: canSearch ? 'var(--green-500)' : 'var(--disabled)',
-            border: 'none',
-            borderRadius: '8px',
-            color: canSearch ? 'white' : 'var(--text-muted)',
-            fontSize: '15px',
-            fontWeight: 600,
-            cursor: canSearch ? 'pointer' : 'not-allowed',
-            transition: 'all 0.2s',
-            boxShadow: canSearch ? '0 2px 8px rgba(15, 110, 86, 0.3)' : 'none',
-            fontFamily: "'DM Sans', sans-serif",
-            width: '100%',
-            outline: 'none',
-          }}
-          onMouseEnter={(e) => {
-            if (canSearch) {
-              e.currentTarget.style.background = 'var(--green-700)';
-              e.currentTarget.style.boxShadow = '0 4px 20px rgba(15, 110, 86, 0.12)';
-              e.currentTarget.style.transform = 'translateY(-2px)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (canSearch) {
-              e.currentTarget.style.background = 'var(--green-500)';
-              e.currentTarget.style.boxShadow = '0 2px 8px rgba(15, 110, 86, 0.3)';
-              e.currentTarget.style.transform = 'translateY(0)';
-            }
-          }}
-        >
-          {t('search.button.execute')}
-        </button>
       </div>
 
-      {/* Step Navigation Buttons */}
-      <div style={{ maxWidth: '1200px', margin: '40px auto 0', padding: '0 48px', display: 'flex', gap: '16px', justifyContent: 'flex-end' }}>
-        {currentStep > 1 && (
-          <button
-            onClick={handlePreviousStep}
+      {/* Fixed bottom action bar — steps 2 & 3 */}
+      {currentStep > 1 && (
+        <div
+          style={{
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: 40,
+            background: 'rgba(255,255,255,0.95)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            borderTop: '1px solid var(--border)',
+            boxShadow: '0 -4px 20px rgba(15, 110, 86, 0.06)',
+          }}
+        >
+          <div
             style={{
-              padding: '12px 32px',
-              background: '#FFFFFF',
-              border: '2px solid #1D9E75',
-              color: 'var(--green-500)',
-              borderRadius: '8px',
-              fontSize: '14px',
-              fontWeight: 600,
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-              fontFamily: "'DM Sans', sans-serif",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(29, 158, 117, 0.1)';
-              e.currentTarget.style.transform = 'translateY(-2px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = '#FFFFFF';
-              e.currentTarget.style.transform = 'translateY(0)';
+              maxWidth: '1200px',
+              margin: '0 auto',
+              padding: '12px clamp(16px, 4vw, 48px)',
+              minHeight: '72px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '16px',
             }}
           >
-            {t('search.button.back')}
-          </button>
-        )}
-        {currentStep < 3 && currentStep !== 1 && (
-          <button
-            onClick={handleNextStep}
-            style={{
-              padding: '12px 32px',
-              background: 'var(--green-500)',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '14px',
-              fontWeight: 600,
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-              fontFamily: "'DM Sans', sans-serif",
-              boxShadow: '0 2px 8px rgba(15, 110, 86, 0.3)',
-              outline: 'none',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'var(--green-700)';
-              e.currentTarget.style.boxShadow = '0 4px 20px rgba(15, 110, 86, 0.12)';
-              e.currentTarget.style.transform = 'translateY(-2px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'var(--green-500)';
-              e.currentTarget.style.boxShadow = '0 2px 8px rgba(15, 110, 86, 0.3)';
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}
-          >
-            {t('search.button.next')}
-          </button>
-        )}
-      </div>
+            {/* Back — de-emphasized ghost link */}
+            <button
+              onClick={handlePreviousStep}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                minHeight: '44px',
+                padding: '10px 16px',
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--text-muted)',
+                fontSize: '14px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'color 0.15s',
+                fontFamily: "'DM Sans', sans-serif",
+                borderRadius: '8px',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = 'var(--navy)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = 'var(--text-muted)';
+              }}
+            >
+              {t('search.button.back')}
+            </button>
+
+            {/* Primary action — Next (step 2) / Execute (step 3) */}
+            {currentStep === 2 && (
+              <button
+                onClick={handleNextStep}
+                style={{
+                  minHeight: '44px',
+                  padding: '12px 36px',
+                  background: 'var(--green-500)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '15px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  fontFamily: "'DM Sans', sans-serif",
+                  boxShadow: '0 2px 8px rgba(15, 110, 86, 0.3)',
+                  outline: 'none',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'var(--green-700)';
+                  e.currentTarget.style.boxShadow = '0 4px 20px rgba(15, 110, 86, 0.12)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'var(--green-500)';
+                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(15, 110, 86, 0.3)';
+                }}
+              >
+                {t('search.button.next')}
+              </button>
+            )}
+            {currentStep === 3 && (
+              <button
+                onClick={handleSearch}
+                disabled={!canSearch}
+                style={{
+                  minHeight: '44px',
+                  padding: '12px 36px',
+                  background: canSearch ? 'var(--green-500)' : 'var(--disabled)',
+                  color: canSearch ? 'white' : 'var(--text-muted)',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '15px',
+                  fontWeight: 600,
+                  cursor: canSearch ? 'pointer' : 'not-allowed',
+                  transition: 'all 0.2s',
+                  fontFamily: "'DM Sans', sans-serif",
+                  boxShadow: canSearch ? '0 2px 8px rgba(15, 110, 86, 0.3)' : 'none',
+                  outline: 'none',
+                }}
+                onMouseEnter={(e) => {
+                  if (canSearch) {
+                    e.currentTarget.style.background = 'var(--green-700)';
+                    e.currentTarget.style.boxShadow = '0 4px 20px rgba(15, 110, 86, 0.12)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (canSearch) {
+                    e.currentTarget.style.background = 'var(--green-500)';
+                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(15, 110, 86, 0.3)';
+                  }
+                }}
+              >
+                {t('search.button.execute')}
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
