@@ -18,16 +18,25 @@ ERROR_MESSAGES = {
 }
 
 def _load_prompt_template() -> str:
-    """Load prompt template from file."""
-    prompts_dir = os.getenv("PROMPTS_DIR", "./prompts")
-    prompt_path = os.path.join(prompts_dir, "academic_query.txt")
+    """Load prompt template from file with fallback paths."""
+    possible_paths = [
+        os.getenv("PROMPTS_DIR", "./prompts"),
+        "/app/prompts",
+        "./backend/prompts",
+        os.path.join(os.path.dirname(__file__), "..", "prompts"),
+    ]
 
-    try:
-        with open(prompt_path, "r", encoding="utf-8") as f:
-            return f.read()
-    except FileNotFoundError:
-        logger.error(f"Prompt file not found: {prompt_path}")
-        raise ValueError(f"Prompt template not found at {prompt_path}")
+    for base_path in possible_paths:
+        prompt_path = os.path.join(base_path, "academic_query.txt")
+        try:
+            with open(prompt_path, "r", encoding="utf-8") as f:
+                logger.info(f"Loaded prompt from: {prompt_path}")
+                return f.read()
+        except FileNotFoundError:
+            continue
+
+    logger.error(f"Prompt file not found in any of: {possible_paths}")
+    raise ValueError(f"Prompt template not found. Tried: {possible_paths}")
 
 PROMPT_TEMPLATE = _load_prompt_template()
 
