@@ -151,10 +151,6 @@ class NLPService:
         # Combinar con AND
         query = " AND ".join(branches)
 
-        # Agregar exclusiones si es necesario
-        # (simplemente como NOT al final)
-        query += ' NOT (adult OR elderly OR animal OR review)'
-
         return query
 
     async def extract_terms(self, title: str) -> dict:
@@ -167,5 +163,5 @@ class NLPService:
         return {
             "main_concepts": list(concepts.keys()),
             "synonyms": concepts,
-            "exclusions": ["adult", "elderly", "animal", "review"]
+            "exclusions": []
         }
