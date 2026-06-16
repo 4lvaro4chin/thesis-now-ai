@@ -1339,7 +1339,7 @@ export default function SearchPage() {
               border: 'none',
               borderRadius: '8px',
               fontSize: '14px',
-              fontWeight: 600',
+              fontWeight: 600,
               cursor: currentStep === 1 && !queryGenerated ? 'not-allowed' : 'pointer',
               transition: 'all 0.2s',
               fontFamily: "'DM Sans', sans-serif",
