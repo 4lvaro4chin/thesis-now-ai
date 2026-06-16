@@ -26,8 +26,19 @@ export default function ResultsPage() {
   const [modalRating, setModalRating] = useState(0);
   const [sortBy, setSortBy] = useState<'relevance' | 'citations' | 'year' | 'title'>('relevance');
   const [explanation, setExplanation] = useState<string>('');
+  const [collapsedSources, setCollapsedSources] = useState<Set<string>>(new Set());
 
   const { getSavedIds: fetchSavedIds, savePublication, removePublication } = useSavedPublications();
+
+  const toggleSourceCollapse = (source: string) => {
+    const newCollapsed = new Set(collapsedSources);
+    if (newCollapsed.has(source)) {
+      newCollapsed.delete(source);
+    } else {
+      newCollapsed.add(source);
+    }
+    setCollapsedSources(newCollapsed);
+  };
   const jobId = searchParams.get('job_id');
 
   useEffect(() => {
@@ -469,18 +480,46 @@ export default function ResultsPage() {
             ) : (
               Object.entries(groupedResults).map(([source, sourceResults]) => (
                 <div key={source} style={{ marginBottom: '48px' }}>
-                  <h2 style={{
-                    fontSize: '16px',
-                    fontWeight: 600,
-                    color: '#1B2A4A',
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
                     marginBottom: '16px',
                     paddingBottom: '12px',
                     borderBottom: '2px solid #E8EDEB',
                   }}>
-                    {getSourceLabel(source)} ({sourceResults.length})
-                  </h2>
+                    <h2 style={{
+                      fontSize: '16px',
+                      fontWeight: 600,
+                      color: '#1B2A4A',
+                      margin: 0,
+                    }}>
+                      {getSourceLabel(source)} ({sourceResults.length})
+                    </h2>
+                    <button
+                      onClick={() => toggleSourceCollapse(source)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: '4px 8px',
+                        cursor: 'pointer',
+                        fontSize: '18px',
+                        color: '#6B7280',
+                        transition: 'color 0.2s',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.color = '#1D9E75';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.color = '#6B7280';
+                      }}
+                      title={collapsedSources.has(source) ? 'Expandir' : 'Colapsar'}
+                    >
+                      {collapsedSources.has(source) ? '▶' : '▼'}
+                    </button>
+                  </div>
 
-                  <div style={{ display: 'grid', gap: '16px' }}>
+                  <div style={{ display: collapsedSources.has(source) ? 'none' : 'grid', gap: '16px' }}>
                     {sortResults(sourceResults).map((article, idx) => {
                       const relevance = getRelevanceColor(article.relevance_score);
                       return (
