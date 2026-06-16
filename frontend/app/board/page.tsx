@@ -17,6 +17,7 @@ export default function BoardPage() {
   const [selectedThesis, setSelectedThesis] = useState<string>('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingRating, setEditingRating] = useState(0);
+  const [confirmingId, setConfirmingId] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'rating' | 'year' | 'date' | 'source' | 'title'>('rating');
 
   useEffect(() => {
@@ -105,7 +106,7 @@ export default function BoardPage() {
                 cursor: 'pointer',
               }}
             >
-              ← Volver a búsqueda
+              {t('board.backToSearch')}
             </Link>
           </div>
           <h1
@@ -119,10 +120,10 @@ export default function BoardPage() {
               marginBottom: '8px',
             }}
           >
-            Mi Tablero
+            {t('board.title')}
           </h1>
           <p style={{ fontSize: '16px', color: '#6B7280', lineHeight: 1.6 }}>
-            Publicaciones guardadas para tu revisión bibliográfica
+            {t('board.subtitle')}
           </p>
         </div>
       </div>
@@ -131,7 +132,7 @@ export default function BoardPage() {
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 48px' }}>
         {loading ? (
           <div style={{ textAlign: 'center', padding: '60px 0' }}>
-            <p style={{ color: '#6B7280', fontSize: '16px' }}>Cargando publicaciones...</p>
+            <p style={{ color: '#6B7280', fontSize: '16px' }}>{t('board.loading')}</p>
           </div>
         ) : publications.length === 0 ? (
           <div
@@ -144,7 +145,7 @@ export default function BoardPage() {
             }}
           >
             <p style={{ color: '#6B7280', fontSize: '16px', marginBottom: '16px' }}>
-              Aún no has guardado publicaciones
+              {t('board.empty')}
             </p>
             <Link
               href="/search"
@@ -159,7 +160,7 @@ export default function BoardPage() {
                 fontWeight: 500,
               }}
             >
-              Hacer una búsqueda
+              {t('board.emptyCta')}
             </Link>
           </div>
         ) : (
@@ -168,7 +169,7 @@ export default function BoardPage() {
             {theses.length > 1 && (
               <div style={{ marginBottom: '40px' }}>
                 <label style={{ fontSize: '12px', fontWeight: 600, color: '#1B2A4A', display: 'block', marginBottom: '8px', textTransform: 'uppercase' }}>
-                  Filtrar por tesis
+                  {t('board.filterByThesis')}
                 </label>
                 <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-end', flexWrap: 'wrap' }}>
                   <select
@@ -217,7 +218,7 @@ export default function BoardPage() {
                       e.currentTarget.style.transform = 'translateY(0)';
                     }}
                   >
-                    🔍 Buscar más
+                    {t('board.searchMore')}
                   </Link>
                 </div>
               </div>
@@ -227,7 +228,7 @@ export default function BoardPage() {
             {selectedThesis && filteredPublications.length > 1 && (
               <div style={{ marginBottom: '24px', paddingBottom: '16px', borderBottom: '1px solid #E8EDEB' }}>
                 <label style={{ fontSize: '12px', fontWeight: 600, color: '#1B2A4A', display: 'block', marginBottom: '8px', textTransform: 'uppercase' }}>
-                  Ordenar por
+                  {t('board.sortBy')}
                 </label>
                 <select
                   value={sortBy}
@@ -244,11 +245,11 @@ export default function BoardPage() {
                     fontWeight: 500,
                   }}
                 >
-                  <option value="rating">Calificación (mayor primero)</option>
-                  <option value="year">Año (más reciente primero)</option>
-                  <option value="date">Fecha guardada (más reciente primero)</option>
-                  <option value="source">Fuente (A-Z)</option>
-                  <option value="title">Título (A-Z)</option>
+                  <option value="rating">{t('board.sort.rating')}</option>
+                  <option value="year">{t('board.sort.year')}</option>
+                  <option value="date">{t('board.sort.date')}</option>
+                  <option value="source">{t('board.sort.source')}</option>
+                  <option value="title">{t('board.sort.title')}</option>
                 </select>
               </div>
             )}
@@ -261,7 +262,7 @@ export default function BoardPage() {
                     "{selectedThesis}"
                   </h2>
                   <p style={{ fontSize: '13px', color: '#6B7280' }}>
-                    {filteredPublications.length} publicación{filteredPublications.length !== 1 ? 'es' : ''} guardada{filteredPublications.length !== 1 ? 's' : ''}
+                    {filteredPublications.length} {t(filteredPublications.length === 1 ? 'board.savedCount.one' : 'board.savedCount.other')}
                   </p>
                 </div>
 
@@ -282,27 +283,70 @@ export default function BoardPage() {
                             {pub.title}
                           </h3>
                           <p style={{ fontSize: '13px', color: '#6B7280', marginBottom: '12px' }}>
-                            {pub.authors?.join(', ') || 'Unknown authors'}
+                            {pub.authors?.join(', ') || t('board.unknownAuthors')}
                             {pub.year && ` (${pub.year})`}
                           </p>
                         </div>
-                        <button
-                          onClick={() => handleRemove(pub.id || '')}
-                          style={{
-                            background: '#FEE8E8',
-                            border: 'none',
-                            color: 'var(--error)',
-                            padding: '8px 12px',
-                            borderRadius: '6px',
-                            cursor: 'pointer',
-                            fontSize: '14px',
-                            fontWeight: 500,
-                            marginLeft: '16px',
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
-                          🗑️ Eliminar
-                        </button>
+                        {confirmingId === pub.id ? (
+                          <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginLeft: '16px' }}>
+                            <span style={{ fontSize: '13px', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+                              {t('board.confirmDelete')}
+                            </span>
+                            <button
+                              onClick={() => {
+                                handleRemove(pub.id || '');
+                                setConfirmingId(null);
+                              }}
+                              style={{
+                                background: 'var(--error)',
+                                border: 'none',
+                                color: 'white',
+                                padding: '8px 12px',
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                                fontSize: '13px',
+                                fontWeight: 600,
+                                whiteSpace: 'nowrap',
+                              }}
+                            >
+                              {t('board.confirmYes')}
+                            </button>
+                            <button
+                              onClick={() => setConfirmingId(null)}
+                              style={{
+                                background: 'transparent',
+                                border: '1px solid #E8EDEB',
+                                color: 'var(--text-muted)',
+                                padding: '8px 12px',
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                                fontSize: '13px',
+                                fontWeight: 500,
+                                whiteSpace: 'nowrap',
+                              }}
+                            >
+                              {t('board.cancel')}
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setConfirmingId(pub.id || null)}
+                            style={{
+                              background: '#FEE8E8',
+                              border: 'none',
+                              color: 'var(--error)',
+                              padding: '8px 12px',
+                              borderRadius: '6px',
+                              cursor: 'pointer',
+                              fontSize: '14px',
+                              fontWeight: 500,
+                              marginLeft: '16px',
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
+                            {t('board.delete')}
+                          </button>
+                        )}
                       </div>
 
                       {/* Rating */}
@@ -327,7 +371,7 @@ export default function BoardPage() {
                                 fontWeight: 500,
                               }}
                             >
-                              Guardar
+                              {t('board.save')}
                             </button>
                             <button
                               onClick={() => setEditingId(null)}
@@ -342,7 +386,7 @@ export default function BoardPage() {
                                 fontWeight: 500,
                               }}
                             >
-                              Cancelar
+                              {t('board.cancel')}
                             </button>
                           </div>
                         ) : (
@@ -359,7 +403,7 @@ export default function BoardPage() {
                             }}
                           >
                             <StarRating value={pub.star_rating || 0} readonly size="small" />
-                            {!pub.star_rating && <span style={{ fontSize: '12px', color: '#9CA3AF' }}>Sin calificar</span>}
+                            {!pub.star_rating && <span style={{ fontSize: '12px', color: '#9CA3AF' }}>{t('board.unrated')}</span>}
                           </div>
                         )}
                       </div>
@@ -408,7 +452,7 @@ export default function BoardPage() {
                               fontWeight: 500,
                             }}
                           >
-                            Ver online
+                            {t('board.viewOnline')}
                           </a>
                         )}
                       </div>
