@@ -72,7 +72,7 @@ export default function BoardPage() {
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
             <Link
-              href="/results"
+              href="/search"
               style={{
                 fontSize: '14px',
                 color: '#1D9E75',
@@ -81,7 +81,7 @@ export default function BoardPage() {
                 cursor: 'pointer',
               }}
             >
-              ← Volver
+              ← Volver a búsqueda
             </Link>
           </div>
           <h1
