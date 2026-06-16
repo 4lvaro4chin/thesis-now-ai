@@ -218,41 +218,38 @@ export default function SearchPage() {
     }
   }, [searchParams]);
 
-  // Generate query when title changes
-  useEffect(() => {
+  // Generate query manually when user clicks button
+  const handleGenerateQuery = async () => {
     if (!title.trim()) {
       setTokens([]);
+      setExplanation('');
       return;
     }
 
-    const generateQuery = async () => {
-      setLoadingQuery(true);
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/nlp/generate-query`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title: title.trim(), lang }),
-        });
+    setLoadingQuery(true);
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/nlp/generate-query`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: title.trim(), lang }),
+      });
 
-        if (response.ok) {
-          const data = await response.json();
-          setTokens(tokenize(data.query || title.trim()));
-          setExplanation(data.explanation || '');
-        } else {
-          setTokens([{ id: newTokenId(), type: 'term', value: title.trim() }]);
-          setExplanation('');
-        }
-      } catch (error) {
-        console.error('Error generating query:', error);
+      if (response.ok) {
+        const data = await response.json();
+        setTokens(tokenize(data.query || title.trim()));
+        setExplanation(data.explanation || '');
+      } else {
         setTokens([{ id: newTokenId(), type: 'term', value: title.trim() }]);
-      } finally {
-        setLoadingQuery(false);
+        setExplanation('');
       }
-    };
-
-    const debounceTimer = setTimeout(generateQuery, 500);
-    return () => clearTimeout(debounceTimer);
-  }, [title]);
+    } catch (error) {
+      console.error('Error generating query:', error);
+      setTokens([{ id: newTokenId(), type: 'term', value: title.trim() }]);
+      setExplanation('');
+    } finally {
+      setLoadingQuery(false);
+    }
+  };
 
   const getFinalQuery = (): string => {
     const toks = sanitizeTokens(tokens);
@@ -486,40 +483,40 @@ export default function SearchPage() {
                 e.currentTarget.style.boxShadow = 'none';
               }}
             />
-            {/* Search Button Below Input */}
+            {/* Generate Query Button Below Input */}
             <button
-              onClick={handleSearch}
-              disabled={!canSearch}
+              onClick={handleGenerateQuery}
+              disabled={!title.trim() || loadingQuery}
               style={{
                 marginTop: '16px',
                 padding: '12px 32px',
-                background: canSearch ? '#1D9E75' : '#D1D5DB',
+                background: title.trim() && !loadingQuery ? '#1D9E75' : '#D1D5DB',
                 border: 'none',
                 borderRadius: '8px',
                 color: 'white',
                 fontSize: '14px',
                 fontWeight: 600,
-                cursor: canSearch ? 'pointer' : 'not-allowed',
+                cursor: title.trim() && !loadingQuery ? 'pointer' : 'not-allowed',
                 transition: 'all 0.2s',
-                boxShadow: canSearch ? '0 2px 8px rgba(15, 110, 86, 0.3)' : 'none',
+                boxShadow: title.trim() && !loadingQuery ? '0 2px 8px rgba(15, 110, 86, 0.3)' : 'none',
                 fontFamily: "'DM Sans', sans-serif",
               }}
               onMouseEnter={(e) => {
-                if (canSearch) {
+                if (title.trim() && !loadingQuery) {
                   e.currentTarget.style.background = '#0F6E56';
                   e.currentTarget.style.boxShadow = '0 4px 20px rgba(15, 110, 86, 0.12)';
                   e.currentTarget.style.transform = 'translateY(-2px)';
                 }
               }}
               onMouseLeave={(e) => {
-                if (canSearch) {
+                if (title.trim() && !loadingQuery) {
                   e.currentTarget.style.background = '#1D9E75';
                   e.currentTarget.style.boxShadow = '0 2px 8px rgba(15, 110, 86, 0.3)';
                   e.currentTarget.style.transform = 'translateY(0)';
                 }
               }}
             >
-              {t('search.button.execute')}
+              {loadingQuery ? 'Generando...' : 'Generar Query'}
             </button>
           </div>
         </div>
