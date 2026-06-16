@@ -13,6 +13,7 @@ class SearchService:
         from connectors.openalex import OpenAlexConnector
         from connectors.crossref import CrossrefConnector
         from connectors.arxiv import ArxivConnector
+        from connectors.europepmc import EuropePMCConnector
 
         self.connectors = {
             "pubmed": PubMedConnector(),
@@ -20,6 +21,7 @@ class SearchService:
             "openalex": OpenAlexConnector(),
             "crossref": CrossrefConnector(),
             "arxiv": ArxivConnector(),
+            "europepmc": EuropePMCConnector(),
         }
 
     async def search_all_databases(self, query: str, databases: List[str]) -> List[SearchResult]:

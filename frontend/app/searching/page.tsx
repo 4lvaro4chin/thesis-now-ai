@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import { useAuthProtection } from '@/lib/useAuthProtection';
 import { useTranslation } from '@/lib/useTranslation';
 import { useSearch } from '@/lib/useSearch';
+import { Button } from '@/components/ui/Button';
 
 export default function SearchingPage() {
   useAuthProtection();
@@ -106,21 +108,11 @@ export default function SearchingPage() {
             }}>
               {error}
             </p>
-            <a
-              href="/search"
-              style={{
-                display: 'inline-block',
-                padding: '12px 28px',
-                background: '#1D9E75',
-                color: 'white',
-                textDecoration: 'none',
-                borderRadius: '8px',
-                fontSize: '14px',
-                fontWeight: 500,
-              }}
-            >
-              Back to Search
-            </a>
+            <Link href="/search">
+              <Button variant="primary" size="md">
+                Back to Search
+              </Button>
+            </Link>
           </>
         ) : (
           <>
@@ -159,7 +151,7 @@ export default function SearchingPage() {
                   style={{
                     width: '8px',
                     height: '8px',
-                    backgroundColor: '#5DCAA5',
+                    backgroundColor: 'var(--green-400)',
                     borderRadius: '50%',
                     animation: `bounce 1.4s infinite ease-in-out`,
                     animationDelay: `${i * 0.16}s`,

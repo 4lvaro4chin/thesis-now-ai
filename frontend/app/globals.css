@@ -3,20 +3,31 @@
 @import "tailwindcss";
 
 :root {
-  /* VERDES CORE (3) */
-  --green-500: #1D9E75;
-  --green-700: #0F6E56;
-  --green-900: #04342C;
+  /* VERDES COMPLETOS */
+  --green-50:   #F0FBF7;
+  --green-100:  #E1F5EE;
+  --green-300:  #9FE1CB;
+  --green-400:  #5DCAA5;
+  --green-500:  #1D9E75;
+  --green-700:  #0F6E56;
+  --green-800:  #085041;
+  --green-900:  #04342C;
 
-  /* NEUTRALES CORE (5) */
+  /* NEUTRALES */
   --navy:       #1B2A4A;
   --text:       #2D3748;
   --text-muted: #6B7280;
+  --text-light: #6B7280;
   --border:     #E8EDEB;
   --white:      #FFFFFF;
 
   /* BG */
   --bg:         #F4F6F5;
+
+  /* COLORES SEMÁNTICOS */
+  --error:      #DC2626;
+  --error-bg:   #FEE2E2;
+  --disabled:   #D1D5DB;
 
   /* Fonts */
   --font-sans: 'DM Sans', sans-serif;
@@ -50,4 +61,13 @@ body {
 
 .section-py {
   @apply py-16 sm:py-20 md:py-24;
+}
+
+/* Keyword highlight styling for search results */
+mark {
+  background-color: #FEF08A;
+  color: inherit;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-weight: 600;
 }

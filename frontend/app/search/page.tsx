@@ -14,62 +14,70 @@ interface Token {
 let tokenIdCounter = 0;
 const newTokenId = () => `tk-${tokenIdCounter++}`;
 
-// Database logos
+// Database logos - Official style
 const DatabaseLogos = {
   pubmed: (
     <svg viewBox="0 0 100 100" width="60" height="60" xmlns="http://www.w3.org/2000/svg">
       <rect width="100" height="100" rx="12" fill="#0072BA" />
-      <text x="50" y="60" fontSize="36" fontWeight="bold" fill="white" textAnchor="middle" fontFamily="Arial">
+      <text x="50" y="62" fontSize="48" fontWeight="900" fill="white" textAnchor="middle" fontFamily="Arial, sans-serif">
         P
       </text>
     </svg>
   ),
   semantic_scholar: (
     <svg viewBox="0 0 100 100" width="60" height="60" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="50" cy="50" r="50" fill="#0369A1" />
-      <circle cx="30" cy="35" r="12" fill="#EC4899" />
-      <circle cx="50" cy="25" r="12" fill="#8B5CF6" />
-      <circle cx="70" cy="35" r="12" fill="#06B6D4" />
-      <circle cx="40" cy="55" r="12" fill="#10B981" />
-      <circle cx="60" cy="55" r="12" fill="#F59E0B" />
-      <circle cx="50" cy="75" r="12" fill="#EF4444" />
+      <rect width="100" height="100" fill="#0369A1" />
+      <circle cx="30" cy="30" r="14" fill="#EC4899" />
+      <circle cx="50" cy="18" r="14" fill="#8B5CF6" />
+      <circle cx="70" cy="30" r="14" fill="#06B6D4" />
+      <circle cx="38" cy="60" r="14" fill="#10B981" />
+      <circle cx="62" cy="60" r="14" fill="#F59E0B" />
+      <circle cx="50" cy="82" r="14" fill="#EF4444" />
     </svg>
   ),
   sciencedirect: (
     <svg viewBox="0 0 100 100" width="60" height="60" xmlns="http://www.w3.org/2000/svg">
-      <rect width="100" height="100" rx="12" fill="#E85C0D" />
-      <path d="M 30 40 L 50 30 L 70 40 L 70 70 Q 50 80 30 70 Z" fill="white" opacity="0.9" />
+      <rect width="100" height="100" rx="8" fill="#E85C0D" />
+      <path d="M 20 50 Q 20 30 35 25 L 65 25 Q 80 30 80 50 Q 80 70 65 75 L 35 75 Q 20 70 20 50" fill="white" />
     </svg>
   ),
   arxiv: (
     <svg viewBox="0 0 100 100" width="60" height="60" xmlns="http://www.w3.org/2000/svg">
-      <rect width="100" height="100" rx="12" fill="#B91C1C" />
-      <text x="50" y="65" fontSize="32" fontWeight="bold" fill="white" textAnchor="middle" fontFamily="Georgia">
+      <rect width="100" height="100" rx="8" fill="#B91C1C" />
+      <text x="50" y="68" fontSize="56" fontWeight="bold" fill="white" textAnchor="middle" fontFamily="Georgia, serif">
         a
       </text>
     </svg>
   ),
   google_scholar: (
     <svg viewBox="0 0 100 100" width="60" height="60" xmlns="http://www.w3.org/2000/svg">
-      <rect width="100" height="100" rx="12" fill="#4285F4" />
-      <path d="M 50 25 L 65 40 L 65 70 Q 50 78 35 70 L 35 40 Z" fill="white" />
-      <circle cx="50" cy="35" r="6" fill="#EA4335" />
+      <rect width="100" height="100" rx="8" fill="#4285F4" />
+      <path d="M 50 25 L 68 42 L 68 75 Q 50 85 32 75 L 32 42 Z" fill="white" />
+      <circle cx="50" cy="38" r="8" fill="#EA4335" />
     </svg>
   ),
   openalex: (
     <svg viewBox="0 0 100 100" width="60" height="60" xmlns="http://www.w3.org/2000/svg">
-      <rect width="100" height="100" rx="12" fill="#003366" />
-      <text x="50" y="65" fontSize="28" fontWeight="bold" fill="white" textAnchor="middle" fontFamily="Arial">
+      <rect width="100" height="100" rx="8" fill="#003D82" />
+      <path d="M 25 50 L 50 25 L 75 50 L 75 75 L 25 75 Z" fill="white" />
+      <text x="50" y="62" fontSize="18" fontWeight="bold" fill="#003D82" textAnchor="middle">
         OA
       </text>
     </svg>
   ),
   crossref: (
     <svg viewBox="0 0 100 100" width="60" height="60" xmlns="http://www.w3.org/2000/svg">
-      <rect width="100" height="100" rx="12" fill="#159B5E" />
-      <text x="50" y="65" fontSize="24" fontWeight="bold" fill="white" textAnchor="middle" fontFamily="Arial">
-        CR
-      </text>
+      <rect width="100" height="100" rx="8" fill="#159B5E" />
+      <line x1="35" y1="35" x2="65" y2="65" stroke="white" strokeWidth="6" />
+      <line x1="65" y1="35" x2="35" y2="65" stroke="white" strokeWidth="6" />
+    </svg>
+  ),
+  europepmc: (
+    <svg viewBox="0 0 100 100" width="60" height="60" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" rx="8" fill="#D97706" />
+      <circle cx="35" cy="50" r="12" fill="none" stroke="white" strokeWidth="4" />
+      <circle cx="65" cy="50" r="12" fill="none" stroke="white" strokeWidth="4" />
+      <line x1="47" y1="50" x2="53" y2="50" stroke="white" strokeWidth="4" />
     </svg>
   ),
 };
@@ -183,9 +191,9 @@ const computeNegation = (tokens: Token[]): boolean[] => {
 };
 
 // Colores de marca mejorados para fondo oscuro
-const GREEN = { bg: 'rgba(29, 158, 117, 0.2)', bgHover: 'rgba(29, 158, 117, 0.3)', border: '#5DCAA5', text: '#9FE1CB' };
+const GREEN = { bg: 'rgba(29, 158, 117, 0.2)', bgHover: 'rgba(29, 158, 117, 0.3)', border: 'var(--green-400)', text: 'var(--green-300)' };
 const BLUE = { bg: 'rgba(27, 111, 168, 0.2)', bgHover: 'rgba(27, 111, 168, 0.3)', border: '#4B8FC7', text: '#93C5E6' };
-const RED = { bg: 'rgba(163, 56, 32, 0.25)', bgHover: 'rgba(163, 56, 32, 0.35)', border: '#DC2626', text: '#FCA5A5' };
+const RED = { bg: 'rgba(163, 56, 32, 0.25)', bgHover: 'rgba(163, 56, 32, 0.35)', border: 'var(--error)', text: '#FCA5A5' };
 
 export default function SearchPage() {
   useAuthProtection();
@@ -197,6 +205,7 @@ export default function SearchPage() {
   const [selectedDatabases, setSelectedDatabases] = useState<Record<string, boolean>>({
     pubmed: true,
     semantic_scholar: true,
+    europepmc: true,
     openalex: true,
     crossref: true,
     arxiv: true,
@@ -212,11 +221,23 @@ export default function SearchPage() {
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  // Load initial title from URL parameter
+  // Load initial title, query, and step from URL parameters
   useEffect(() => {
     const initialTitle = searchParams.get('initialTitle');
+    const booleanQueryParam = searchParams.get('booleanQuery');
+    const stepParam = searchParams.get('step');
+
     if (initialTitle) {
       setTitle(decodeURIComponent(initialTitle));
+    }
+    if (booleanQueryParam) {
+      const decoded = decodeURIComponent(booleanQueryParam);
+      const parsed = tokenize(decoded);
+      setTokens(parsed);
+      setQueryGenerated(true);
+      if (stepParam === '2') {
+        setCurrentStep(2);
+      }
     }
   }, [searchParams]);
 
@@ -424,22 +445,22 @@ export default function SearchPage() {
 
   // Step indicator component
   const StepIndicator = () => (
-    <div style={{ background: '#F9FAFB', padding: '20px 48px', borderBottom: '1px solid #E8EDEB', marginBottom: '40px' }}>
+    <div style={{ background: '#F9FAFB', padding: '20px 48px', borderBottom: '1px solid var(--border)', marginBottom: '40px' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-          {(['Thesis Title', 'Boolean Query', 'Select Databases'] as const).map((label, idx) => {
-            const stepNum = idx + 1 as 1 | 2 | 3;
+          {([1, 2, 3] as const).map((stepNum) => {
             const isActive = currentStep === stepNum;
             const isCompleted = currentStep > stepNum;
+            const labelKey = `search.step.indicator.${stepNum}` as const;
 
             return (
-              <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
+              <div key={stepNum} style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
                 <div
                   style={{
                     width: '36px',
                     height: '36px',
                     borderRadius: '50%',
-                    background: isActive || isCompleted ? '#1D9E75' : '#E5E7EB',
+                    background: isActive || isCompleted ? 'var(--green-500)' : '#E5E7EB',
                     color: 'white',
                     fontSize: '14px',
                     fontWeight: 600,
@@ -451,14 +472,14 @@ export default function SearchPage() {
                 >
                   {isCompleted ? '✓' : stepNum}
                 </div>
-                <span style={{ fontSize: '13px', fontWeight: 500, color: isActive ? '#1D9E75' : '#6B7280' }}>
-                  {label}
+                <span style={{ fontSize: '13px', fontWeight: 500, color: isActive ? 'var(--green-500)' : 'var(--text-muted)' }}>
+                  {t(labelKey)}
                 </span>
-                {idx < 2 && (
+                {stepNum < 3 && (
                   <div
                     style={{
                       height: '2px',
-                      background: isCompleted ? '#1D9E75' : '#E5E7EB',
+                      background: isCompleted ? 'var(--green-500)' : '#E5E7EB',
                       flex: 1,
                       marginLeft: '12px',
                     }}
@@ -472,16 +493,46 @@ export default function SearchPage() {
     </div>
   );
 
+  // Thesis Title Header component
+  const ThesisTitleHeader = () => {
+    if (!title.trim()) return null;
+    return (
+      <div style={{
+        background: '#F9FAFB',
+        borderBottom: '1px solid var(--border)',
+        padding: '16px 48px',
+        marginBottom: '40px',
+      }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '6px', letterSpacing: '0.08em' }}>
+            {t('search.step2.label')}
+          </p>
+          <h2 style={{
+            fontSize: 'clamp(18px, 2vw, 24px)',
+            fontWeight: 600,
+            color: 'var(--navy)',
+            lineHeight: 1.4,
+            margin: 0,
+            wordBreak: 'break-word',
+          }}>
+            {title}
+          </h2>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div style={{ minHeight: '100vh', background: '#FFFFFF', paddingTop: '72px', paddingBottom: '100px' }}>
       <StepIndicator />
+      <ThesisTitleHeader />
 
       {/* STEP 1: THESIS TITLE */}
       <div
         style={{
           display: currentStep !== 1 ? 'none' : 'block',
-          background: 'linear-gradient(135deg, #F0FBF7 0%, #E8F8F4 100%)',
-          borderBottom: '1px solid #E1F5EE',
+          background: 'linear-gradient(135deg, var(--green-50) 0%, #E8F8F4 100%)',
+          borderBottom: '1px solid var(--green-100)',
           padding: '64px 48px',
           marginBottom: '60px',
         }}
@@ -493,7 +544,7 @@ export default function SearchPage() {
               fontWeight: 600,
               textTransform: 'uppercase',
               letterSpacing: '0.12em',
-              color: '#1D9E75',
+              color: 'var(--green-500)',
               marginBottom: '16px',
             }}
           >
@@ -504,7 +555,7 @@ export default function SearchPage() {
               fontFamily: "'DM Sans', sans-serif",
               fontSize: 'clamp(32px, 5vw, 48px)',
               fontWeight: 700,
-              color: '#04342C',
+              color: 'var(--green-900)',
               letterSpacing: '-0.7px',
               lineHeight: 1.2,
               marginBottom: '16px',
@@ -515,7 +566,7 @@ export default function SearchPage() {
           <p
             style={{
               fontSize: '16px',
-              color: '#6B7280',
+              color: 'var(--text-muted)',
               lineHeight: 1.6,
               marginBottom: '40px',
             }}
@@ -531,13 +582,13 @@ export default function SearchPage() {
                 fontFamily: "'DM Sans', sans-serif",
                 fontSize: '12px',
                 fontWeight: 600,
-                color: '#1B2A4A',
+                color: 'var(--navy)',
                 marginBottom: '12px',
                 textTransform: 'uppercase',
                 letterSpacing: '0.5px',
               }}
             >
-              {t('search.section.title')}
+              {t('search.step2.label')}
             </label>
             <input
               type="text"
@@ -548,7 +599,7 @@ export default function SearchPage() {
                 width: '100%',
                 padding: '16px 20px',
                 fontSize: '15px',
-                border: title.trim() ? '2px solid #1D9E75' : '1.5px solid #E8EDEB',
+                border: title.trim() ? '2px solid #1D9E75' : '1.5px solid var(--border)',
                 borderRadius: '12px',
                 fontFamily: "'DM Sans', sans-serif",
                 boxSizing: 'border-box',
@@ -557,11 +608,11 @@ export default function SearchPage() {
                 color: '#1F2937',
               }}
               onFocus={(e) => {
-                e.currentTarget.style.borderColor = '#1D9E75';
+                e.currentTarget.style.borderColor = 'var(--green-500)';
                 e.currentTarget.style.boxShadow = '0 0 0 4px rgba(29, 158, 117, 0.1)';
               }}
               onBlur={(e) => {
-                e.currentTarget.style.borderColor = title.trim() ? '#1D9E75' : '#E8EDEB';
+                e.currentTarget.style.borderColor = title.trim() ? 'var(--green-500)' : 'var(--border)';
                 e.currentTarget.style.boxShadow = 'none';
               }}
             />
@@ -572,33 +623,34 @@ export default function SearchPage() {
               style={{
                 marginTop: '16px',
                 padding: '12px 32px',
-                background: title.trim() && !loadingQuery ? '#1D9E75' : '#D1D5DB',
+                background: title.trim() && !loadingQuery ? 'var(--green-500)' : 'var(--disabled)',
                 border: 'none',
                 borderRadius: '8px',
-                color: 'white',
+                color: title.trim() && !loadingQuery ? 'white' : 'var(--text-muted)',
                 fontSize: '14px',
                 fontWeight: 600,
                 cursor: title.trim() && !loadingQuery ? 'pointer' : 'not-allowed',
                 transition: 'all 0.2s',
                 boxShadow: title.trim() && !loadingQuery ? '0 2px 8px rgba(15, 110, 86, 0.3)' : 'none',
                 fontFamily: "'DM Sans', sans-serif",
+                outline: 'none',
               }}
               onMouseEnter={(e) => {
                 if (title.trim() && !loadingQuery) {
-                  e.currentTarget.style.background = '#0F6E56';
+                  e.currentTarget.style.background = 'var(--green-700)';
                   e.currentTarget.style.boxShadow = '0 4px 20px rgba(15, 110, 86, 0.12)';
                   e.currentTarget.style.transform = 'translateY(-2px)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (title.trim() && !loadingQuery) {
-                  e.currentTarget.style.background = '#1D9E75';
+                  e.currentTarget.style.background = 'var(--green-500)';
                   e.currentTarget.style.boxShadow = '0 2px 8px rgba(15, 110, 86, 0.3)';
                   e.currentTarget.style.transform = 'translateY(0)';
                 }
               }}
             >
-              {loadingQuery ? 'Generando...' : 'Generar Query'}
+              {loadingQuery ? t('search.button.generating') : t('search.button.generateQuery')}
             </button>
           </div>
         </div>
@@ -610,7 +662,7 @@ export default function SearchPage() {
         <div
           style={{
             display: currentStep !== 2 ? 'none' : 'block',
-            background: '#04342C',
+            background: 'var(--green-900)',
             border: '1px solid #0F6E56',
             borderRadius: '12px',
             padding: '24px',
@@ -621,13 +673,13 @@ export default function SearchPage() {
             style={{
               fontSize: '11px',
               fontWeight: 600,
-              color: '#9FE1CB',
+              color: 'var(--green-300)',
               marginBottom: '16px',
               textTransform: 'uppercase',
               letterSpacing: '0.5px',
             }}
           >
-            🔨 Query Booleana Generada {loadingQuery && '· generando...'}
+            {t('search.step2.queryTitle')} {loadingQuery && t('search.step2.queryGenerating')}
           </p>
 
           {/* Token Blocks */}
@@ -646,8 +698,8 @@ export default function SearchPage() {
             }}
           >
             {tokens.length === 0 ? (
-              <span style={{ color: '#9FE1CB', fontSize: '13px' }}>
-                Ingresa un título para generar la query...
+              <span style={{ color: 'var(--green-300)', fontSize: '13px' }}>
+                {t('search.step2.empty')}
               </span>
             ) : (
               tokens.map((token, idx) => {
@@ -768,7 +820,7 @@ export default function SearchPage() {
                           background: 'rgba(163, 56, 32, 0.25)',
                           color: '#FCA5A5',
                           borderRadius: '4px',
-                          border: '1.5px solid #DC2626',
+                          border: '1.5px solid var(--error)',
                           display: 'inline-block',
                         }}
                       >
@@ -782,7 +834,7 @@ export default function SearchPage() {
                         style={{
                           fontSize: '18px',
                           fontWeight: 700,
-                          color: negated[idx] ? '#EF5350' : '#5DCAA5',
+                          color: negated[idx] ? '#EF5350' : 'var(--green-400)',
                           fontFamily: 'monospace',
                           padding: '0 2px',
                           display: 'inline-block',
@@ -821,7 +873,7 @@ export default function SearchPage() {
                             transition: 'all 0.2s',
                           }}
                           onMouseEnter={(e) => {
-                            e.currentTarget.style.background = '#DC2626';
+                            e.currentTarget.style.background = 'var(--error)';
                           }}
                           onMouseLeave={(e) => {
                             e.currentTarget.style.background = '#EF4444';
@@ -842,10 +894,10 @@ export default function SearchPage() {
                               left: '-7px',
                               width: '16px',
                               height: '16px',
-                              background: '#5DCAA5',
+                              background: 'var(--green-400)',
                               border: 'none',
                               borderRadius: '50%',
-                              color: '#04342C',
+                              color: 'var(--green-900)',
                               cursor: 'pointer',
                               fontSize: '9px',
                               padding: 0,
@@ -872,10 +924,10 @@ export default function SearchPage() {
                               left: '-7px',
                               width: '16px',
                               height: '16px',
-                              background: token.type === 'and' ? '#5DCAA5' : '#93C5E6',
+                              background: token.type === 'and' ? 'var(--green-400)' : '#93C5E6',
                               border: 'none',
                               borderRadius: '50%',
-                              color: '#04342C',
+                              color: 'var(--green-900)',
                               cursor: 'pointer',
                               fontSize: '8px',
                               fontWeight: 700,
@@ -905,7 +957,7 @@ export default function SearchPage() {
                 padding: '6px 12px',
                 background: 'rgba(159, 225, 203, 0.15)',
                 border: '1px solid rgba(159, 225, 203, 0.3)',
-                color: '#9FE1CB',
+                color: 'var(--green-300)',
                 borderRadius: '6px',
                 fontSize: '12px',
                 fontWeight: 500,
@@ -927,7 +979,7 @@ export default function SearchPage() {
                 padding: '6px 12px',
                 background: 'rgba(93, 202, 165, 0.2)',
                 border: '1px solid #5DCAA5',
-                color: '#9FE1CB',
+                color: 'var(--green-300)',
                 borderRadius: '6px',
                 fontSize: '12px',
                 fontWeight: 500,
@@ -970,7 +1022,7 @@ export default function SearchPage() {
               style={{
                 padding: '6px 12px',
                 background: 'rgba(163, 56, 32, 0.15)',
-                border: '1px solid #DC2626',
+                border: '1px solid var(--error)',
                 color: '#FCA5A5',
                 borderRadius: '6px',
                 fontSize: '12px',
@@ -993,7 +1045,7 @@ export default function SearchPage() {
                 padding: '6px 12px',
                 background: 'rgba(159, 225, 203, 0.1)',
                 border: '1px solid rgba(159, 225, 203, 0.3)',
-                color: '#9FE1CB',
+                color: 'var(--green-300)',
                 borderRadius: '6px',
                 fontSize: '12px',
                 fontWeight: 600,
@@ -1012,9 +1064,8 @@ export default function SearchPage() {
             </button>
           </div>
 
-          <p style={{ fontSize: '11px', color: '#9FE1CB', marginBottom: '0', lineHeight: 1.5, opacity: 0.8 }}>
-            💡 Clic = seleccionar (inserta bloques después). Arrastrar = reordenar.
-            Hover: editar (✎), alternar AND/OR (⇄), eliminar (✕).
+          <p style={{ fontSize: '11px', color: 'var(--green-300)', marginBottom: '0', lineHeight: 1.5, opacity: 0.8 }}>
+            💡 {t('search.step2.hint')}
           </p>
         </div>
 
@@ -1033,20 +1084,20 @@ export default function SearchPage() {
           <div
             style={{
               background: '#FFFFFF',
-              border: '1px solid #E1F5EE',
+              border: '1px solid var(--green-100)',
               borderRadius: '8px',
               padding: '12px',
               fontFamily: 'monospace',
               fontSize: '12px',
               lineHeight: 1.6,
-              color: '#04342C',
+              color: 'var(--green-900)',
               wordBreak: 'break-word',
             }}
           >
-            <p style={{ margin: 0, color: '#6B7280', fontSize: '11px', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 600 }}>
-              📋 Query ejecutará
+            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '11px', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 600 }}>
+              {t('search.step2.queryWillExecute')}
             </p>
-            <p style={{ margin: 0, color: '#04342C', fontWeight: 600 }}>
+            <p style={{ margin: 0, color: 'var(--green-900)', fontWeight: 600 }}>
               {getFinalQuery() || '(ingresa términos para generar query)'}
             </p>
           </div>
@@ -1066,7 +1117,7 @@ export default function SearchPage() {
                 fontFamily: "'DM Sans', sans-serif",
               }}
             >
-              💬 <strong style={{ color: '#D97706' }}>En lenguaje natural:</strong>{' '}
+              💬 <strong style={{ color: '#D97706' }}>{t('search.step2.naturalLanguage')}</strong>{' '}
               {getNaturalDescription()}
             </div>
           )}
@@ -1076,7 +1127,7 @@ export default function SearchPage() {
         <div
           style={{
             display: currentStep !== 3 ? 'none' : 'block',
-            background: 'linear-gradient(135deg, #F0FBF7 0%, #E1F5EE 100%)',
+            background: 'linear-gradient(135deg, var(--green-50) 0%, var(--green-100) 100%)',
             border: 'none',
             borderRadius: '16px',
             padding: '48px 40px',
@@ -1100,30 +1151,17 @@ export default function SearchPage() {
           />
 
           <div style={{ position: 'relative', zIndex: 1 }}>
-            <p
-              style={{
-                fontSize: '12px',
-                fontWeight: 700,
-                color: '#0F6E56',
-                marginBottom: '12px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.8px',
-                margin: '0 0 8px 0',
-              }}
-            >
-              ● DÓNDE BUSCAR
-            </p>
             <h3
               style={{
                 fontSize: '28px',
                 fontWeight: 700,
-                color: '#1B2A4A',
+                color: 'var(--navy)',
                 marginBottom: '32px',
                 margin: '0 0 32px 0',
                 letterSpacing: '-0.5px',
               }}
             >
-              Selecciona tus bases de datos
+              {t('search.step3.selectDatabases')}
             </h3>
 
             <div
@@ -1134,18 +1172,20 @@ export default function SearchPage() {
               }}
             >
             {[
-              { id: 'pubmed', label: 'PubMed', desc: 'Medicina, ciencias de la salud', available: true },
-              { id: 'semantic_scholar', label: 'Semantic Scholar', desc: 'Multidisciplinario, académico', available: true },
-              { id: 'openalex', label: 'OpenAlex', desc: 'Multidisciplinario, acceso abierto', available: true },
-              { id: 'crossref', label: 'Crossref', desc: 'Índice global de DOIs - 130M+ artículos', available: true },
-              { id: 'arxiv', label: 'arXiv', desc: 'Preprints: Física, Matemáticas, CS', available: true },
-              { id: 'sciencedirect', label: 'ScienceDirect', desc: 'Ciencias, tecnología', available: false },
-              { id: 'google_scholar', label: 'Google Scholar', desc: 'Búsqueda académica global', available: false },
+              { id: 'pubmed', label: 'PubMed', descKey: 'search.db.pubmed.desc', available: true },
+              { id: 'semantic_scholar', label: 'Semantic Scholar', descKey: 'search.db.semantic_scholar.desc', available: true },
+              { id: 'europepmc', label: 'Europe PMC', descKey: 'search.db.europepmc.desc', available: true },
+              { id: 'openalex', label: 'OpenAlex', descKey: 'search.db.openalex.desc', available: true },
+              { id: 'crossref', label: 'Crossref', descKey: 'search.db.crossref.desc', available: true },
+              { id: 'arxiv', label: 'arXiv', descKey: 'search.db.arxiv.desc', available: true },
+              { id: 'sciencedirect', label: 'ScienceDirect', descKey: 'search.db.sciencedirect.desc', available: false },
+              { id: 'google_scholar', label: 'Google Scholar', descKey: 'search.db.google_scholar.desc', available: false },
             ].map((db) => {
               const isSelected = selectedDatabases[db.id];
               const logoMap: Record<string, React.ReactNode> = {
                 pubmed: DatabaseLogos.pubmed,
                 semantic_scholar: DatabaseLogos.semantic_scholar,
+                europepmc: DatabaseLogos.europepmc,
                 openalex: DatabaseLogos.openalex,
                 crossref: DatabaseLogos.crossref,
                 arxiv: DatabaseLogos.arxiv,
@@ -1164,7 +1204,7 @@ export default function SearchPage() {
                     cursor: db.available ? 'pointer' : 'not-allowed',
                     padding: '32px 28px',
                     borderRadius: '14px',
-                    border: isSelected ? '2px solid #1D9E75' : db.available ? '2px solid #E1F5EE' : '2px solid #FECDD3',
+                    border: isSelected ? '2px solid #1D9E75' : db.available ? '2px solid var(--green-100)' : '2px solid #FECDD3',
                     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                     background: isSelected ? '#FFFFFF' : db.available ? '#FFFFFF' : '#FEF2F2',
                     boxShadow: isSelected
@@ -1197,7 +1237,7 @@ export default function SearchPage() {
                         position: 'absolute',
                         top: '8px',
                         right: '8px',
-                        background: '#DC2626',
+                        background: 'var(--error)',
                         color: 'white',
                         padding: '4px 8px',
                         borderRadius: '4px',
@@ -1230,7 +1270,7 @@ export default function SearchPage() {
                       width: '24px',
                       height: '24px',
                       cursor: db.available ? 'pointer' : 'not-allowed',
-                      accentColor: '#1D9E75',
+                      accentColor: 'var(--green-500)',
                       opacity: db.available ? 1 : 0.5,
                     }}
                   />
@@ -1241,7 +1281,7 @@ export default function SearchPage() {
                       style={{
                         fontSize: '15px',
                         fontWeight: 700,
-                        color: isSelected ? '#0F6E56' : db.available ? '#1B2A4A' : '#A1A1A1',
+                        color: isSelected ? 'var(--green-700)' : db.available ? 'var(--navy)' : '#A1A1A1',
                         marginBottom: '6px',
                       }}
                     >
@@ -1250,11 +1290,11 @@ export default function SearchPage() {
                     <div
                       style={{
                         fontSize: '12px',
-                        color: isSelected ? '#1D9E75' : db.available ? '#6B7280' : '#D1D5DB',
+                        color: isSelected ? 'var(--green-500)' : db.available ? 'var(--text-muted)' : 'var(--disabled)',
                         lineHeight: 1.5,
                       }}
                     >
-                      {db.available ? db.desc : 'Disponible con pago'}
+                      {db.available ? t(db.descKey) : 'Disponible con pago'}
                     </div>
                   </div>
                 </label>
@@ -1271,10 +1311,10 @@ export default function SearchPage() {
           style={{
             display: currentStep !== 3 ? 'none' : 'block',
             padding: '14px 40px',
-            background: canSearch ? '#1D9E75' : '#D1D5DB',
+            background: canSearch ? 'var(--green-500)' : 'var(--disabled)',
             border: 'none',
             borderRadius: '8px',
-            color: 'white',
+            color: canSearch ? 'white' : 'var(--text-muted)',
             fontSize: '15px',
             fontWeight: 600,
             cursor: canSearch ? 'pointer' : 'not-allowed',
@@ -1282,17 +1322,18 @@ export default function SearchPage() {
             boxShadow: canSearch ? '0 2px 8px rgba(15, 110, 86, 0.3)' : 'none',
             fontFamily: "'DM Sans', sans-serif",
             width: '100%',
+            outline: 'none',
           }}
           onMouseEnter={(e) => {
             if (canSearch) {
-              e.currentTarget.style.background = '#0F6E56';
+              e.currentTarget.style.background = 'var(--green-700)';
               e.currentTarget.style.boxShadow = '0 4px 20px rgba(15, 110, 86, 0.12)';
               e.currentTarget.style.transform = 'translateY(-2px)';
             }
           }}
           onMouseLeave={(e) => {
             if (canSearch) {
-              e.currentTarget.style.background = '#1D9E75';
+              e.currentTarget.style.background = 'var(--green-500)';
               e.currentTarget.style.boxShadow = '0 2px 8px rgba(15, 110, 86, 0.3)';
               e.currentTarget.style.transform = 'translateY(0)';
             }
@@ -1311,7 +1352,7 @@ export default function SearchPage() {
               padding: '12px 32px',
               background: '#FFFFFF',
               border: '2px solid #1D9E75',
-              color: '#1D9E75',
+              color: 'var(--green-500)',
               borderRadius: '8px',
               fontSize: '14px',
               fontWeight: 600,
@@ -1328,17 +1369,17 @@ export default function SearchPage() {
               e.currentTarget.style.transform = 'translateY(0)';
             }}
           >
-            ← Atrás
+            {t('search.button.back')}
           </button>
         )}
-        {currentStep < 3 && (
+        {currentStep < 3 && currentStep !== 1 && (
           <button
             onClick={handleNextStep}
             disabled={currentStep === 1 && !queryGenerated}
             style={{
               padding: '12px 32px',
-              background: currentStep === 1 && !queryGenerated ? '#D1D5DB' : '#1D9E75',
-              color: 'white',
+              background: currentStep === 1 && !queryGenerated ? 'var(--disabled)' : 'var(--green-500)',
+              color: currentStep === 1 && !queryGenerated ? 'var(--text-muted)' : 'white',
               border: 'none',
               borderRadius: '8px',
               fontSize: '14px',
@@ -1347,23 +1388,24 @@ export default function SearchPage() {
               transition: 'all 0.2s',
               fontFamily: "'DM Sans', sans-serif",
               boxShadow: currentStep === 1 && !queryGenerated ? 'none' : '0 2px 8px rgba(15, 110, 86, 0.3)',
+              outline: 'none',
             }}
             onMouseEnter={(e) => {
               if (!(currentStep === 1 && !queryGenerated)) {
-                e.currentTarget.style.background = '#0F6E56';
+                e.currentTarget.style.background = 'var(--green-700)';
                 e.currentTarget.style.boxShadow = '0 4px 20px rgba(15, 110, 86, 0.12)';
                 e.currentTarget.style.transform = 'translateY(-2px)';
               }
             }}
             onMouseLeave={(e) => {
               if (!(currentStep === 1 && !queryGenerated)) {
-                e.currentTarget.style.background = '#1D9E75';
+                e.currentTarget.style.background = 'var(--green-500)';
                 e.currentTarget.style.boxShadow = '0 2px 8px rgba(15, 110, 86, 0.3)';
                 e.currentTarget.style.transform = 'translateY(0)';
               }
             }}
           >
-            Siguiente →
+            {t('search.button.next')}
           </button>
         )}
       </div>

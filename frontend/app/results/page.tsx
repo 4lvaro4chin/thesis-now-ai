@@ -1,11 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useAuthProtection } from '@/lib/useAuthProtection';
 import { useTranslation } from '@/lib/useTranslation';
 import { useSavedPublications } from '@/lib/useSavedPublications';
 import { StarRating } from '@/components/ui/StarRating';
+import { BooleanTag } from '@/components/ui/BooleanTag';
+import { Button } from '@/components/ui/Button';
 import type { SearchResult } from '@/lib/useSearch';
 
 export default function ResultsPage() {
@@ -133,7 +136,7 @@ export default function ResultsPage() {
   };
 
   const getRelevanceColor = (score: number) => {
-    if (score >= 0.8) return { bg: '#E1F5EE', text: '#0F6E56' };
+    if (score >= 0.8) return { bg: 'var(--green-100)', text: '#0F6E56' };
     if (score >= 0.5) return { bg: '#EBF4FD', text: '#1B6FA8' };
     return { bg: '#FEF0EC', text: '#A33820' };
   };
@@ -149,10 +152,12 @@ export default function ResultsPage() {
   };
 
   const extractKeywords = (query: string): string[] => {
-    // Remove boolean operators and parentheses, extract unique terms
+    // Remove boolean operators, parentheses, quotes, and wildcards
     const cleaned = query
       .replace(/\(|\)/g, ' ')
       .replace(/\bAND\b|\bOR\b|\bNOT\b/gi, ' ')
+      .replace(/"/g, '')     // Remove quote marks from phrases
+      .replace(/\*/g, '')    // Remove truncation wildcards
       .trim();
 
     const terms = cleaned
@@ -164,16 +169,41 @@ export default function ResultsPage() {
     return terms;
   };
 
+  const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
   const highlightKeywords = (text: string, keywords: string[]) => {
     if (!text || keywords.length === 0) return text;
 
     let result = text;
     keywords.forEach((keyword) => {
-      const regex = new RegExp(`(${keyword})`, 'gi');
+      const regex = new RegExp(`(${escapeRegex(keyword)})`, 'gi');
       result = result.replace(regex, '<mark>$1</mark>');
     });
 
     return result;
+  };
+
+  type TokenType = 'AND' | 'OR' | 'NOT' | 'TRUNC' | 'term' | 'paren';
+  const parseBooleanQuery = (query: string): { type: TokenType; value: string }[] => {
+    const tokens: { type: TokenType; value: string }[] = [];
+    const re = /\(|\)|"[^"]*"|[^\s()]+/g;
+    for (const match of query.matchAll(re)) {
+      const s = match[0];
+      if (s === '(' || s === ')') {
+        tokens.push({ type: 'paren', value: s });
+      } else if (/^AND$/i.test(s)) {
+        tokens.push({ type: 'AND', value: 'AND' });
+      } else if (/^OR$/i.test(s)) {
+        tokens.push({ type: 'OR', value: 'OR' });
+      } else if (/^NOT$/i.test(s)) {
+        tokens.push({ type: 'NOT', value: 'NOT' });
+      } else if (s.includes('*')) {
+        tokens.push({ type: 'TRUNC', value: s });
+      } else {
+        tokens.push({ type: 'term', value: s.replace(/^"|"$/g, '') });
+      }
+    }
+    return tokens;
   };
 
   const handleSaveClick = (article: SearchResult) => {
@@ -259,15 +289,15 @@ export default function ResultsPage() {
   const getSortLabel = (): string => {
     switch (sortBy) {
       case 'relevance':
-        return 'Ordenar por: Relevancia ↓';
+        return t('results.sort.relevance');
       case 'citations':
-        return 'Ordenar por: Citaciones ↓';
+        return t('results.sort.citations');
       case 'year':
-        return 'Ordenar por: Año reciente ↓';
+        return t('results.sort.yearRecent');
       case 'title':
-        return 'Ordenar por: Título A-Z';
+        return t('results.sort.titleAZ');
       default:
-        return 'Ordenar por';
+        return t('results.sortBy');
     }
   };
 
@@ -393,17 +423,19 @@ export default function ResultsPage() {
       <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 48px' }}>
         {error ? (
           <div style={{ textAlign: 'center', paddingTop: '48px' }}>
-            <h2 style={{ color: '#DC2626', marginBottom: '16px' }}>Error</h2>
-            <p style={{ color: '#6B7280' }}>{error}</p>
-            <a href="/search" style={{ marginTop: '24px', display: 'inline-block', padding: '10px 20px', background: '#1D9E75', color: 'white', textDecoration: 'none', borderRadius: '8px' }}>
-              Back to Search
-            </a>
+            <h2 style={{ color: 'var(--error)', marginBottom: '16px' }}>Error</h2>
+            <p style={{ color: '#6B7280', marginBottom: '24px' }}>{error}</p>
+            <Link href="/search">
+              <Button variant="primary" size="md">
+                Back to Search
+              </Button>
+            </Link>
           </div>
         ) : (
           <>
             {/* Back Button */}
-            <a
-              href="/search"
+            <Link
+              href={`/search?initialTitle=${encodeURIComponent(thesisTitle)}&booleanQuery=${encodeURIComponent(booleanQuery)}&step=2`}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -417,7 +449,33 @@ export default function ResultsPage() {
               }}
             >
               ← {t('results.back') || 'Back to Search'}
-            </a>
+            </Link>
+
+            {/* Thesis Title Header */}
+            {thesisTitle && (
+              <div style={{
+                background: '#F9FAFB',
+                borderBottom: '1px solid var(--border)',
+                marginLeft: '-48px',
+                marginRight: '-48px',
+                padding: '16px 48px',
+                marginBottom: '40px',
+              }}>
+                <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '6px', letterSpacing: '0.08em', margin: 0 }}>
+                  {t('search.step2.label')}
+                </p>
+                <h2 style={{
+                  fontSize: 'clamp(18px, 2vw, 24px)',
+                  fontWeight: 600,
+                  color: 'var(--navy)',
+                  lineHeight: 1.4,
+                  margin: 0,
+                  wordBreak: 'break-word',
+                }}>
+                  {thesisTitle}
+                </h2>
+              </div>
+            )}
 
             {/* Header */}
             <div className="fade-in" style={{ marginBottom: '48px' }}>
@@ -436,17 +494,11 @@ export default function ResultsPage() {
                 {t('results.subtitle')} <span style={{ fontWeight: 600, color: '#1B2A4A' }}>{results.length}</span> {t('results.articles')}
               </p>
               {booleanQuery && (
-                <div style={{
-                  background: '#F0FBF7',
-                  border: '1px solid #E1F5EE',
-                  borderRadius: '8px',
-                  padding: '12px 16px',
-                  fontSize: '13px',
-                  color: '#0F6E56',
-                  fontFamily: 'monospace',
-                  marginBottom: '16px',
-                }}>
-                  <strong>Query:</strong> {booleanQuery}
+                <div className="bg-green-50 border border-green-100 rounded-lg px-4 py-3 mb-4 flex flex-wrap items-center gap-1.5">
+                  <span className="text-xs font-semibold text-green-700 mr-1">Query:</span>
+                  {parseBooleanQuery(booleanQuery).map((token, i) => (
+                    <BooleanTag key={i} type={token.type} value={token.value} />
+                  ))}
                 </div>
               )}
 
@@ -468,7 +520,7 @@ export default function ResultsPage() {
               {/* Sort Dropdown */}
               <div style={{ marginTop: '32px', paddingTop: '24px', borderTop: '1px solid #E8EDEB' }}>
                 <label style={{ fontSize: '12px', fontWeight: 600, color: '#1B2A4A', display: 'block', marginBottom: '8px', textTransform: 'uppercase' }}>
-                  Ordenar por
+                  {t('results.sortBy')}
                 </label>
                 <select
                   value={sortBy}
@@ -494,8 +546,77 @@ export default function ResultsPage() {
             </div>
 
             {results.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '48px 0' }}>
-                <p style={{ color: '#6B7280' }}>No results found. Try a different search.</p>
+              <div style={{ textAlign: 'center', padding: '64px 0' }}>
+                <div style={{
+                  background: 'var(--green-50)',
+                  borderRadius: '12px',
+                  padding: '48px 32px',
+                  maxWidth: '500px',
+                  margin: '0 auto',
+                }}>
+                  <svg
+                    style={{
+                      width: '64px',
+                      height: '64px',
+                      margin: '0 auto 24px',
+                      color: 'var(--green-300)',
+                    }}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                  <h3 style={{
+                    fontSize: '18px',
+                    fontWeight: 600,
+                    color: 'var(--navy)',
+                    marginBottom: '12px',
+                  }}>
+                    {t('results.noResults')}
+                  </h3>
+                  <p style={{
+                    fontSize: '14px',
+                    color: '#6B7280',
+                    marginBottom: '24px',
+                    lineHeight: '1.6',
+                  }}>
+                    {t('results.noResultsHint')}
+                  </p>
+                  <Link href={`/search?initialTitle=${encodeURIComponent(thesisTitle)}&booleanQuery=${encodeURIComponent(booleanQuery)}&step=2`}>
+                    <button style={{
+                      background: 'var(--green-500)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '10px',
+                      padding: '12px 40px',
+                      fontSize: '14px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      boxShadow: '0 2px 8px rgba(15, 110, 86, 0.3)',
+                      minHeight: '44px',
+                      fontFamily: "'DM Sans', sans-serif",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'var(--green-700)';
+                      e.currentTarget.style.boxShadow = '0 4px 20px rgba(15, 110, 86, 0.12)';
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'var(--green-500)';
+                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(15, 110, 86, 0.3)';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                    }}>
+                      {t('results.refineSearch')}
+                    </button>
+                  </Link>
+                </div>
               </div>
             ) : (
               Object.entries(groupedResults).map(([source, sourceResults]) => (
@@ -625,16 +746,6 @@ export default function ResultsPage() {
                             </div>
                           )}
 
-                          <style>{`
-                            mark {
-                              background-color: #FEF08A;
-                              color: inherit;
-                              padding: 2px 4px;
-                              border-radius: 3px;
-                              font-weight: 600;
-                            }
-                          `}</style>
-
                           {/* Metadata */}
                           <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
                             <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
@@ -717,62 +828,6 @@ export default function ResultsPage() {
                 </div>
               ))
             )}
-
-            {/* Export Bar */}
-            <div style={{
-              position: 'fixed',
-              bottom: 0,
-              left: 0,
-              right: 0,
-              background: 'white',
-              borderTop: '1px solid #E8EDEB',
-              padding: '16px 48px',
-              display: 'flex',
-              gap: '12px',
-              justifyContent: 'center',
-              zIndex: 40,
-            }}>
-              <button style={{
-                padding: '10px 20px',
-                background: '#1D9E75',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '14px',
-                fontWeight: 500,
-                cursor: 'pointer',
-              }}>
-                Export PDF
-              </button>
-              <button style={{
-                padding: '10px 20px',
-                background: 'transparent',
-                color: '#1D9E75',
-                border: '1.5px solid #1D9E75',
-                borderRadius: '8px',
-                fontSize: '14px',
-                fontWeight: 500,
-                cursor: 'pointer',
-              }}>
-                Export Word
-              </button>
-              <a
-                href="/search"
-                style={{
-                  padding: '10px 20px',
-                  background: 'transparent',
-                  color: '#6B7280',
-                  border: '1px solid #E8EDEB',
-                  borderRadius: '8px',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  textDecoration: 'none',
-                  cursor: 'pointer',
-                }}
-              >
-                New Search
-              </a>
-            </div>
 
             {/* Modal de calificación */}
             {modalOpen && modalArticle && (

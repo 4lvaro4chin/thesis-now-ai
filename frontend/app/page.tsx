@@ -69,7 +69,7 @@ export default function Home() {
             fontFamily: "'Cormorant Garamond', serif",
             fontStyle: "italic",
             fontSize: "24px",
-            color: "rgba(255,255,255,0.5)",
+            color: "rgba(255,255,255,0.65)",
             marginBottom: "44px",
             lineHeight: 1.4,
             textWrap: "pretty"
@@ -89,7 +89,11 @@ export default function Home() {
             transition: "box-shadow 0.2s, border-color 0.2s",
             boxShadow: "0 4px 24px rgba(0,0,0,0.2)"
           }}>
+            <label htmlFor="thesis-title" className="sr-only">
+              {t('home.input.placeholder')}
+            </label>
             <input
+              id="thesis-title"
               type="text"
               placeholder={t('home.input.placeholder')}
               value={title}

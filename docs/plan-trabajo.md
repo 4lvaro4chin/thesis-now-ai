@@ -32,7 +32,7 @@
 **Orden típico en resultados:**
 1. Papers recientes (2023+) con 80+ citas → Score ~80-85%
 2. Papers clásicos (2015-2020) con 150+ citas → Score ~65-75%
-3. Papers nuevos (2024) con <10 citas → Score <35%
+3. Papers nuevos (2024) con < 10 citas → Score < 35%
 
 **Racionalidad:** En búsqueda académica, un paper muy citado (antiguo) vale más que uno nuevo pero poco leído. Las citas reflejan impacto real.
 
@@ -43,9 +43,72 @@
 - [ ] **Recalibrar pesos** si usuarios reclaman que papers nuevos desaparecen (ajustar a 40/60 o 50/50)
 
 ### Por qué NO text similarity en MVP
-- Latencia: 50 papers × 100ms = +5 seg → rompe SLA <3 min
+- Latencia: 50 papers × 100ms = +5 seg → rompe SLA < 3 min
 - Sin datos reales de usuario; justificación débil
 - Scoring simple es defensible, matemático, sin magia
+
+---
+
+## 📊 Sesión 2026-06-16 — ✅ UI/UX COMPLETO + i18n MASIVO + DATABASE #3 AGREGADA
+
+✅ **Menú Mobile Redesign Completo**
+- ✅ Side drawer desde la derecha (width: 280px, border-radius: 12px)
+- ✅ User info en la parte superior (si autenticado) con accent styling
+- ✅ Navigation links (Cómo funciona, Bases, Precios) con SVG icons
+- ✅ Account links (Mi Tablero, Cerrar sesión) con icons
+- ✅ Separadores visuales consistentes
+- ✅ Results page options: Export PDF (premium), Export Word (premium), Nueva búsqueda
+- ✅ Log out SIEMPRE como última opción del menú
+- ✅ Smooth animations: slideInFromRight 0.3s
+- ✅ Hover effects con CSS classes (no onMouseEnter/onMouseLeave)
+
+✅ **Internacionalización MASIVA — 40+ nuevas traducciones en 3 idiomas**
+- ✅ Navbar: signIn, startFree, logout, howItWorks, databases, pricing, dashboard, exportPdf, exportWord, newSearch
+- ✅ Search Step 2: Tesis a buscar, Query Booleana Generada, Clic/Arrastrar/Hover hints, empty state, queryWillExecute, naturalLanguage
+- ✅ Search Step 3: Tesis a buscar, Selecciona tus bases, 8 descripciones de bases de datos
+- ✅ Search Step Indicators: Título de tesis, Query Booleana, Selecciona bases (todos traducidos)
+- ✅ Results: noResults, noResultsHint, refineSearch, sortBy, 4 opciones de ordenamiento, saveArticle, modal titles
+- ✅ Footer: tagline, privacy, terms, contact
+- ✅ Todas las traducciones EN 3 IDIOMAS: ES/EN/PT
+
+✅ **Database #3 Integrada: Europe PMC**
+- ✅ Backend connector implementado: backend/connectors/europepmc.py
+- ✅ SearchService actualizado con europepmc en self.connectors
+- ✅ Frontend selector actualizado: 6 bases visibles (3 nuevas: europepmc, openalex, crossref)
+- ✅ Europe PMC logo SVG con color naranja (#D97706)
+- ✅ 40M+ papers life sciences + humanities
+- ✅ Boolean query support nativa
+- ✅ Metadata: title, authors, year, DOI, PMID, PMCID, abstract, journal, openAccess
+
+✅ **Button & UI Refinements**
+- ✅ "Refinar búsqueda" button: padding mejorado (12px 40px), estilos inline
+- ✅ Button component: Primary/Secondary/Ghost con sombras y hover effects
+- ✅ Mobile menu: bordes redondeados (12px), margen derecho (12px)
+- ✅ Todos los botones: min-height 44px, font-weight 600, transiciones smooth
+
+✅ **Search Page Improvements**
+- ✅ Button "Siguiente" removido del Paso 1 (solo está "Generar Query")
+- ✅ Label "● DÓNDE BUSCAR" removido del Paso 3
+- ✅ "Tesis a buscar" label en i18n (todos los idiomas)
+
+✅ **Results Page Cleanup**
+- ✅ Bloque de botones "Export PDF/Word/New Search" REMOVIDO del bottom
+- ✅ Opciones Export agregadas al menú mobile (solo en /results)
+- ✅ Export PDF/Word como opciones PREMIUM (deshabilitadas, opacity 0.6)
+
+✅ **Database Logos Actualizados**
+- ✅ 8 logos SVG mejorados con estilos oficiales
+- ✅ PubMed: letra "P" más grande
+- ✅ Semantic Scholar: círculos coloreados mejor distribuidos
+- ✅ Europe PMC: símbolo de conexión (2 círculos)
+- ✅ OpenAlex: forma de casa con "OA"
+- ✅ Crossref: símbolo de referencia cruzada (X)
+- ✅ arXiv: letra "a" Georgia serif
+- ✅ ScienceDirect: forma suave
+- ✅ Google Scholar: libro con punto rojo
+
+**Commits realizados:** ~15 cambios agrupados
+**Líneas de código modificadas:** 300+ líneas
 
 ---
 
@@ -89,7 +152,7 @@
 
 **Milestone Fase 0 Progress:**
 - ✅ Backend + 2 APIs funcionando en producción
-- ✅ Búsqueda <3 minutos verificada
+- ✅ Búsqueda < 3 minutos verificada
 - ⏳ 20 usuarios beta (Semana 3)
 - ⏳ 5 pagos (Semana 3)
 
@@ -223,7 +286,7 @@
 - [ ] 20 usuarios registrados
 - [ ] 5 pagos completados
 - [ ] Feedback positivo >30%
-- [ ] Búsqueda <3 minutos desde producción
+- [ ] Búsqueda < 3 minutos desde producción
 - [ ] 2 bases funcionando sin errores en producción
 
 ---

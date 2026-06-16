@@ -87,8 +87,8 @@ export default function BoardPage() {
       {/* Hero Section */}
       <div
         style={{
-          background: 'linear-gradient(135deg, #F0FBF7 0%, #E8F8F4 100%)',
-          borderBottom: '1px solid #E1F5EE',
+          background: 'linear-gradient(135deg, var(--green-50) 0%, #E8F8F4 100%)',
+          borderBottom: '1px solid var(--green-100)',
           padding: '64px 48px',
           marginBottom: '60px',
         }}
@@ -291,7 +291,7 @@ export default function BoardPage() {
                           style={{
                             background: '#FEE8E8',
                             border: 'none',
-                            color: '#DC2626',
+                            color: 'var(--error)',
                             padding: '8px 12px',
                             borderRadius: '6px',
                             cursor: 'pointer',
@@ -368,7 +368,7 @@ export default function BoardPage() {
                       <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
                         {/* Source */}
                         <div style={{
-                          background: '#E1F5EE',
+                          background: 'var(--green-100)',
                           color: '#0F6E56',
                           padding: '4px 10px',
                           borderRadius: '4px',

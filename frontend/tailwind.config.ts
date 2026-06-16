@@ -9,11 +9,17 @@ const config: Config = {
     extend: {
       colors: {
         green: {
+          50: "#F0FBF7",
+          100: "#E1F5EE",
+          300: "#9FE1CB",
+          400: "#5DCAA5",
           500: "#1D9E75",
           700: "#0F6E56",
+          800: "#085041",
           900: "#04342C",
         },
         navy: "#1B2A4A",
+        error: "#DC2626",
         text: {
           DEFAULT: "#2D3748",
           muted: "#6B7280",

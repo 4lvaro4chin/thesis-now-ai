@@ -30,7 +30,7 @@ El prototipo HTML documenta esto en 5 pantallas:
 | Área | Funcionalidad |
 |------|--------------|
 | Auth | Registro email + login básico |
-| Búsqueda | Campo título → booleanos → PubMed + Semantic Scholar |
+| Búsqueda | Campo título → booleanos → PubMed + Semantic Scholar + Europe PMC |
 | Resultados | Lista simple: título, autores, año, DOI, abstract |
 | Reporte | PDF básico descargable |
 | Pagos | 1 búsqueda gratis; pago manual (Stripe Link) |
@@ -40,7 +40,7 @@ El prototipo HTML documenta esto en 5 pantallas:
 - 20 usuarios reales usando plataforma
 - 5 usuarios pagos
 - Feedback positivo >30%
-- Búsqueda <3 minutos
+- Búsqueda < 3 minutos
 - Al menos 2 bases funcionando sin errores
 
 ---
@@ -65,8 +65,9 @@ El prototipo HTML documenta esto en 5 pantallas:
 - Visualización de términos generados
 - Edición manual de booleanos antes de ejecutar
 
-#### Bases de datos (5 gratuitas)
+#### Bases de datos (6 gratuitas)
 - PubMed / MEDLINE
+- Europe PMC (40M+ papers life sciences + humanities)
 - arXiv
 - ERIC
 - Semantic Scholar

@@ -28,7 +28,7 @@ Prioritize terminology commonly used in peer-reviewed literature.
 
 TASK 2 — NATURAL LANGUAGE EXPLANATION
 
-Provide a brief explanation in plain {{SELECTED_LANGUAGE}} (2–3 sentences) aimed at the student who wrote the thesis.
+Provide a brief explanation in plain {{SELECTED_LANGUAGE}} (4–6 sentences) aimed at the student who wrote the thesis.
 
 The explanation must:
 
