@@ -3,41 +3,41 @@ import Link from "next/link";
 export default function PricingPage() {
   const plans = [
     {
-      name: "Estudiante",
+      name: "Básico",
       price: 4.99,
-      credits: 100,
+      credits: 3,
       features: [
-        "1 búsqueda incluida",
-        "Hasta 100 resultados",
-        "Descargar en PDF",
+        "3 búsquedas (1 crédito = 1 búsqueda)",
+        "Todas las bases de datos",
+        "Reporte descargable (Word/PDF)",
         "Soporte por email",
       ],
       highlighted: false,
     },
     {
-      name: "Profesional",
-      price: 14.99,
-      credits: 500,
+      name: "Tesis",
+      price: 9.99,
+      credits: 8,
       features: [
-        "5 búsquedas incluidas",
-        "Hasta 1000 resultados",
-        "Descargar en PDF, CSV, BibTeX",
-        "Filtros avanzados",
+        "8 búsquedas (1 crédito = 1 búsqueda)",
+        "Todas las bases de datos",
+        "Reporte descargable (Word/PDF)",
+        "Mejor relación precio/búsqueda",
         "Soporte prioritario",
       ],
       highlighted: true,
-      badge: "Más elegido",
+      badge: "Más popular",
     },
     {
       name: "Investigador",
       price: 19.99,
-      credits: 1000,
+      credits: 20,
       features: [
-        "Búsquedas ilimitadas",
-        "Todos los formatos de exportación",
-        "API acceso",
-        "Gestión de proyectos",
-        "Soporte 24/7",
+        "20 búsquedas (1 crédito = 1 búsqueda)",
+        "Todas las bases de datos",
+        "Reporte descargable (Word/PDF)",
+        "Menor precio por búsqueda",
+        "Soporte prioritario",
       ],
       highlighted: false,
     },
@@ -66,7 +66,7 @@ export default function PricingPage() {
             maxWidth: "600px",
             margin: "0 auto"
           }}>
-            Elige el plan que mejor se adapte a tus necesidades. Siempre puedes cambiar después.
+            Compra créditos una sola vez. 1 crédito = 1 búsqueda completa. Sin suscripciones ni cobros recurrentes.
           </p>
         </div>
 
@@ -133,7 +133,7 @@ export default function PricingPage() {
                   fontSize: "14px",
                   marginLeft: "4px"
                 }}>
-                  / mes
+                  pago único
                 </span>
               </div>
 
@@ -142,7 +142,7 @@ export default function PricingPage() {
                 color: plan.highlighted ? "rgba(255,255,255,0.6)" : "#6B7280",
                 marginBottom: "32px"
               }}>
-                {plan.credits} créditos incluidos
+                {plan.credits} créditos · ${(plan.price / plan.credits).toFixed(2)} por búsqueda
               </p>
 
               {/* Features */}
@@ -219,16 +219,20 @@ export default function PricingPage() {
           }}>
             {[
               {
-                q: "¿Puedo cambiar de plan?",
-                a: "Sí, puedes cambiar de plan en cualquier momento. El cambio se reflejará en tu próxima facturación.",
+                q: "¿Es un pago único o una suscripción?",
+                a: "Es un pago único. Compras un pack de créditos y son tuyos; no hay cobros recurrentes ni suscripciones.",
               },
               {
                 q: "¿Qué pasa si no uso todos mis créditos?",
-                a: "Los créditos no utilizados se acumulan por 6 meses. Después expiran automáticamente.",
+                a: "Tus créditos se mantienen disponibles por 12 meses desde la compra. Después expiran automáticamente.",
               },
               {
                 q: "¿Hay un período de prueba?",
-                a: "Sí, ofrecemos 5 búsquedas gratis para nuevos usuarios. No se requiere tarjeta de crédito.",
+                a: "Sí, tu primera búsqueda es gratis al registrarte, con todas las bases de datos y reporte descargable. No se requiere tarjeta de crédito.",
+              },
+              {
+                q: "¿Ofrecen licencias para universidades?",
+                a: "Sí. Para instituciones ofrecemos licencias anuales con búsquedas ilimitadas para tus estudiantes. Escríbenos para una cotización.",
               },
             ].map((faq, idx) => (
               <div key={idx}>

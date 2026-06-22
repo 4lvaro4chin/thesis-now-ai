@@ -13,7 +13,7 @@ class PubMedConnector:
     BASE_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
     TIMEOUT = 30
 
-    async def search(self, query: str, max_results: int = 50) -> List[SearchResult]:
+    async def search(self, query: str, filters: dict = None, max_results: int = 50) -> List[SearchResult]:
         """
         Search PubMed and return results.
         1. esearch: Get UIDs for the query
@@ -21,11 +21,14 @@ class PubMedConnector:
         """
         try:
             async with httpx.AsyncClient(timeout=self.TIMEOUT) as client:
+                # Apply filters by appending to query string
+                filtered_query = self._apply_filters(query, filters)
+
                 # Step 1: Search for UIDs (use XML to be safe)
                 search_url = f"{self.BASE_URL}/esearch.fcgi"
                 search_params = {
                     "db": "pubmed",
-                    "term": query,
+                    "term": filtered_query,
                     "retmax": min(max_results, 50),
                     "rettype": "xml",
                 }
@@ -171,3 +174,28 @@ class PubMedConnector:
             logger.error(f"PubMed XML parse error: {str(e)}")
 
         return results
+
+    def _apply_filters(self, query: str, filters: dict = None) -> str:
+        """Apply filters by appending PubMed field tags to the query."""
+        if not filters:
+            return query
+        filtered = query
+        if filters.get("year_from") or filters.get("year_to"):
+            year_from = filters.get("year_from", 1900)
+            year_to = filters.get("year_to", 9999)
+            filtered += f" AND {year_from}:{year_to}[dp]"
+        if filters.get("doc_types"):
+            types = filters["doc_types"]
+            type_filter = " OR ".join([f'"{t}"[pt]' for t in types])
+            filtered += f" AND ({type_filter})"
+        if filters.get("lang_filter"):
+            langs = filters["lang_filter"]
+            lang_map = {"en": "eng", "es": "spa", "pt": "por", "fr": "fre", "de": "ger"}
+            lang_tags = [lang_map.get(l, l) for l in langs]
+            lang_filter = " OR ".join([f'"{t}"[la]' for t in lang_tags])
+            filtered += f" AND ({lang_filter})"
+        if filters.get("open_access_only"):
+            filtered += ' AND "open access"[pt]'
+        if filters.get("peer_reviewed_only"):
+            filtered += ' AND "journal article"[pt]'
+        return filtered

@@ -13,7 +13,7 @@ class ArxivConnector:
     BASE_URL = "https://export.arxiv.org/api/query"
     TIMEOUT = 30
 
-    async def search(self, query: str, max_results: int = 50) -> List[SearchResult]:
+    async def search(self, query: str, filters: dict = None, max_results: int = 50) -> List[SearchResult]:
         """
         Search arXiv using the API.
         arXiv indexes ~2.5M preprints in STEM fields.
@@ -21,6 +21,12 @@ class ArxivConnector:
         try:
             async with httpx.AsyncClient(timeout=self.TIMEOUT) as client:
                 simple_query = self._simplify_query(query)
+
+                # Apply arXiv date filters if provided (arXiv format: YYYYMMDD)
+                if filters and (filters.get("year_from") or filters.get("year_to")):
+                    year_from = filters.get("year_from", 1900)
+                    year_to = filters.get("year_to", 9999)
+                    simple_query += f" AND submittedDate:[{year_from}0101 TO {year_to}1231]"
 
                 # arXiv API requires search_query parameter
                 params = {

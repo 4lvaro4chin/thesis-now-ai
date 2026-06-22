@@ -12,15 +12,18 @@ class EuropePMCConnector:
     BASE_URL = "https://www.ebi.ac.uk/europepmc/webservices/rest/search"
     TIMEOUT = 30
 
-    async def search(self, query: str, max_results: int = 50) -> List[SearchResult]:
+    async def search(self, query: str, filters: dict = None, max_results: int = 50) -> List[SearchResult]:
         """
         Search Europe PMC and return results.
         Europe PMC API accepts boolean queries and returns JSON responses.
         """
         try:
             async with httpx.AsyncClient(timeout=self.TIMEOUT) as client:
+                # Apply EuropePMC filters by appending to query
+                filtered_query = self._apply_filters(query, filters)
+
                 search_params = {
-                    "query": query,
+                    "query": filtered_query,
                     "format": "json",
                     "pageSize": min(max_results, 100),
                     "pageNumber": 1,
@@ -127,3 +130,24 @@ class EuropePMCConnector:
             logger.error(f"Europe PMC JSON parse error: {str(e)}")
 
         return results
+
+    def _apply_filters(self, query: str, filters: dict = None) -> str:
+        """Apply filters by appending EuropePMC field tags to the query."""
+        if not filters:
+            return query
+        filtered = query
+        if filters.get("year_from") or filters.get("year_to"):
+            year_from = filters.get("year_from", 1900)
+            year_to = filters.get("year_to", 9999)
+            filtered += f" AND PUB_YEAR:[{year_from} TO {year_to}]"
+        if filters.get("doc_types"):
+            types = filters["doc_types"]
+            type_filter = " OR ".join([f"PUB_TYPE:{t}" for t in types])
+            filtered += f" AND ({type_filter})"
+        if filters.get("lang_filter"):
+            langs = filters["lang_filter"]
+            lang_filter = " OR ".join([f"LANG:{l.upper()}" for l in langs])
+            filtered += f" AND ({lang_filter})"
+        if filters.get("open_access_only"):
+            filtered += " AND OPEN_ACCESS:Y"
+        return filtered

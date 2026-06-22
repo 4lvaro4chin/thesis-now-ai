@@ -120,6 +120,8 @@ export default function ResultsPage() {
       pubmed: 'PubMed',
       semantic_scholar: 'Semantic Scholar',
       arxiv: 'arXiv',
+      doaj: 'DOAJ',
+      alicia: 'ALICIA',
       sciencedirect: 'ScienceDirect',
     };
     return labels[source] || source;
@@ -131,6 +133,7 @@ export default function ResultsPage() {
       semantic_scholar: { label: 'Semantic Scholar', bg: '#E0F2FE', color: '#0369A1', emoji: '📚' },
       arxiv: { label: 'arXiv', bg: '#F3E8FF', color: '#6D28D9', emoji: '📄' },
       sciencedirect: { label: 'ScienceDirect', bg: '#FECDD3', color: '#BE1238', emoji: '📖' },
+      alicia: { label: 'ALICIA', bg: '#CFFAFE', color: '#0E7490', emoji: '🇵🇪' },
     };
     return sources[source] || { label: source, bg: '#E5E7EB', color: '#374151', emoji: '📑' };
   };

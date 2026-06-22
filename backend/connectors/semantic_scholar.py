@@ -13,7 +13,7 @@ class SemanticScholarConnector:
     BASE_URL = "https://api.semanticscholar.org/graph/v1"
     TIMEOUT = 30
 
-    async def search(self, query: str, max_results: int = 50) -> List[SearchResult]:
+    async def search(self, query: str, filters: dict = None, max_results: int = 50) -> List[SearchResult]:
         """
         Search Semantic Scholar using paper search endpoint.
         Includes retry logic for rate limits.
@@ -25,8 +25,13 @@ class SemanticScholarConnector:
                 params = {
                     "query": query,
                     "limit": min(max_results, 50),
-                    "fields": "title,authors,year,abstract,url,doi,citationCount",
+                    "fields": "title,authors,year,abstract,url,doi,citationCount,openAccessPdf",
                 }
+
+                if filters and filters.get("year_from"):
+                    params["year"] = f"{filters['year_from']}-{filters.get('year_to', 9999)}"
+                if filters and filters.get("open_access_only"):
+                    params["openAccessPdf"] = "true"
 
                 # Prepare headers with API key if available
                 headers = {}

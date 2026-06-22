@@ -13,7 +13,7 @@ class OpenAlexConnector:
     TIMEOUT = 30
     MAILTO = "digitalcorepro@gmail.com"  # Polite pool - improves rate limit
 
-    async def search(self, query: str, max_results: int = 50) -> List[SearchResult]:
+    async def search(self, query: str, filters: dict = None, max_results: int = 50) -> List[SearchResult]:
         """
         Search OpenAlex using the works endpoint.
         OpenAlex is free and doesn't require authentication.
@@ -28,9 +28,26 @@ class OpenAlexConnector:
                 params = {
                     "search": simple_query,
                     "per-page": min(max_results, 50),
-                    "select": "id,title,authorships,publication_year,doi,cited_by_count,abstract_inverted_index",
+                    "select": "id,title,authorships,publication_year,doi,cited_by_count,abstract_inverted_index,is_oa,primary_location",
                     "mailto": self.MAILTO,
                 }
+
+                # Apply filters via OpenAlex filter syntax
+                filter_parts = []
+                if filters:
+                    if filters.get("year_from") or filters.get("year_to"):
+                        year_from = filters.get("year_from", 1900)
+                        year_to = filters.get("year_to", 9999)
+                        filter_parts.append(f"publication_year:{year_from}-{year_to}")
+                    if filters.get("doc_types"):
+                        type_map = {"article": "journal-article", "thesis": "dissertation", "conference paper": "conference-proceeding", "preprint": "preprint", "review": "review"}
+                        oa_types = [type_map.get(t, t) for t in filters["doc_types"]]
+                        filter_parts.append(",".join([f"type:{t}" for t in oa_types]))
+                    if filters.get("open_access_only"):
+                        filter_parts.append("open_access.is_oa:true")
+
+                if filter_parts:
+                    params["filter"] = ",".join(filter_parts)
 
                 logger.info(f"OpenAlex search: {query}")
 

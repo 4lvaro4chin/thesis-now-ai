@@ -23,14 +23,28 @@ export default function SearchingPage() {
   const title = searchParams.get('title') || 'Loading...';
   const databasesParam = searchParams.get('databases') || 'pubmed,semantic_scholar';
   const databases = databasesParam.split(',').filter(Boolean);
+  const yearFrom = searchParams.get('year_from');
+  const yearTo = searchParams.get('year_to');
+  const docTypesParam = searchParams.get('doc_types');
+  const langFilterParam = searchParams.get('lang_filter');
+  const openAccess = searchParams.get('open_access') === 'true';
+  const peerReviewed = searchParams.get('peer_reviewed') === 'true';
 
   useEffect(() => {
     const executeSearch = async () => {
       try {
+        const payload: any = { title, databases, lang };
+        if (yearFrom) payload.year_from = parseInt(yearFrom);
+        if (yearTo) payload.year_to = parseInt(yearTo);
+        if (docTypesParam) payload.doc_types = docTypesParam.split(',').filter(Boolean);
+        if (langFilterParam) payload.lang_filter = langFilterParam.split(',').filter(Boolean);
+        if (openAccess) payload.open_access_only = true;
+        if (peerReviewed) payload.peer_reviewed_only = true;
+
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/search`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title, databases, lang }),
+          body: JSON.stringify(payload),
         });
 
         if (!response.ok) throw new Error('Failed to start search');

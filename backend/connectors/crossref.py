@@ -13,7 +13,7 @@ class CrossrefConnector:
     TIMEOUT = 30
     MAILTO = "digitalcorepro@gmail.com"  # Polite pool - improves rate limit to 50 req/sec
 
-    async def search(self, query: str, max_results: int = 50) -> List[SearchResult]:
+    async def search(self, query: str, filters: dict = None, max_results: int = 50) -> List[SearchResult]:
         """
         Search Crossref using the works endpoint.
         Crossref indexes ~130M articles, journals, conferences, datasets.
@@ -28,6 +28,23 @@ class CrossrefConnector:
                     "rows": min(max_results, 100),  # Crossref allows up to 100 per page
                     "mailto": self.MAILTO,
                 }
+
+                # Apply Crossref filters
+                filter_parts = []
+                if filters:
+                    if filters.get("year_from") or filters.get("year_to"):
+                        year_from = filters.get("year_from", 1900)
+                        year_to = filters.get("year_to", 9999)
+                        filter_parts.append(f"from-pub-date:{year_from}")
+                        filter_parts.append(f"until-pub-date:{year_to}")
+                    if filters.get("doc_types"):
+                        type_map = {"article": "journal-article", "thesis": "dissertation", "conference paper": "conference-proceeding", "preprint": "preprint", "review": "review"}
+                        cr_types = [type_map.get(t, t) for t in filters["doc_types"]]
+                        for t in cr_types:
+                            filter_parts.append(f"type:{t}")
+
+                if filter_parts:
+                    params["filter"] = ",".join(filter_parts)
 
                 logger.info(f"Crossref search: {simple_query}")
 

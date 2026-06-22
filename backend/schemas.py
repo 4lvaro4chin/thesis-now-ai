@@ -5,12 +5,24 @@ class SearchRequest(BaseModel):
     title: str = Field(..., min_length=3, max_length=500)
     databases: Optional[List[str]] = None
     lang: Optional[str] = "es"
+    year_from: Optional[int] = None
+    year_to: Optional[int] = None
+    doc_types: Optional[List[str]] = None
+    lang_filter: Optional[List[str]] = None
+    open_access_only: Optional[bool] = False
+    peer_reviewed_only: Optional[bool] = False
 
     class Config:
         example = {
             "title": "Mindfulness interventions in adolescents",
             "databases": ["pubmed", "semantic_scholar", "openalex", "crossref", "arxiv"],
-            "lang": "es"
+            "lang": "es",
+            "year_from": 2015,
+            "year_to": 2024,
+            "doc_types": ["article", "thesis"],
+            "lang_filter": ["en", "es"],
+            "open_access_only": False,
+            "peer_reviewed_only": False
         }
 
 class BooleanQuery(BaseModel):

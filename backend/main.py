@@ -129,9 +129,19 @@ async def execute_search(job_id: str, request: SearchRequest):
         logger.info(f"[{job_id}] Target databases: {', '.join(databases)}")
         logger.info(f"[{job_id}] Query: {nlp_result.get('boolean_query', '')}\n")
 
+        filters = {
+            "year_from": request.year_from,
+            "year_to": request.year_to,
+            "doc_types": request.doc_types,
+            "lang_filter": request.lang_filter,
+            "open_access_only": request.open_access_only,
+            "peer_reviewed_only": request.peer_reviewed_only,
+        }
+
         results = await search_service.search_all_databases(
             nlp_result.get("boolean_query", ""),
-            databases
+            databases,
+            filters
         )
 
         jobs[job_id]["results"] = results

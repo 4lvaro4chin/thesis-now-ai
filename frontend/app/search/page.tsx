@@ -80,6 +80,19 @@ const DatabaseLogos = {
       <line x1="47" y1="50" x2="53" y2="50" stroke="white" strokeWidth="4" />
     </svg>
   ),
+  doaj: (
+    <svg viewBox="0 0 100 100" width="60" height="60" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" rx="8" fill="#C8202F" />
+      <rect x="35" y="48" width="30" height="26" rx="4" fill="white" />
+      <path d="M 40 48 V 38 a 10 10 0 0 1 20 0" fill="none" stroke="white" strokeWidth="5" />
+    </svg>
+  ),
+  alicia: (
+    <svg viewBox="0 0 100 100" width="60" height="60" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" rx="8" fill="#0E7490" />
+      <text x="50" y="64" textAnchor="middle" fontSize="42" fontWeight="700" fill="white" fontFamily="sans-serif">A</text>
+    </svg>
+  ),
 };
 
 // Convert backend query string into tokens (terms, operators, parens)
@@ -209,6 +222,8 @@ export default function SearchPage() {
     openalex: true,
     crossref: true,
     arxiv: true,
+    doaj: true,
+    alicia: true,
   });
   const [tokens, setTokens] = useState<Token[]>([]);
   const [explanation, setExplanation] = useState<string>('');
@@ -220,6 +235,13 @@ export default function SearchPage() {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [yearFrom, setYearFrom] = useState<string>('2010');
+  const [yearTo, setYearTo] = useState<string>(new Date().getFullYear().toString());
+  const [docTypes, setDocTypes] = useState<string[]>([]);
+  const [langFilter, setLangFilter] = useState<string[]>([]);
+  const [openAccess, setOpenAccess] = useState(false);
+  const [peerReviewed, setPeerReviewed] = useState(false);
+  const [filtersExpanded, setFiltersExpanded] = useState(false);
 
   // Load initial title, query, and step from URL parameters
   useEffect(() => {
@@ -427,13 +449,20 @@ export default function SearchPage() {
       return;
     }
 
-    const queryString = new URLSearchParams({
+    const queryParams = new URLSearchParams({
       title: title.trim(),
       databases: selectedDbArray.join(','),
       query: finalQuery,
-    }).toString();
+    });
 
-    router.push(`/searching?${queryString}`);
+    if (yearFrom) queryParams.set('year_from', yearFrom);
+    if (yearTo) queryParams.set('year_to', yearTo);
+    if (docTypes.length) queryParams.set('doc_types', docTypes.join(','));
+    if (langFilter.length) queryParams.set('lang_filter', langFilter.join(','));
+    if (openAccess) queryParams.set('open_access', 'true');
+    if (peerReviewed) queryParams.set('peer_reviewed', 'true');
+
+    router.push(`/searching?${queryParams.toString()}`);
   };
 
   const toggleDatabase = (db: string, value: boolean) => {
@@ -1069,6 +1098,190 @@ export default function SearchPage() {
           </p>
         </div>
 
+        {/* Filters - STEP 2 - Collapsed by default */}
+        {currentStep === 2 && (
+          <div
+            style={{
+              background: 'var(--green-800)',
+              border: '1px solid #0F6E56',
+              borderRadius: '12px',
+              padding: '20px',
+              marginBottom: '24px',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <p style={{ fontSize: '13px', fontWeight: 600, color: 'white', margin: 0 }}>
+                🔍 {t('search.filters.title')}
+              </p>
+              <button
+                onClick={() => setFiltersExpanded(!filtersExpanded)}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: 'none',
+                  color: 'white',
+                  cursor: 'pointer',
+                  padding: '4px 8px',
+                  borderRadius: '4px',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                }}
+              >
+                {filtersExpanded ? '▼' : '▶'}
+              </button>
+            </div>
+
+            {/* Filters Content - Collapsible */}
+            <div style={{ display: filtersExpanded ? 'block' : 'none', transition: 'all 0.3s ease' }}>
+              {/* Row 1: Year Range */}
+              <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
+                <label style={{ fontSize: '13px', color: '#fff', minWidth: '80px' }}>
+                  {t('search.filters.year')}:
+                </label>
+                <input
+                  type="number"
+                  value={yearFrom}
+                  onChange={(e) => setYearFrom(e.target.value)}
+                  min="1900"
+                  max="2100"
+                  style={{
+                    padding: '6px 10px',
+                    borderRadius: '6px',
+                    border: '1px solid #0F6E56',
+                    background: '#fff',
+                    width: '100px',
+                    fontSize: '13px',
+                  }}
+                  placeholder={t('search.filters.yearFrom')}
+                />
+                <span style={{ color: '#fff', fontSize: '13px' }}>–</span>
+                <input
+                  type="number"
+                  value={yearTo}
+                  onChange={(e) => setYearTo(e.target.value)}
+                  min="1900"
+                  max="2100"
+                  style={{
+                    padding: '6px 10px',
+                    borderRadius: '6px',
+                    border: '1px solid #0F6E56',
+                    background: '#fff',
+                    width: '100px',
+                    fontSize: '13px',
+                  }}
+                  placeholder={t('search.filters.yearTo')}
+                />
+              </div>
+
+              {/* Row 2: Document Type */}
+              <div style={{ marginBottom: '16px' }}>
+                <p style={{ fontSize: '13px', color: '#fff', marginBottom: '8px', fontWeight: 500 }}>
+                  {t('search.filters.docType')}
+                </p>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  {['article', 'thesis', 'conference-paper', 'book-chapter', 'preprint', 'review'].map((type) => (
+                    <button
+                      key={type}
+                      onClick={() =>
+                        setDocTypes((prev) =>
+                          prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+                        )
+                      }
+                      style={{
+                        padding: '6px 12px',
+                        borderRadius: '20px',
+                        border: 'none',
+                        background: docTypes.includes(type) ? '#0F6E56' : 'rgba(255,255,255,0.1)',
+                        color: '#fff',
+                        fontSize: '12px',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = docTypes.includes(type) ? '#0F6E56' : 'rgba(255,255,255,0.2)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = docTypes.includes(type) ? '#0F6E56' : 'rgba(255,255,255,0.1)';
+                      }}
+                    >
+                      {t(`filter.type.${type}`)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Row 3: Language */}
+              <div style={{ marginBottom: '16px' }}>
+                <p style={{ fontSize: '13px', color: '#fff', marginBottom: '8px', fontWeight: 500 }}>
+                  {t('search.filters.language')}
+                </p>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  {['en', 'es', 'pt', 'fr', 'de'].map((lang) => (
+                    <button
+                      key={lang}
+                      onClick={() =>
+                        setLangFilter((prev) =>
+                          prev.includes(lang) ? prev.filter((l) => l !== lang) : [...prev, lang]
+                        )
+                      }
+                      style={{
+                        padding: '6px 12px',
+                        borderRadius: '20px',
+                        border: 'none',
+                        background: langFilter.includes(lang) ? '#0F6E56' : 'rgba(255,255,255,0.1)',
+                        color: '#fff',
+                        fontSize: '12px',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = langFilter.includes(lang)
+                          ? '#0F6E56'
+                          : 'rgba(255,255,255,0.2)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = langFilter.includes(lang)
+                          ? '#0F6E56'
+                          : 'rgba(255,255,255,0.1)';
+                      }}
+                    >
+                      {t(`filter.lang.${lang}`)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Row 4: Toggles */}
+              <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={openAccess}
+                    onChange={(e) => setOpenAccess(e.target.checked)}
+                    style={{ cursor: 'pointer' }}
+                  />
+                  <span style={{ color: '#fff', fontSize: '13px' }}>{t('search.filters.openAccess')}</span>
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={peerReviewed}
+                    onChange={(e) => setPeerReviewed(e.target.checked)}
+                    style={{ cursor: 'pointer' }}
+                  />
+                  <span style={{ color: '#fff', fontSize: '13px' }}>{t('search.filters.peerReviewed')}</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Block 2: Query Ejecutará + Lenguaje Natural - STEP 2 */}
         <div
           style={{
@@ -1101,6 +1314,84 @@ export default function SearchPage() {
               {getFinalQuery() || '(ingresa términos para generar query)'}
             </p>
           </div>
+
+          {/* Active Filters Display */}
+          {(yearFrom || yearTo || docTypes.length > 0 || langFilter.length > 0 || openAccess || peerReviewed) && (
+            <div style={{ marginTop: '12px', display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+              {(yearFrom || yearTo) && (
+                <span
+                  style={{
+                    background: 'rgba(29, 158, 117, 0.1)',
+                    color: 'var(--green-700)',
+                    padding: '4px 10px',
+                    borderRadius: '12px',
+                    fontSize: '11px',
+                    fontWeight: 600,
+                  }}
+                >
+                  📅 {yearFrom}–{yearTo}
+                </span>
+              )}
+              {docTypes.map((type) => (
+                <span
+                  key={type}
+                  style={{
+                    background: 'rgba(29, 158, 117, 0.1)',
+                    color: 'var(--green-700)',
+                    padding: '4px 10px',
+                    borderRadius: '12px',
+                    fontSize: '11px',
+                    fontWeight: 600,
+                  }}
+                >
+                  📄 {t(`filter.type.${type}`)}
+                </span>
+              ))}
+              {langFilter.map((lang) => (
+                <span
+                  key={lang}
+                  style={{
+                    background: 'rgba(29, 158, 117, 0.1)',
+                    color: 'var(--green-700)',
+                    padding: '4px 10px',
+                    borderRadius: '12px',
+                    fontSize: '11px',
+                    fontWeight: 600,
+                  }}
+                >
+                  🌐 {t(`filter.lang.${lang}`)}
+                </span>
+              ))}
+              {openAccess && (
+                <span
+                  style={{
+                    background: 'rgba(29, 158, 117, 0.1)',
+                    color: 'var(--green-700)',
+                    padding: '4px 10px',
+                    borderRadius: '12px',
+                    fontSize: '11px',
+                    fontWeight: 600,
+                  }}
+                >
+                  🔓 {t('search.filters.openAccess')}
+                </span>
+              )}
+              {peerReviewed && (
+                <span
+                  style={{
+                    background: 'rgba(29, 158, 117, 0.1)',
+                    color: 'var(--green-700)',
+                    padding: '4px 10px',
+                    borderRadius: '12px',
+                    fontSize: '11px',
+                    fontWeight: 600,
+                  }}
+                >
+                  ✓ {t('search.filters.peerReviewed')}
+                </span>
+              )}
+            </div>
+          )}
 
           {/* Natural Language Note */}
           {tokens.length > 0 && (
@@ -1178,6 +1469,8 @@ export default function SearchPage() {
               { id: 'openalex', label: 'OpenAlex', descKey: 'search.db.openalex.desc', available: true },
               { id: 'crossref', label: 'Crossref', descKey: 'search.db.crossref.desc', available: true },
               { id: 'arxiv', label: 'arXiv', descKey: 'search.db.arxiv.desc', available: true },
+              { id: 'doaj', label: 'DOAJ', descKey: 'search.db.doaj.desc', available: true },
+              { id: 'alicia', label: 'ALICIA', descKey: 'search.db.alicia.desc', available: true },
               { id: 'sciencedirect', label: 'ScienceDirect', descKey: 'search.db.sciencedirect.desc', available: false },
               { id: 'google_scholar', label: 'Google Scholar', descKey: 'search.db.google_scholar.desc', available: false },
             ].map((db) => {
@@ -1189,6 +1482,8 @@ export default function SearchPage() {
                 openalex: DatabaseLogos.openalex,
                 crossref: DatabaseLogos.crossref,
                 arxiv: DatabaseLogos.arxiv,
+                doaj: DatabaseLogos.doaj,
+                alicia: DatabaseLogos.alicia,
                 sciencedirect: DatabaseLogos.sciencedirect,
                 google_scholar: DatabaseLogos.google_scholar,
               };

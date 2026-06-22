@@ -14,6 +14,8 @@ class SearchService:
         from connectors.crossref import CrossrefConnector
         from connectors.arxiv import ArxivConnector
         from connectors.europepmc import EuropePMCConnector
+        from connectors.doaj import DOAJConnector
+        from connectors.alicia import AliciaConnector
 
         self.connectors = {
             "pubmed": PubMedConnector(),
@@ -22,9 +24,11 @@ class SearchService:
             "crossref": CrossrefConnector(),
             "arxiv": ArxivConnector(),
             "europepmc": EuropePMCConnector(),
+            "doaj": DOAJConnector(),
+            "alicia": AliciaConnector(),
         }
 
-    async def search_all_databases(self, query: str, databases: List[str]) -> List[SearchResult]:
+    async def search_all_databases(self, query: str, databases: List[str], filters: dict = None) -> List[SearchResult]:
         """
         Execute searches in multiple databases in parallel.
         Deduplicate results by DOI/title.
@@ -33,11 +37,13 @@ class SearchService:
         tasks = []
         for db in databases:
             if db in self.connectors:
-                task = self.connectors[db].search(query)
+                task = self.connectors[db].search(query, filters=filters)
                 tasks.append((db, task))
 
         # Run all searches in parallel
         all_results = []
+        if filters is None:
+            filters = {}
         for db, task in tasks:
             try:
                 results = await task
