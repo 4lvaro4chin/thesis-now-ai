@@ -345,9 +345,6 @@ export function Navbar({ user: initialUser }: NavbarProps) {
           <div style={{ display: 'none', gap: '8px', alignItems: 'center' }} className="md:flex">
             {user ? (
               <>
-                <a href="/search" className="nav-btn-outlined">
-                  Nueva búsqueda
-                </a>
                 <a href="/board" className="nav-btn-outlined">
                   Mi Tablero
                 </a>
@@ -497,9 +494,9 @@ export function Navbar({ user: initialUser }: NavbarProps) {
               <>
                 <a href="/search" onClick={() => setMenuOpen(false)} className="mobile-nav-link">
                   <svg className="mobile-menu-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                    <circle cx="12" cy="12" r="1"/><path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24M1 12h6m6 0h6M4.22 19.78l4.24-4.24m5.08-5.08l4.24-4.24"/>
                   </svg>
-                  Nueva búsqueda
+                  {t('navbar.newSearch')}
                 </a>
                 <a href="/board" onClick={() => setMenuOpen(false)} className="mobile-nav-link">
                   <svg className="mobile-menu-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -551,12 +548,6 @@ export function Navbar({ user: initialUser }: NavbarProps) {
                   </svg>
                   {t('navbar.exportWord')}
                 </button>
-                <a href="/search" onClick={() => setMenuOpen(false)} className="mobile-nav-link">
-                  <svg className="mobile-menu-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="1"/><path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24M1 12h6m6 0h6M4.22 19.78l4.24-4.24m5.08-5.08l4.24-4.24"/>
-                  </svg>
-                  {t('navbar.newSearch')}
-                </a>
               </>
             )}
 
