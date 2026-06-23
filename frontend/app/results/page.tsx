@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { useAuthProtection } from '@/lib/useAuthProtection';
 import { useTranslation } from '@/lib/useTranslation';
 import { useSavedPublications } from '@/lib/useSavedPublications';
+import { useTracking } from '@/lib/useTracking';
 import { StarRating } from '@/components/ui/StarRating';
 import { BooleanTag } from '@/components/ui/BooleanTag';
 import { Button } from '@/components/ui/Button';
@@ -15,6 +16,7 @@ export default function ResultsPage() {
   useAuthProtection();
   const { t } = useTranslation();
   const searchParams = useSearchParams();
+  const { track } = useTracking();
 
   const [results, setResults] = useState<SearchResult[]>([]);
   const [booleanQuery, setBooleanQuery] = useState<string>('');
@@ -63,8 +65,9 @@ export default function ResultsPage() {
     const cached = sessionStorage.getItem(`search_${jobId}`);
     const loadAndPrepare = (data: any) => {
       const title = data.title || '';
+      const results = data.results || [];
       setThesisTitle(title);
-      setResults(data.results || []);
+      setResults(results);
       setBooleanQuery(data.boolean_query || '');
       setExplanation(data.explanation || '');
 
@@ -73,6 +76,16 @@ export default function ResultsPage() {
         fetchSavedIds(title).then(setSavedIds);
       }
       setLoading(false);
+
+      // Track search completion
+      track('search_completed', {
+        job_id: jobId,
+        thesis_title: title,
+        results_count: results.length,
+        sources: Array.from(
+          new Set(results.map((r: any) => r.source || 'unknown'))
+        ),
+      });
     };
 
     if (cached) {
@@ -230,6 +243,12 @@ export default function ResultsPage() {
       if (modalArticle.url) newSavedIds.add(modalArticle.url);
       setSavedIds(newSavedIds);
 
+      track('article_saved', {
+        doi: modalArticle.doi,
+        source: modalArticle.source,
+        rating: modalRating || 1,
+      });
+
       setModalOpen(false);
       setModalArticle(null);
       setModalRating(0);
@@ -264,6 +283,11 @@ export default function ResultsPage() {
       if (article.doi) newSavedIds.delete(article.doi);
       if (article.url) newSavedIds.delete(article.url);
       setSavedIds(newSavedIds);
+
+      track('article_removed', {
+        doi: article.doi,
+        source: article.source,
+      });
     } catch (err) {
       console.error('Failed to remove publication:', err);
     }

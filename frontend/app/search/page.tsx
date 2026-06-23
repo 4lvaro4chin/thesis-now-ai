@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthProtection } from '@/lib/useAuthProtection';
 import { useTranslation } from '@/lib/useTranslation';
+import { useTracking } from '@/lib/useTracking';
 
 interface Token {
   id: string;
@@ -213,6 +214,7 @@ export default function SearchPage() {
   const router = useRouter();
   const { t, lang } = useTranslation();
   const searchParams = useSearchParams();
+  const { track } = useTracking();
 
   const [title, setTitle] = useState('');
   const [selectedDatabases, setSelectedDatabases] = useState<Record<string, boolean>>({
@@ -262,6 +264,11 @@ export default function SearchPage() {
       }
     }
   }, [searchParams]);
+
+  // Track page view
+  useEffect(() => {
+    track('search_page_viewed', { step: currentStep })
+  }, []);
 
   // Generate query manually when user clicks button
   const handleGenerateQuery = async () => {
@@ -461,6 +468,16 @@ export default function SearchPage() {
     if (langFilter.length) queryParams.set('lang_filter', langFilter.join(','));
     if (openAccess) queryParams.set('open_access', 'true');
     if (peerReviewed) queryParams.set('peer_reviewed', 'true');
+
+    track('search_initiated', {
+      thesis_title: title.trim(),
+      databases_selected: selectedDbArray,
+      databases_count: selectedDbArray.length,
+      query_length: finalQuery.length,
+      year_from: yearFrom,
+      year_to: yearTo,
+      has_filters: !!(docTypes.length || langFilter.length || openAccess || peerReviewed),
+    });
 
     router.push(`/searching?${queryParams.toString()}`);
   };

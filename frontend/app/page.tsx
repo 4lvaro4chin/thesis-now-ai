@@ -2,11 +2,17 @@
 
 import Link from "next/link";
 import { useTranslation } from "@/lib/useTranslation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useTracking } from "@/lib/useTracking";
 
 export default function Home() {
   const { t } = useTranslation();
+  const { track } = useTracking();
   const [title, setTitle] = useState('');
+
+  useEffect(() => {
+    track('landing_viewed');
+  }, []);
 
   const steps = [
     { num: "1", title: t('home.step1.title'), desc: t('home.step1.desc') },

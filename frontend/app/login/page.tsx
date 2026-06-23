@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase';
 import { useTranslation } from '@/lib/useTranslation';
+import { useTracking } from '@/lib/useTracking';
 
 type Tab = 'login' | 'signup';
 
@@ -18,6 +19,7 @@ export default function LoginPage() {
   const [mounted, setMounted] = useState(false);
   const [showEmailForm, setShowEmailForm] = useState(false);
   const { t } = useTranslation();
+  const { track } = useTracking();
 
   useEffect(() => {
     setMounted(true);
@@ -44,6 +46,7 @@ export default function LoginPage() {
           password,
         });
         if (signInError) throw signInError;
+        track('user_login', { method: 'email' });
       } else {
         const { error: signUpError } = await supabase.auth.signUp({
           email,
@@ -53,6 +56,7 @@ export default function LoginPage() {
           },
         });
         if (signUpError) throw signUpError;
+        track('user_signup', { method: 'email' });
       }
 
       router.push('/search');
