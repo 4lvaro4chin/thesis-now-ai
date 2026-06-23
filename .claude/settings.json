@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python main.py)",
+      "Bash(curl -s --retry 10 --retry-delay 1 --retry-connrefused -o /dev/null -w \"HTTP %{http_code}\\\\n\" http://localhost:8000/docs)",
+      "Bash(curl -s --retry 20 --retry-delay 1 --retry-connrefused -o /dev/null -w \"HTTP %{http_code}\\\\n\" http://localhost:3000)",
+      "Bash(curl -s -X POST http://localhost:8000/search -H \"Content-Type: application/json\" -d '{\"title\":\"Implementación de SAP en empresas peruanas\",\"databases\":[\"alicia\"],\"lang\":\"es\"}')",
+      "Bash(python -m py_compile schemas.py main.py services/search_service.py connectors/*.py)",
+      "Bash(curl -s --retry 15 --retry-delay 1 --retry-connrefused -o /dev/null -w \"backend %{http_code} \" http://localhost:8000/health)",
+      "Bash(curl -s --retry 20 --retry-delay 1 --retry-connrefused -o /dev/null -w \"frontend %{http_code}\\\\n\" http://localhost:3000)",
+      "Bash(taskkill /PID 35408 /F)",
+      "PowerShell(\\(Invoke-WebRequest -Uri 'http://localhost:8000/docs' -UseBasicParsing\\).StatusCode)"
+    ]
+  }
+}

@@ -94,6 +94,12 @@ const DatabaseLogos = {
       <text x="50" y="64" textAnchor="middle" fontSize="42" fontWeight="700" fill="white" fontFamily="sans-serif">A</text>
     </svg>
   ),
+  dialnet: (
+    <svg viewBox="0 0 100 100" width="60" height="60" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" rx="8" fill="#C6001B" />
+      <text x="50" y="65" textAnchor="middle" fontSize="36" fontWeight="700" fill="white" fontFamily="sans-serif">D</text>
+    </svg>
+  ),
 };
 
 // Convert backend query string into tokens (terms, operators, parens)
@@ -226,6 +232,7 @@ export default function SearchPage() {
     arxiv: true,
     doaj: true,
     alicia: true,
+    dialnet: true,
   });
   const [tokens, setTokens] = useState<Token[]>([]);
   const [explanation, setExplanation] = useState<string>('');
