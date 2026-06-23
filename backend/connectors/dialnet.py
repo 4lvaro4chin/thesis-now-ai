@@ -9,7 +9,8 @@ logger = logging.getLogger(__name__)
 class DialnetConnector:
     """Dialnet API - Spanish academic database (SSHU: Social Sciences, Humanities).
 
-    Free API, no authentication required.
+    NOTE: Dialnet API endpoint appears to be private/restricted.
+    Public API access may not be available for programmatic queries.
     ~4M articles/chapters from Spanish and Portuguese universities.
     Strong in: Law, Philosophy, History, Languages, Education, Social Sciences.
     """

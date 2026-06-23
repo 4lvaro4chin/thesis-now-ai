@@ -232,7 +232,6 @@ export default function SearchPage() {
     arxiv: true,
     doaj: true,
     alicia: true,
-    dialnet: true,
   });
   const [tokens, setTokens] = useState<Token[]>([]);
   const [explanation, setExplanation] = useState<string>('');
@@ -1495,7 +1494,7 @@ export default function SearchPage() {
               { id: 'arxiv', label: 'arXiv', descKey: 'search.db.arxiv.desc', available: true },
               { id: 'doaj', label: 'DOAJ', descKey: 'search.db.doaj.desc', available: true },
               { id: 'alicia', label: 'ALICIA', descKey: 'search.db.alicia.desc', available: true },
-              { id: 'dialnet', label: 'Dialnet', descKey: 'search.db.dialnet.desc', available: true },
+              { id: 'dialnet', label: 'Dialnet', descKey: 'search.db.dialnet.desc', available: false },
               { id: 'sciencedirect', label: 'ScienceDirect', descKey: 'search.db.sciencedirect.desc', available: false },
               { id: 'google_scholar', label: 'Google Scholar', descKey: 'search.db.google_scholar.desc', available: false },
             ].map((db) => {
