@@ -1495,6 +1495,7 @@ export default function SearchPage() {
               { id: 'arxiv', label: 'arXiv', descKey: 'search.db.arxiv.desc', available: true },
               { id: 'doaj', label: 'DOAJ', descKey: 'search.db.doaj.desc', available: true },
               { id: 'alicia', label: 'ALICIA', descKey: 'search.db.alicia.desc', available: true },
+              { id: 'dialnet', label: 'Dialnet', descKey: 'search.db.dialnet.desc', available: true },
               { id: 'sciencedirect', label: 'ScienceDirect', descKey: 'search.db.sciencedirect.desc', available: false },
               { id: 'google_scholar', label: 'Google Scholar', descKey: 'search.db.google_scholar.desc', available: false },
             ].map((db) => {
@@ -1508,6 +1509,7 @@ export default function SearchPage() {
                 arxiv: DatabaseLogos.arxiv,
                 doaj: DatabaseLogos.doaj,
                 alicia: DatabaseLogos.alicia,
+                dialnet: DatabaseLogos.dialnet,
                 sciencedirect: DatabaseLogos.sciencedirect,
                 google_scholar: DatabaseLogos.google_scholar,
               };
