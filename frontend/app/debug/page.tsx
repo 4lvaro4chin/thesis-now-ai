@@ -8,11 +8,9 @@ export default function DebugPage() {
 
   useEffect(() => {
     const apiKey = process.env.NEXT_PUBLIC_POSTHOG_KEY
-    const isInitialized = posthog.has_loaded?.()
 
     setStatus({
       api_key: apiKey ? `${apiKey.slice(0, 10)}...` : 'MISSING',
-      is_initialized: isInitialized,
       posthog_instance: typeof posthog,
       window_posthog: typeof (window as any).posthog,
     })
