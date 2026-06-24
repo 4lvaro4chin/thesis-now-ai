@@ -460,9 +460,9 @@ export function Navbar({ user: initialUser }: NavbarProps) {
         )}
 
         {/* Mobile Menu Panel — Side Drawer from Right */}
-        {menuOpen && (
+        {(menuOpen || isMenuExiting) && (
           <div
-            className="md:hidden mobile-menu"
+            className={`md:hidden ${isMenuExiting ? 'mobile-menu-exit' : 'mobile-menu'}`}
             style={{
               position: 'fixed',
               top: '64px',
@@ -477,7 +477,6 @@ export function Navbar({ user: initialUser }: NavbarProps) {
               display: 'flex',
               flexDirection: 'column',
               gap: 0,
-              animation: isMenuExiting ? 'slideOutToRight 0.3s ease-out' : 'slideInFromRight 0.3s ease-out',
             }}
           >
             {/* User Section (Top) — Only if authenticated */}
