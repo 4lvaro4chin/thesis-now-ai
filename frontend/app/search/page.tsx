@@ -100,6 +100,14 @@ const DatabaseLogos = {
       <text x="50" y="65" textAnchor="middle" fontSize="36" fontWeight="700" fill="white" fontFamily="sans-serif">D</text>
     </svg>
   ),
+  core: (
+    <svg viewBox="0 0 100 100" width="60" height="60" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" rx="8" fill="#1E40AF" />
+      <circle cx="30" cy="40" r="12" fill="none" stroke="white" strokeWidth="3" />
+      <circle cx="50" cy="50" r="15" fill="none" stroke="white" strokeWidth="3" />
+      <circle cx="70" cy="40" r="12" fill="none" stroke="white" strokeWidth="3" />
+    </svg>
+  ),
 };
 
 // Convert backend query string into tokens (terms, operators, parens)
@@ -232,6 +240,7 @@ export default function SearchPage() {
     arxiv: true,
     doaj: true,
     alicia: true,
+    core: true,
   });
   const [tokens, setTokens] = useState<Token[]>([]);
   const [explanation, setExplanation] = useState<string>('');
@@ -1494,6 +1503,7 @@ export default function SearchPage() {
               { id: 'arxiv', label: 'arXiv', descKey: 'search.db.arxiv.desc', available: true },
               { id: 'doaj', label: 'DOAJ', descKey: 'search.db.doaj.desc', available: true },
               { id: 'alicia', label: 'ALICIA', descKey: 'search.db.alicia.desc', available: true },
+              { id: 'core', label: 'CORE', descKey: 'search.db.core.desc', available: true },
               { id: 'dialnet', label: 'Dialnet', descKey: 'search.db.dialnet.desc', available: false },
               { id: 'sciencedirect', label: 'ScienceDirect', descKey: 'search.db.sciencedirect.desc', available: false },
               { id: 'google_scholar', label: 'Google Scholar', descKey: 'search.db.google_scholar.desc', available: false },
@@ -1508,6 +1518,7 @@ export default function SearchPage() {
                 arxiv: DatabaseLogos.arxiv,
                 doaj: DatabaseLogos.doaj,
                 alicia: DatabaseLogos.alicia,
+                core: DatabaseLogos.core,
                 dialnet: DatabaseLogos.dialnet,
                 sciencedirect: DatabaseLogos.sciencedirect,
                 google_scholar: DatabaseLogos.google_scholar,

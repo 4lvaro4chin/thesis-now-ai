@@ -17,6 +17,7 @@ class SearchService:
         from connectors.doaj import DOAJConnector
         from connectors.alicia import AliciaConnector
         from connectors.dialnet import DialnetConnector
+        from connectors.core import CoreConnector
 
         self.connectors = {
             "pubmed": PubMedConnector(),
@@ -28,6 +29,7 @@ class SearchService:
             "doaj": DOAJConnector(),
             "alicia": AliciaConnector(),
             "dialnet": DialnetConnector(),
+            "core": CoreConnector(),
         }
 
     async def search_all_databases(self, query: str, databases: List[str], filters: dict = None) -> List[SearchResult]:
