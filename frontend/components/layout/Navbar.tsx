@@ -18,8 +18,17 @@ export function Navbar({ user: initialUser }: NavbarProps) {
   const [user, setUser] = useState(initialUser);
   const [mounted, setMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isMenuExiting, setIsMenuExiting] = useState(false);
   const { t, lang } = useTranslation();
   const isResultsPage = pathname === '/results';
+
+  const handleMenuClose = () => {
+    setIsMenuExiting(true);
+    setTimeout(() => {
+      setMenuOpen(false);
+      setIsMenuExiting(false);
+    }, 300);
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -298,8 +307,23 @@ export function Navbar({ user: initialUser }: NavbarProps) {
           }
         }
 
+        @keyframes slideOutToRight {
+          from {
+            opacity: 1;
+            transform: translateX(0);
+          }
+          to {
+            opacity: 0;
+            transform: translateX(100%);
+          }
+        }
+
         .mobile-menu {
           animation: slideInFromRight 0.3s ease-out !important;
+        }
+
+        .mobile-menu-exit {
+          animation: slideOutToRight 0.3s ease-out !important;
         }
       `}</style>
 
@@ -423,7 +447,7 @@ export function Navbar({ user: initialUser }: NavbarProps) {
         {/* Mobile Menu Overlay */}
         {menuOpen && (
           <div
-            onClick={() => setMenuOpen(false)}
+            onClick={handleMenuClose}
             className="md:hidden"
             style={{
               position: 'fixed',
@@ -453,7 +477,7 @@ export function Navbar({ user: initialUser }: NavbarProps) {
               display: 'flex',
               flexDirection: 'column',
               gap: 0,
-              animation: 'slideInFromRight 0.3s ease-out',
+              animation: isMenuExiting ? 'slideOutToRight 0.3s ease-out' : 'slideInFromRight 0.3s ease-out',
             }}
           >
             {/* User Section (Top) — Only if authenticated */}
@@ -468,19 +492,19 @@ export function Navbar({ user: initialUser }: NavbarProps) {
             )}
 
             {/* Navigation Links */}
-            <a href="/#features" onClick={() => setMenuOpen(false)} className="mobile-nav-link">
+            <a href="/#features" onClick={handleMenuClose} className="mobile-nav-link">
               <svg className="mobile-menu-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="1"/><path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24M1 12h6m6 0h6M4.22 19.78l4.24-4.24m5.08-5.08l4.24-4.24"/>
               </svg>
               {t('navbar.howItWorks')}
             </a>
-            <a href="/#databases" onClick={() => setMenuOpen(false)} className="mobile-nav-link">
+            <a href="/#databases" onClick={handleMenuClose} className="mobile-nav-link">
               <svg className="mobile-menu-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/>
               </svg>
               {t('navbar.databases')}
             </a>
-            <a href="/pricing" onClick={() => setMenuOpen(false)} className="mobile-nav-link">
+            <a href="/pricing" onClick={handleMenuClose} className="mobile-nav-link">
               <svg className="mobile-menu-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
               </svg>
@@ -492,13 +516,13 @@ export function Navbar({ user: initialUser }: NavbarProps) {
             {/* Account Links */}
             {user ? (
               <>
-                <a href="/search" onClick={() => setMenuOpen(false)} className="mobile-nav-link">
+                <a href="/search" onClick={handleMenuClose} className="mobile-nav-link">
                   <svg className="mobile-menu-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="12" cy="12" r="1"/><path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24M1 12h6m6 0h6M4.22 19.78l4.24-4.24m5.08-5.08l4.24-4.24"/>
                   </svg>
                   {t('navbar.newSearch')}
                 </a>
-                <a href="/board" onClick={() => setMenuOpen(false)} className="mobile-nav-link">
+                <a href="/board" onClick={handleMenuClose} className="mobile-nav-link">
                   <svg className="mobile-menu-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
                   </svg>
