@@ -324,7 +324,7 @@ export function Navbar({ user: initialUser }: NavbarProps) {
           animation: slideInFromRight 0.3s ease-out !important;
         }
 
-        .mobile-menu-exit {
+        [data-exiting="true"] {
           animation: slideOutToRight 0.3s ease-out !important;
         }
       `}</style>
@@ -464,7 +464,8 @@ export function Navbar({ user: initialUser }: NavbarProps) {
         {/* Mobile Menu Panel — Side Drawer from Right */}
         {(menuOpen || isMenuExiting) && (
           <div
-            className={`md:hidden ${isMenuExiting ? 'mobile-menu-exit' : 'mobile-menu'}`}
+            data-exiting={isMenuExiting}
+            className="md:hidden mobile-menu"
             style={{
               position: 'fixed',
               top: '64px',
