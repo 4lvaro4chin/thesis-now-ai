@@ -26,8 +26,10 @@ export function Navbar({ user: initialUser }: NavbarProps) {
     setIsMenuExiting(true);
     setTimeout(() => {
       setMenuOpen(false);
-      setIsMenuExiting(false);
     }, 300);
+    setTimeout(() => {
+      setIsMenuExiting(false);
+    }, 310);
   };
 
   useEffect(() => {
