@@ -121,6 +121,25 @@ export default function ResultsPage() {
     return () => clearInterval(progressInterval);
   }, [jobId, fetchSavedIds]);
 
+  // Helper functions for scoring and filtering
+  const getRelevanceColor = (score: number) => {
+    if (score >= 0.8) return { bg: 'var(--green-100)', text: '#0F6E56' };
+    if (score >= 0.5) return { bg: '#EBF4FD', text: '#1B6FA8' };
+    return { bg: '#FEF0EC', text: '#A33820' };
+  };
+
+  const getScoreBand = (score: number): 'high' | 'mid' | 'low' => {
+    if (score >= 0.8) return 'high';
+    if (score >= 0.5) return 'mid';
+    return 'low';
+  };
+
+  const toggleScoreFilter = (band: 'high' | 'mid' | 'low') => {
+    const next = new Set(scoreFilters);
+    next.has(band) ? next.delete(band) : next.add(band);
+    setScoreFilters(next);
+  };
+
   const filteredResults = results.filter((r) =>
     scoreFilters.has(getScoreBand(r.relevance_score))
   );
@@ -156,24 +175,6 @@ export default function ResultsPage() {
       alicia: { label: 'ALICIA', bg: '#CFFAFE', color: '#0E7490', emoji: '🇵🇪' },
     };
     return sources[source] || { label: source, bg: '#E5E7EB', color: '#374151', emoji: '📑' };
-  };
-
-  const getRelevanceColor = (score: number) => {
-    if (score >= 0.8) return { bg: 'var(--green-100)', text: '#0F6E56' };
-    if (score >= 0.5) return { bg: '#EBF4FD', text: '#1B6FA8' };
-    return { bg: '#FEF0EC', text: '#A33820' };
-  };
-
-  const getScoreBand = (score: number): 'high' | 'mid' | 'low' => {
-    if (score >= 0.8) return 'high';
-    if (score >= 0.5) return 'mid';
-    return 'low';
-  };
-
-  const toggleScoreFilter = (band: 'high' | 'mid' | 'low') => {
-    const next = new Set(scoreFilters);
-    next.has(band) ? next.delete(band) : next.add(band);
-    setScoreFilters(next);
   };
 
   const toggleAbstract = (key: string) => {
