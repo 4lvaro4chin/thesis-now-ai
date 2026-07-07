@@ -574,7 +574,7 @@ export default function ResultsPage() {
 
               {/* Sort Dropdown + Quick Score Filters */}
               <div style={{ marginTop: '32px', paddingTop: '24px', borderTop: '1px solid #E8EDEB' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'minmax(0, 1fr) auto', gap: '16px', alignItems: 'flex-start' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'minmax(0, 1fr) auto', gap: '16px', alignItems: 'flex-end' }}>
                   <div>
                     <label style={{ fontSize: '12px', fontWeight: 600, color: '#1B2A4A', display: 'block', marginBottom: '8px', textTransform: 'uppercase' }}>
                       {t('results.sortBy')}
