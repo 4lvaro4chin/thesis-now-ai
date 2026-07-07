@@ -17,6 +17,14 @@ export default function ResultsPage() {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
   const { track } = useTracking();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const [results, setResults] = useState<SearchResult[]>([]);
   const [booleanQuery, setBooleanQuery] = useState<string>('');
@@ -566,7 +574,7 @@ export default function ResultsPage() {
 
               {/* Sort Dropdown + Quick Score Filters */}
               <div style={{ marginTop: '32px', paddingTop: '24px', borderTop: '1px solid #E8EDEB' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) auto', gap: '16px', alignItems: 'flex-start', '@media (max-width: 768px)': { gridTemplateColumns: '1fr' } }}>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'minmax(0, 1fr) auto', gap: '16px', alignItems: 'flex-start' }}>
                   <div>
                     <label style={{ fontSize: '12px', fontWeight: 600, color: '#1B2A4A', display: 'block', marginBottom: '8px', textTransform: 'uppercase' }}>
                       {t('results.sortBy')}
@@ -595,7 +603,7 @@ export default function ResultsPage() {
                   </div>
 
                   {/* Quick Score Filters */}
-                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', justifyContent: isMobile ? 'flex-start' : 'flex-end' }}>
                     {(['high', 'mid', 'low'] as const).map((band) => {
                       const color = band === 'high' ? { bg: '#0F6E56', text: '#FFFFFF' } : band === 'mid' ? { bg: '#1B6FA8', text: '#FFFFFF' } : { bg: '#A33820', text: '#FFFFFF' };
                       const isActive = scoreFilters.has(band);
