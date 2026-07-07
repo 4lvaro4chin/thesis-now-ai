@@ -14,6 +14,7 @@ export interface SearchResult {
   relevance_score: number;
   citation_count?: number;
   similarity_score?: number;
+  doc_type?: string;
 }
 
 export interface SearchJob {
