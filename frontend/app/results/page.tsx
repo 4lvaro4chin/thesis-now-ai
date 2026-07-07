@@ -149,7 +149,7 @@ export default function ResultsPage() {
   };
 
   const filteredResults = results.filter((r) =>
-    scoreFilters.has(getScoreBand(r.relevance_score))
+    scoreFilters.has(getScoreBand((r as any).similarity_score !== undefined ? (r as any).similarity_score : r.relevance_score))
   );
 
   const groupedResults = filteredResults.reduce(
@@ -603,7 +603,11 @@ export default function ResultsPage() {
                   </div>
 
                   {/* Quick Score Filters */}
-                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', justifyContent: isMobile ? 'flex-start' : 'flex-end' }}>
+                  <div>
+                    <label style={{ fontSize: '12px', fontWeight: 600, color: '#1B2A4A', display: 'block', marginBottom: '8px', textTransform: 'uppercase' }}>
+                      🤖 AI-Ranked
+                    </label>
+                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', justifyContent: isMobile ? 'flex-start' : 'flex-end' }}>
                     {(['high', 'mid', 'low'] as const).map((band) => {
                       const color = band === 'high' ? { bg: '#0F6E56', text: '#FFFFFF' } : band === 'mid' ? { bg: '#1B6FA8', text: '#FFFFFF' } : { bg: '#A33820', text: '#FFFFFF' };
                       const isActive = scoreFilters.has(band);
@@ -639,6 +643,7 @@ export default function ResultsPage() {
                         </button>
                       );
                     })}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -891,7 +896,7 @@ export default function ResultsPage() {
                                 fontSize: '11px',
                                 fontWeight: 600,
                               }}>
-                                {Math.round(article.relevance_score * 100)}% {t('results.relevant')}
+                                {Math.round(article.relevance_score * 100)}%
                               </div>
 
                               {/* AI-Ranked Badge (if similarity score present) */}
