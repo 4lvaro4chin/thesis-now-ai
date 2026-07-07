@@ -152,6 +152,14 @@ class PubMedConnector:
                                 doi = article_id.text
                                 break
 
+                    # Publication type
+                    pub_types = []
+                    pub_type_list = article_elem.find("PublicationTypeList")
+                    if pub_type_list is not None:
+                        for pub_type in pub_type_list.findall("PublicationType"):
+                            if pub_type.text:
+                                pub_types.append(pub_type.text)
+
                     result = SearchResult(
                         source="pubmed",
                         title=title,
@@ -163,6 +171,7 @@ class PubMedConnector:
                         abstract=abstract,
                         citation_count=0,
                         relevance_score=0.5,
+                        doc_type=self._normalize_doc_type(pub_types),
                     )
                     results.append(result)
 
@@ -199,3 +208,23 @@ class PubMedConnector:
         if filters.get("peer_reviewed_only"):
             filtered += ' AND "journal article"[pt]'
         return filtered
+
+    def _normalize_doc_type(self, pub_types: List[str]) -> str:
+        """Normalize PubMed PublicationTypes to canonical doc_type"""
+        if not pub_types:
+            return None
+        primary_type = pub_types[0] if pub_types else None
+        if not primary_type:
+            return None
+        type_map = {
+            "Journal Article": "article",
+            "Review": "review",
+            "Research Support": "article",
+            "Clinical Trial": "article",
+            "Conference Paper": "conference",
+            "Case Reports": "article",
+            "Preprint": "preprint",
+            "Dissertation": "thesis",
+            "Thesis": "thesis",
+        }
+        return type_map.get(primary_type, "article")

@@ -81,6 +81,7 @@ class CoreConnector:
                                     abstract=item.get("abstract") or item.get("description"),
                                     citation_count=item.get("citationCount", 0),
                                     relevance_score=0.5,
+                                    doc_type="article",
                                 )
                                 results.append(result)
                             except Exception as e:

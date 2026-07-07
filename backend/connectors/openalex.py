@@ -28,7 +28,7 @@ class OpenAlexConnector:
                 params = {
                     "search": simple_query,
                     "per-page": min(max_results, 50),
-                    "select": "id,title,authorships,publication_year,doi,cited_by_count,abstract_inverted_index,is_oa,primary_location",
+                    "select": "id,title,authorships,publication_year,doi,cited_by_count,abstract_inverted_index,is_oa,primary_location,type",
                     "mailto": self.MAILTO,
                 }
 
@@ -90,6 +90,7 @@ class OpenAlexConnector:
                                     abstract=self._reconstruct_abstract(work.get("abstract_inverted_index")),
                                     citation_count=work.get("cited_by_count", 0),
                                     relevance_score=0.5,
+                                    doc_type=self._normalize_doc_type(work.get("type")),
                                 )
                                 results.append(result)
                             except Exception as e:
@@ -175,3 +176,18 @@ class OpenAlexConnector:
         query = ' '.join(query.split())
 
         return query if query.strip() else "research"  # Fallback to generic search
+
+    def _normalize_doc_type(self, oa_type: str) -> str:
+        """Normalize OpenAlex type to canonical doc_type"""
+        if not oa_type:
+            return None
+        type_map = {
+            "journal-article": "article",
+            "preprint": "preprint",
+            "dissertation": "thesis",
+            "conference-proceeding": "conference",
+            "review": "review",
+            "book-chapter": "article",
+            "book": "article",
+        }
+        return type_map.get(oa_type.lower(), "article")

@@ -82,6 +82,7 @@ class DialnetConnector:
                                     abstract=item.get("resumen") or item.get("abstract"),
                                     citation_count=item.get("citaciones", 0),
                                     relevance_score=0.5,
+                                    doc_type="article",
                                 )
                                 results.append(result)
                             except Exception as e:

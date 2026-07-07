@@ -76,6 +76,7 @@ class AliciaConnector:
                                     abstract=self._extract_abstract(item),
                                     citation_count=0,  # Not provided by ALICIA
                                     relevance_score=0.5,
+                                    doc_type="article",
                                 )
                                 results.append(result)
                             except Exception as e:

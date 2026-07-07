@@ -103,6 +103,10 @@ class EuropePMCConnector:
                     # Open Access status
                     is_open_access = article.get("isOpenAccess", False)
 
+                    # Document type
+                    pub_type = article.get("pubType")
+                    doc_type = self._normalize_doc_type(pub_type, article.get("source"))
+
                     result = SearchResult(
                         source="europepmc",
                         title=title,
@@ -114,6 +118,7 @@ class EuropePMCConnector:
                         abstract=abstract,
                         citation_count=0,  # Europe PMC doesn't provide citation count directly
                         relevance_score=0.5,  # Will be recalculated by scoring service
+                        doc_type=doc_type,
                         metadata={
                             "pmcid": pmcid,
                             "journal": journal,
@@ -151,3 +156,18 @@ class EuropePMCConnector:
         if filters.get("open_access_only"):
             filtered += " AND OPEN_ACCESS:Y"
         return filtered
+
+    def _normalize_doc_type(self, pub_type: Optional[str], source: Optional[str] = None) -> str:
+        """Normalize Europe PMC pubType to canonical doc_type"""
+        if not pub_type:
+            # If no pubType but source indicates preprint
+            if source == "PPR":
+                return "preprint"
+            return None
+        type_map = {
+            "research-article": "article",
+            "journal-article": "article",
+            "review": "review",
+            "preprint": "preprint",
+        }
+        return type_map.get(pub_type.lower(), "article" if source != "PPR" else "preprint")

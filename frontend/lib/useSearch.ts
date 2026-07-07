@@ -13,6 +13,7 @@ export interface SearchResult {
   abstract?: string;
   relevance_score: number;
   citation_count?: number;
+  similarity_score?: number;
 }
 
 export interface SearchJob {

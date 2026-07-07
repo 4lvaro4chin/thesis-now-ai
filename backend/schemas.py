@@ -41,6 +41,8 @@ class SearchResult(BaseModel):
     abstract: Optional[str]
     citation_count: Optional[int] = Field(default=0)
     relevance_score: float = Field(default=0.5, ge=0, le=1)
+    similarity_score: Optional[float] = Field(default=None, ge=0, le=1)
+    doc_type: Optional[str] = None
 
 class SearchStatus(BaseModel):
     id: str

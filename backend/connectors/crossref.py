@@ -84,6 +84,7 @@ class CrossrefConnector:
                                     abstract=None,  # Crossref rarely has abstracts
                                     citation_count=item.get("is-referenced-by-count", 0),
                                     relevance_score=0.5,
+                                    doc_type=self._normalize_doc_type(item.get("type")),
                                 )
                                 results.append(result)
                             except Exception as e:
@@ -131,24 +132,58 @@ class CrossrefConnector:
 
     def _simplify_query(self, boolean_query: str) -> str:
         """
-        Convert boolean query to simple keyword search for Crossref.
-        Remove operators, parentheses, and wildcards.
+        Convert boolean query to keyword search for Crossref while preserving critical terms.
+        Crossref doesn't support full boolean syntax, so we extract AND groups and join with spaces.
+        This ensures all critical terms are required.
         """
         import re
 
         # Remove NOT clauses
         query = re.sub(r'\bNOT\s+(?:\([^)]*\)|[^\s()]+)', '', boolean_query, flags=re.IGNORECASE)
 
-        # Remove operators
-        query = re.sub(r'\b(AND|OR)\b', '', query, flags=re.IGNORECASE)
+        # Extract main AND groups: split by AND and clean each group
+        and_groups = re.split(r'\s+AND\s+', query, flags=re.IGNORECASE)
 
-        # Remove parentheses
-        query = query.replace('(', '').replace(')', '')
+        cleaned_groups = []
+        for group in and_groups:
+            # Remove outer parentheses
+            group = group.strip().strip('()')
 
-        # Remove wildcards
-        query = query.replace('*', '')
+            # For OR groups, keep first term or best representative
+            # This preserves synonyms by using the first/primary term
+            or_terms = re.split(r'\s+OR\s+', group, flags=re.IGNORECASE)
+            primary_term = or_terms[0].strip().strip('"\'')
 
-        # Clean up excess whitespace
-        query = ' '.join(query.split())
+            # Keep wildcards to preserve truncation
+            # Only remove trailing wildcard stars for Crossref compatibility
+            primary_term = primary_term.rstrip('*')
 
-        return query if query.strip() else "research"
+            if primary_term:
+                cleaned_groups.append(f'"{primary_term}"')
+
+        # Join with spaces (Crossref treats space as AND in keyword search)
+        result = ' '.join(cleaned_groups)
+
+        # Fallback: if cleaning produced empty result, return original without operators
+        if not result or result.strip() == '""':
+            fallback = boolean_query.replace('(', '').replace(')', '')
+            fallback = re.sub(r'\b(AND|OR)\b', '', fallback, flags=re.IGNORECASE)
+            fallback = fallback.replace('*', '')
+            return fallback.strip() if fallback.strip() else "research"
+
+        return result.strip() if result.strip() else "research"
+
+    def _normalize_doc_type(self, crossref_type: str) -> str:
+        """Normalize Crossref type to canonical doc_type"""
+        if not crossref_type:
+            return None
+        type_map = {
+            "journal-article": "article",
+            "preprint": "preprint",
+            "dissertation": "thesis",
+            "conference-proceeding": "conference",
+            "review": "review",
+            "book-chapter": "article",
+            "book": "article",
+        }
+        return type_map.get(crossref_type.lower(), "article")

@@ -79,6 +79,7 @@ class ArxivConnector:
                                     abstract=self._get_text(entry, "atom:summary", ns),
                                     citation_count=0,  # arXiv doesn't provide citation count
                                     relevance_score=0.5,
+                                    doc_type="preprint",
                                 )
                                 results.append(result)
                             except Exception as e:

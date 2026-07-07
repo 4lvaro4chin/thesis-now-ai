@@ -258,7 +258,7 @@ export default function SearchPage() {
   const [langFilter, setLangFilter] = useState<string[]>([]);
   const [openAccess, setOpenAccess] = useState(false);
   const [peerReviewed, setPeerReviewed] = useState(false);
-  const [filtersExpanded, setFiltersExpanded] = useState(false);
+  const [filtersExpanded, setFiltersExpanded] = useState(true);
 
   // Load initial title, query, and step from URL parameters
   useEffect(() => {
@@ -1343,7 +1343,7 @@ export default function SearchPage() {
               {t('search.step2.queryWillExecute')}
             </p>
             <p style={{ margin: 0, color: 'var(--green-900)', fontWeight: 600 }}>
-              {getFinalQuery() || '(ingresa términos para generar query)'}
+              {getFinalQuery() || '(ingresa tu tema para ver los términos)'}
             </p>
           </div>
 

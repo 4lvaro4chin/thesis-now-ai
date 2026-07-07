@@ -25,7 +25,7 @@ class SemanticScholarConnector:
                 params = {
                     "query": query,
                     "limit": min(max_results, 50),
-                    "fields": "title,authors,year,abstract,url,doi,citationCount,openAccessPdf",
+                    "fields": "title,authors,year,abstract,url,doi,citationCount,openAccessPdf,publicationTypes",
                 }
 
                 if filters and filters.get("year_from"):
@@ -85,6 +85,7 @@ class SemanticScholarConnector:
                                     abstract=paper.get("abstract"),
                                     citation_count=citation_count,
                                     relevance_score=0.5,
+                                    doc_type=self._normalize_doc_type(paper.get("publicationTypes", [])),
                                 )
                                 results.append(result)
                             except Exception as e:
@@ -109,3 +110,21 @@ class SemanticScholarConnector:
         except Exception as e:
             logger.error(f"Semantic Scholar error: {str(e)}")
             return []
+
+    def _normalize_doc_type(self, publication_types: List[str]) -> str:
+        """Normalize Semantic Scholar publicationTypes to canonical doc_type"""
+        if not publication_types or not isinstance(publication_types, list):
+            return None
+        primary_type = publication_types[0] if publication_types else None
+        if not primary_type:
+            return None
+        type_map = {
+            "JournalArticle": "article",
+            "Preprint": "preprint",
+            "Review": "review",
+            "Conference": "conference",
+            "ConferencePaper": "conference",
+            "Dissertation": "thesis",
+            "Thesis": "thesis",
+        }
+        return type_map.get(primary_type, "article")

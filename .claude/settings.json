@@ -9,7 +9,8 @@
       "Bash(curl -s --retry 15 --retry-delay 1 --retry-connrefused -o /dev/null -w \"backend %{http_code} \" http://localhost:8000/health)",
       "Bash(curl -s --retry 20 --retry-delay 1 --retry-connrefused -o /dev/null -w \"frontend %{http_code}\\\\n\" http://localhost:3000)",
       "Bash(taskkill /PID 35408 /F)",
-      "PowerShell(\\(Invoke-WebRequest -Uri 'http://localhost:8000/docs' -UseBasicParsing\\).StatusCode)"
+      "PowerShell(\\(Invoke-WebRequest -Uri 'http://localhost:8000/docs' -UseBasicParsing\\).StatusCode)",
+      "Bash(curl -s http://localhost:3000/search)"
     ]
   }
 }

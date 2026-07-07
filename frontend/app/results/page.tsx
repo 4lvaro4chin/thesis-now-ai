@@ -719,6 +719,36 @@ export default function ResultsPage() {
                             );
                           })()}
 
+                          {/* Year & Doc Type Tags */}
+                          <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
+                            {article.year && (
+                              <div style={{
+                                display: 'inline-block',
+                                background: 'rgba(29, 158, 117, 0.1)',
+                                color: 'var(--green-700)',
+                                padding: '4px 10px',
+                                borderRadius: '4px',
+                                fontSize: '11px',
+                                fontWeight: 600,
+                              }}>
+                                {article.year}
+                              </div>
+                            )}
+                            {article.doc_type && (
+                              <div style={{
+                                display: 'inline-block',
+                                background: 'var(--bg-muted)',
+                                color: 'var(--text-muted)',
+                                padding: '4px 10px',
+                                borderRadius: '4px',
+                                fontSize: '11px',
+                                fontWeight: 600,
+                              }}>
+                                {t(`filter.type.${article.doc_type === 'conference' ? 'conference-paper' : article.doc_type}`)}
+                              </div>
+                            )}
+                          </div>
+
                           {/* Title */}
                           <h3 style={{
                             fontSize: '15px',
@@ -787,6 +817,23 @@ export default function ResultsPage() {
                               }}>
                                 {Math.round(article.relevance_score * 100)}% {t('results.relevant')}
                               </div>
+
+                              {/* AI-Ranked Badge (if similarity score present) */}
+                              {(article as any).similarity_score !== undefined && (
+                                <div style={{
+                                  background: 'rgba(34, 197, 94, 0.1)',
+                                  color: '#16a34a',
+                                  padding: '4px 12px',
+                                  borderRadius: '4px',
+                                  fontSize: '11px',
+                                  fontWeight: 600,
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '4px',
+                                }}>
+                                  🤖 AI-Ranked {Math.round(((article as any).similarity_score || 0) * 100)}%
+                                </div>
+                              )}
 
                               {/* DOI */}
                               {article.doi && (

@@ -60,8 +60,8 @@ class SearchService:
         deduplicated = self._deduplicate(all_results)
         logger.info(f"After deduplication: {len(deduplicated)} unique results")
 
-        # Apply hybrid scoring: 30% recency + 70% citations
-        scored = RelevanceScorer.score(deduplicated)
+        # Apply hybrid scoring: 30% recency + 70% citations + optional AI embeddings
+        scored = RelevanceScorer.score(deduplicated, query=query)
         logger.info(f"Scoring applied: results sorted by relevance")
 
         return scored

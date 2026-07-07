@@ -69,6 +69,7 @@ class DOAJConnector:
                                     abstract=bibjson.get("abstract"),
                                     citation_count=0,  # DOAJ doesn't provide citation counts
                                     relevance_score=0.5,
+                                    doc_type="article",
                                 )
                                 results.append(result)
                             except Exception as e:
