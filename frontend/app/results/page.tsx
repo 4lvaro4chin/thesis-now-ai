@@ -892,10 +892,10 @@ export default function ResultsPage() {
                                 (() => {
                                   const simScore = (article as any).similarity_score || 0;
                                   const colors = simScore >= 0.8
-                                    ? { bg: '#0F6E56', text: '#FFFFFF' }
+                                    ? { bg: 'rgba(15, 110, 86, 0.12)', text: '#0F6E56' }
                                     : simScore >= 0.5
-                                    ? { bg: '#1B6FA8', text: '#FFFFFF' }
-                                    : { bg: '#A33820', text: '#FFFFFF' };
+                                    ? { bg: 'rgba(27, 111, 168, 0.12)', text: '#1B6FA8' }
+                                    : { bg: 'rgba(163, 56, 32, 0.12)', text: '#A33820' };
                                   return (
                                     <div style={{
                                       background: colors.bg,
