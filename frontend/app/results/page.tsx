@@ -887,33 +887,31 @@ export default function ResultsPage() {
                           {/* Metadata */}
                           <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
                             <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
-                              {/* Relevance Score */}
-                              <div style={{
-                                background: relevance.bg,
-                                color: relevance.text,
-                                padding: '4px 12px',
-                                borderRadius: '4px',
-                                fontSize: '11px',
-                                fontWeight: 600,
-                              }}>
-                                {Math.round(article.relevance_score * 100)}%
-                              </div>
-
                               {/* AI-Ranked Badge (if similarity score present) */}
                               {(article as any).similarity_score !== undefined && (
-                                <div style={{
-                                  background: 'rgba(34, 197, 94, 0.1)',
-                                  color: '#16a34a',
-                                  padding: '4px 12px',
-                                  borderRadius: '4px',
-                                  fontSize: '11px',
-                                  fontWeight: 600,
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  gap: '4px',
-                                }}>
-                                  🤖 AI-Ranked {Math.round(((article as any).similarity_score || 0) * 100)}%
-                                </div>
+                                (() => {
+                                  const simScore = (article as any).similarity_score || 0;
+                                  const colors = simScore >= 0.8
+                                    ? { bg: '#0F6E56', text: '#FFFFFF' }
+                                    : simScore >= 0.5
+                                    ? { bg: '#1B6FA8', text: '#FFFFFF' }
+                                    : { bg: '#A33820', text: '#FFFFFF' };
+                                  return (
+                                    <div style={{
+                                      background: colors.bg,
+                                      color: colors.text,
+                                      padding: '4px 12px',
+                                      borderRadius: '4px',
+                                      fontSize: '11px',
+                                      fontWeight: 600,
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      gap: '4px',
+                                    }}>
+                                      🤖 AI-Ranked {Math.round(simScore * 100)}%
+                                    </div>
+                                  );
+                                })()
                               )}
 
                               {/* DOI */}
