@@ -565,71 +565,73 @@ export default function ResultsPage() {
               )}
 
               {/* Sort Dropdown + Quick Score Filters */}
-              <div style={{ marginTop: '32px', paddingTop: '24px', borderTop: '1px solid #E8EDEB', display: 'flex', gap: '24px', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-                <div style={{ flex: 1, minWidth: '220px' }}>
-                  <label style={{ fontSize: '12px', fontWeight: 600, color: '#1B2A4A', display: 'block', marginBottom: '8px', textTransform: 'uppercase' }}>
-                    {t('results.sortBy')}
-                  </label>
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as any)}
-                    style={{
-                      padding: '10px 14px',
-                      border: '1px solid #E8EDEB',
-                      borderRadius: '6px',
-                      fontSize: '13px',
-                      fontFamily: "'DM Sans', sans-serif",
-                      color: '#1B2A4A',
-                      cursor: 'pointer',
-                      backgroundColor: '#FFFFFF',
-                      fontWeight: 500,
-                      width: '100%',
-                    }}
-                  >
-                    <option value="relevance">Relevancia (más alta primero)</option>
-                    <option value="citations">Citaciones (más citadas primero)</option>
-                    <option value="year">Año (más reciente primero)</option>
-                    <option value="title">Título (A-Z)</option>
-                  </select>
-                </div>
+              <div style={{ marginTop: '32px', paddingTop: '24px', borderTop: '1px solid #E8EDEB' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) auto', gap: '16px', alignItems: 'flex-start', '@media (max-width: 768px)': { gridTemplateColumns: '1fr' } }}>
+                  <div>
+                    <label style={{ fontSize: '12px', fontWeight: 600, color: '#1B2A4A', display: 'block', marginBottom: '8px', textTransform: 'uppercase' }}>
+                      {t('results.sortBy')}
+                    </label>
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value as any)}
+                      style={{
+                        padding: '10px 14px',
+                        border: '1px solid #E8EDEB',
+                        borderRadius: '6px',
+                        fontSize: '13px',
+                        fontFamily: "'DM Sans', sans-serif",
+                        color: '#1B2A4A',
+                        cursor: 'pointer',
+                        backgroundColor: '#FFFFFF',
+                        fontWeight: 500,
+                        width: '100%',
+                      }}
+                    >
+                      <option value="relevance">Relevancia (más alta primero)</option>
+                      <option value="citations">Citaciones (más citadas primero)</option>
+                      <option value="year">Año (más reciente primero)</option>
+                      <option value="title">Título (A-Z)</option>
+                    </select>
+                  </div>
 
-                {/* Quick Score Filters */}
-                <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-end' }}>
-                  {(['high', 'mid', 'low'] as const).map((band) => {
-                    const color = band === 'high' ? { bg: '#0F6E56', text: '#FFFFFF' } : band === 'mid' ? { bg: '#1B6FA8', text: '#FFFFFF' } : { bg: '#A33820', text: '#FFFFFF' };
-                    const isActive = scoreFilters.has(band);
-                    return (
-                      <button
-                        key={band}
-                        onClick={() => toggleScoreFilter(band)}
-                        style={{
-                          padding: '8px 14px',
-                          borderRadius: '6px',
-                          fontSize: '12px',
-                          fontWeight: 600,
-                          fontFamily: "'DM Sans', sans-serif",
-                          border: isActive ? 'none' : `1.5px solid ${color.bg}`,
-                          background: isActive ? color.bg : 'transparent',
-                          color: isActive ? color.text : color.bg,
-                          cursor: 'pointer',
-                          transition: 'all 0.2s',
-                          opacity: isActive ? 1 : 0.35,
-                          whiteSpace: 'nowrap',
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.opacity = isActive ? '0.9' : '0.6';
-                          e.currentTarget.style.transform = 'translateY(-2px)';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.opacity = isActive ? '1' : '0.35';
-                          e.currentTarget.style.transform = 'translateY(0)';
-                        }}
-                        title={`Filtrar por ${band === 'high' ? '100-80%' : band === 'mid' ? '79-50%' : '49-0%'}`}
-                      >
-                        {band === 'high' ? t('results.filter.high') : band === 'mid' ? t('results.filter.mid') : t('results.filter.low')}
-                      </button>
-                    );
-                  })}
+                  {/* Quick Score Filters */}
+                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                    {(['high', 'mid', 'low'] as const).map((band) => {
+                      const color = band === 'high' ? { bg: '#0F6E56', text: '#FFFFFF' } : band === 'mid' ? { bg: '#1B6FA8', text: '#FFFFFF' } : { bg: '#A33820', text: '#FFFFFF' };
+                      const isActive = scoreFilters.has(band);
+                      return (
+                        <button
+                          key={band}
+                          onClick={() => toggleScoreFilter(band)}
+                          style={{
+                            padding: '6px 11px',
+                            borderRadius: '5px',
+                            fontSize: 'clamp(10px, 2vw, 12px)',
+                            fontWeight: 600,
+                            fontFamily: "'DM Sans', sans-serif",
+                            border: isActive ? 'none' : `1.5px solid ${color.bg}`,
+                            background: isActive ? color.bg : 'transparent',
+                            color: isActive ? color.text : color.bg,
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                            opacity: isActive ? 1 : 0.35,
+                            whiteSpace: 'nowrap',
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.opacity = isActive ? '0.9' : '0.6';
+                            e.currentTarget.style.transform = 'translateY(-2px)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.opacity = isActive ? '1' : '0.35';
+                            e.currentTarget.style.transform = 'translateY(0)';
+                          }}
+                          title={`Filtrar por ${band === 'high' ? '100-80%' : band === 'mid' ? '79-50%' : '49-0%'}`}
+                        >
+                          {band === 'high' ? t('results.filter.high') : band === 'mid' ? t('results.filter.mid') : t('results.filter.low')}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </div>
