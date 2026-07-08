@@ -605,7 +605,7 @@ export default function ResultsPage() {
                   {/* Quick Score Filters */}
                   <div>
                     <label style={{ fontSize: '12px', fontWeight: 600, color: '#1B2A4A', display: 'block', marginBottom: '8px', textTransform: 'uppercase' }}>
-                      🤖 AI-Ranked
+                      🤖 {t('results.aiRanked')}
                     </label>
                     <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', justifyContent: isMobile ? 'flex-start' : 'flex-end' }}>
                     {(['high', 'mid', 'low'] as const).map((band) => {
@@ -908,7 +908,7 @@ export default function ResultsPage() {
                                       alignItems: 'center',
                                       gap: '4px',
                                     }}>
-                                      🤖 AI-Ranked {Math.round(simScore * 100)}%
+                                      🤖 {t('results.aiRanked')} {Math.round(simScore * 100)}%
                                     </div>
                                   );
                                 })()
