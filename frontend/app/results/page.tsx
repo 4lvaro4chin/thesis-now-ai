@@ -41,7 +41,7 @@ export default function ResultsPage() {
   const [explanation, setExplanation] = useState<string>('');
   const [collapsedSources, setCollapsedSources] = useState<Set<string>>(new Set());
   const [scoreFilters, setScoreFilters] = useState<Set<'high' | 'mid' | 'low'>>(
-    new Set(['high', 'mid', 'low'])
+    new Set(['high', 'mid'])
   );
 
   const { getSavedIds: fetchSavedIds, savePublication, removePublication } = useSavedPublications();
