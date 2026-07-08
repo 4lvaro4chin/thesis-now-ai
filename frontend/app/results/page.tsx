@@ -329,7 +329,11 @@ export default function ResultsPage() {
     const sorted = [...items];
     switch (sortBy) {
       case 'relevance':
-        return sorted.sort((a, b) => (b.relevance_score || 0) - (a.relevance_score || 0));
+        return sorted.sort((a, b) => {
+          const bScore = (b as any).similarity_score !== undefined ? (b as any).similarity_score : b.relevance_score;
+          const aScore = (a as any).similarity_score !== undefined ? (a as any).similarity_score : a.relevance_score;
+          return (bScore || 0) - (aScore || 0);
+        });
       case 'citations':
         return sorted.sort((a, b) => (b.citation_count || 0) - (a.citation_count || 0));
       case 'year':
