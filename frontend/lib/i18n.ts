@@ -40,6 +40,7 @@ export const translations = {
     'navbar.dashboard': 'Mi Tablero',
     'navbar.exportPdf': 'Descargar PDF',
     'navbar.exportWord': 'Descargar Word',
+    'navbar.exportExcel': 'Descargar Excel',
     'navbar.newSearch': 'Nueva búsqueda',
 
     // Search page
@@ -149,6 +150,7 @@ export const translations = {
     'results.button.more': 'Ver más',
     'results.button.load': 'Cargar más resultados',
     'results.export.selected': 'artículos seleccionados',
+    'results.export.excel': 'Descargar Excel',
     'results.button.download': 'Descargar',
     'results.button.readFull': 'Leer abstract completo',
     'results.button.readLess': 'Leer menos',
@@ -250,6 +252,7 @@ export const translations = {
     'navbar.dashboard': 'Dashboard',
     'navbar.exportPdf': 'Download PDF',
     'navbar.exportWord': 'Download Word',
+    'navbar.exportExcel': 'Download Excel',
     'navbar.newSearch': 'New Search',
 
     // Search page
@@ -359,6 +362,7 @@ export const translations = {
     'results.button.more': 'View more',
     'results.button.load': 'Load more results',
     'results.export.selected': 'articles selected',
+    'results.export.excel': 'Download Excel',
     'results.button.download': 'Download',
     'results.button.readFull': 'Read Full Abstract',
     'results.button.readLess': 'Read Less',
@@ -460,6 +464,7 @@ export const translations = {
     'navbar.dashboard': 'Meu Painel',
     'navbar.exportPdf': 'Baixar PDF',
     'navbar.exportWord': 'Baixar Word',
+    'navbar.exportExcel': 'Baixar Excel',
     'navbar.newSearch': 'Nova Pesquisa',
 
     // Search page
@@ -569,6 +574,7 @@ export const translations = {
     'results.button.more': 'Ver mais',
     'results.button.load': 'Carregar mais resultados',
     'results.export.selected': 'artigos selecionados',
+    'results.export.excel': 'Baixar Excel',
     'results.button.download': 'Baixar',
     'results.button.readFull': 'Ler Resumo Completo',
     'results.button.readLess': 'Ler Menos',
