@@ -1,7 +1,7 @@
 import os
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import StreamingResponse
 import logging
 import uuid
 from typing import Optional
@@ -9,7 +9,6 @@ from datetime import datetime
 from io import BytesIO
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment
-import tempfile
 
 # Config
 from dotenv import load_dotenv
@@ -157,15 +156,16 @@ async def export_excel(job_id: str):
     ws.column_dimensions["D"].width = 20
     ws.column_dimensions["E"].width = 20
 
-    # Save to temp file
-    with tempfile.NamedTemporaryFile(suffix=".xlsx", delete=False) as tmp:
-        wb.save(tmp.name)
-        tmp_path = tmp.name
+    # Save to BytesIO (in memory)
+    excel_file = BytesIO()
+    wb.save(excel_file)
+    excel_file.seek(0)
 
-    return FileResponse(
-        path=tmp_path,
-        filename=f"{job.get('title', 'resultados').replace(' ', '_')}.xlsx",
-        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    filename = f"{job.get('title', 'resultados').replace(' ', '_')}.xlsx"
+    return StreamingResponse(
+        iter([excel_file.getvalue()]),
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
     )
 
 async def execute_search(job_id: str, request: SearchRequest):
