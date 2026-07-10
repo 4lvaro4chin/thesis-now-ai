@@ -53,6 +53,19 @@ jobs = {}
 async def health():
     return {"status": "ok", "timestamp": datetime.utcnow().isoformat()}
 
+@app.get("/test/list-jobs")
+async def list_jobs():
+    """Debug endpoint to list all jobs in memory."""
+    job_list = []
+    for job_id, job in jobs.items():
+        job_list.append({
+            "id": job_id,
+            "status": job.get("status"),
+            "title": job.get("title"),
+            "results_count": len(job.get("results", []))
+        })
+    return {"total": len(jobs), "jobs": job_list}
+
 @app.get("/test/create-sample-job")
 async def create_sample_job():
     """
@@ -200,12 +213,12 @@ async def export_excel(job_id: str):
 
     # Data rows
     for row_idx, result in enumerate(results, start=2):
-        ws.cell(row=row_idx, column=1, value=result.get("title", ""))
-        authors = ", ".join(result.get("authors", [])) if result.get("authors") else ""
+        ws.cell(row=row_idx, column=1, value=result.title or "")
+        authors = ", ".join(result.authors) if result.authors else ""
         ws.cell(row=row_idx, column=2, value=authors)
-        ws.cell(row=row_idx, column=3, value=result.get("year", ""))
-        ws.cell(row=row_idx, column=4, value=result.get("source", ""))
-        ws.cell(row=row_idx, column=5, value=result.get("doc_type", ""))
+        ws.cell(row=row_idx, column=3, value=result.year or "")
+        ws.cell(row=row_idx, column=4, value=result.source or "")
+        ws.cell(row=row_idx, column=5, value=result.doc_type or "")
 
     # Column widths
     ws.column_dimensions["A"].width = 50
