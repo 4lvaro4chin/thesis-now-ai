@@ -199,9 +199,13 @@ export default function ResultsPage() {
 
   // Expose export function to window for Navbar access
   useEffect(() => {
+    console.log('Job ID available:', jobId);
     (window as any).thesisNowExportExcel = () => {
+      console.log('Export clicked with jobId:', jobId);
       if (jobId) {
         exportToExcel(jobId);
+      } else {
+        alert('No job ID found. Make sure you have search results.');
       }
     };
     return () => {
