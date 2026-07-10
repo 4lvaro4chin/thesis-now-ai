@@ -53,6 +53,64 @@ jobs = {}
 async def health():
     return {"status": "ok", "timestamp": datetime.utcnow().isoformat()}
 
+@app.get("/test/create-sample-job")
+async def create_sample_job():
+    """
+    Create a sample job with test data for Excel export testing.
+    """
+    job_id = str(uuid.uuid4())
+    jobs[job_id] = {
+        "id": job_id,
+        "title": "Impact of Mobile Learning on Academic Performance",
+        "status": "completed",
+        "boolean_query": '(mobile learning OR m-learning) AND (academic performance OR student achievement)',
+        "explanation": "Test query for Excel export",
+        "results": [
+            {
+                "source": "semantic_scholar",
+                "title": "Mobile Learning and Student Engagement: A Meta-Analysis",
+                "authors": ["Smith, John", "Johnson, Mary"],
+                "year": 2023,
+                "doi": "10.1234/example.2023",
+                "url": "https://example.com/paper1",
+                "relevance_score": 0.92,
+                "similarity_score": 0.88,
+                "citation_count": 15,
+                "doc_type": "Journal Article",
+                "abstract": "This study examines the impact of mobile learning technologies on student engagement and academic outcomes in higher education."
+            },
+            {
+                "source": "pubmed",
+                "title": "Effects of Digital Tools on Learning Outcomes",
+                "authors": ["Chen, Li", "Wang, Wei", "Garcia, Carlos"],
+                "year": 2022,
+                "pmid": "12345678",
+                "url": "https://example.com/paper2",
+                "relevance_score": 0.85,
+                "similarity_score": 0.80,
+                "citation_count": 42,
+                "doc_type": "Research Paper",
+                "abstract": "Digital learning tools have shown significant improvements in student performance across multiple studies."
+            },
+            {
+                "source": "arxiv",
+                "title": "Machine Learning for Personalized Learning Paths",
+                "authors": ["Kumar, Raj"],
+                "year": 2024,
+                "doi": "10.5678/arxiv.2024",
+                "url": "https://example.com/paper3",
+                "relevance_score": 0.72,
+                "similarity_score": 0.68,
+                "citation_count": 3,
+                "doc_type": "Preprint",
+                "abstract": "Adaptive learning systems using machine learning can optimize student learning experiences."
+            }
+        ],
+        "created_at": datetime.utcnow().isoformat(),
+        "completed_at": datetime.utcnow().isoformat(),
+    }
+    return {"job_id": job_id, "status": "ready"}
+
 @app.post("/nlp/generate-query")
 async def generate_query_only(request: SearchRequest):
     """

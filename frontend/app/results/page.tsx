@@ -22,24 +22,35 @@ export default function ResultsPage() {
   // Export to Excel
   const exportToExcel = async (jobId: string) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/report/${jobId}/excel`);
-      if (!response.ok) {
-        alert('Error al descargar Excel');
+      if (!jobId) {
+        alert('No hay búsqueda activa para exportar');
         return;
       }
 
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/report/${jobId}/excel`;
+      console.log('Exporting to:', url);
+
+      const response = await fetch(url);
+      const responseText = await response.text();
+
+      if (!response.ok) {
+        console.error('Export error:', response.status, responseText);
+        alert(`Error al descargar Excel: ${responseText}`);
+        return;
+      }
+
+      const blob = new Blob([responseText], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const downloadUrl = URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.href = url;
+      link.href = downloadUrl;
       link.download = `resultados.xlsx`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      URL.revokeObjectURL(downloadUrl);
     } catch (error) {
       console.error('Export error:', error);
-      alert('Error al exportar resultados');
+      alert('Error al exportar resultados: ' + (error instanceof Error ? error.message : String(error)));
     }
   };
 
