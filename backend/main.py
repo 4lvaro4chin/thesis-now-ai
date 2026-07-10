@@ -1,10 +1,15 @@
 import os
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 import logging
 import uuid
 from typing import Optional
 from datetime import datetime
+from io import BytesIO
+from openpyxl import Workbook
+from openpyxl.styles import Font, PatternFill, Alignment
+import tempfile
 
 # Config
 from dotenv import load_dotenv
@@ -103,6 +108,65 @@ async def get_search_status(job_id: str):
     job = jobs[job_id]
     logger.debug(f"[{job_id}] Status check: {job['status']}")
     return job
+
+@app.get("/report/{job_id}/excel")
+async def export_excel(job_id: str):
+    """
+    Export search results as Excel file.
+    """
+    if job_id not in jobs:
+        logger.warning(f"[{job_id}] Search not found")
+        raise HTTPException(status_code=404, detail="Search not found")
+
+    job = jobs[job_id]
+    results = job.get("results", [])
+
+    if not results:
+        raise HTTPException(status_code=400, detail="No results to export")
+
+    # Create workbook
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Resultados"
+
+    # Headers with styling
+    headers = ["Título", "Autores", "Año", "Base de datos", "Tipo de estudio"]
+    header_font = Font(bold=True, color="FFFFFF")
+    header_fill = PatternFill(start_color="1D9E75", end_color="1D9E75", fill_type="solid")
+    header_alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+
+    for col_idx, header in enumerate(headers, start=1):
+        cell = ws.cell(row=1, column=col_idx, value=header)
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.alignment = header_alignment
+
+    # Data rows
+    for row_idx, result in enumerate(results, start=2):
+        ws.cell(row=row_idx, column=1, value=result.get("title", ""))
+        authors = ", ".join(result.get("authors", [])) if result.get("authors") else ""
+        ws.cell(row=row_idx, column=2, value=authors)
+        ws.cell(row=row_idx, column=3, value=result.get("year", ""))
+        ws.cell(row=row_idx, column=4, value=result.get("source", ""))
+        ws.cell(row=row_idx, column=5, value=result.get("doc_type", ""))
+
+    # Column widths
+    ws.column_dimensions["A"].width = 50
+    ws.column_dimensions["B"].width = 40
+    ws.column_dimensions["C"].width = 12
+    ws.column_dimensions["D"].width = 20
+    ws.column_dimensions["E"].width = 20
+
+    # Save to temp file
+    with tempfile.NamedTemporaryFile(suffix=".xlsx", delete=False) as tmp:
+        wb.save(tmp.name)
+        tmp_path = tmp.name
+
+    return FileResponse(
+        path=tmp_path,
+        filename=f"{job.get('title', 'resultados').replace(' ', '_')}.xlsx",
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
 
 async def execute_search(job_id: str, request: SearchRequest):
     """

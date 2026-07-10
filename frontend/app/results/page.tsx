@@ -19,54 +19,28 @@ export default function ResultsPage() {
   const { track } = useTracking();
   const [isMobile, setIsMobile] = useState(false);
 
-  // Export to Excel/CSV
-  const exportToExcel = (results: SearchResult[], title: string) => {
-    if (results.length === 0) {
-      alert('No hay resultados para exportar');
-      return;
+  // Export to Excel
+  const exportToExcel = async (jobId: string) => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/report/${jobId}/excel`);
+      if (!response.ok) {
+        alert('Error al descargar Excel');
+        return;
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `resultados.xlsx`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Export error:', error);
+      alert('Error al exportar resultados');
     }
-
-    // Headers en español
-    const headers = ['Título', 'Autores', 'Año', 'Base de datos', 'Tipo de estudio'];
-
-    // Mapear resultados a filas
-    const rows = results.map((result) => [
-      result.title || '',
-      result.authors?.join(', ') || '',
-      result.year ? result.year.toString() : '',
-      result.source || '',
-      result.doc_type || '',
-    ]);
-
-    // Crear CSV
-    const csvContent = [
-      headers.join(','),
-      ...rows.map(row =>
-        row.map(cell => {
-          // Escapar comillas y envolver en comillas si contiene comas
-          const escaped = String(cell).replace(/"/g, '""');
-          return escaped.includes(',') ? `"${escaped}"` : escaped;
-        }).join(',')
-      )
-    ].join('\n');
-
-    // Crear blob y descargar
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-
-    // Nombre del archivo: thesis-title_YYYY-MM-DD.csv
-    const today = new Date().toISOString().split('T')[0];
-    const safeTitle = title.replace(/[^a-zA-Z0-9-]/g, '-').substring(0, 50);
-    const filename = `${safeTitle}_${today}.csv`;
-
-    link.setAttribute('href', url);
-    link.setAttribute('download', filename);
-    link.style.visibility = 'hidden';
-
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
   };
 
   useEffect(() => {
@@ -215,12 +189,14 @@ export default function ResultsPage() {
   // Expose export function to window for Navbar access
   useEffect(() => {
     (window as any).thesisNowExportExcel = () => {
-      exportToExcel(filteredResults, thesisTitle);
+      if (jobId) {
+        exportToExcel(jobId);
+      }
     };
     return () => {
       delete (window as any).thesisNowExportExcel;
     };
-  }, [filteredResults, thesisTitle, exportToExcel]);
+  }, [jobId, exportToExcel]);
 
   const getSourceLabel = (source: string): string => {
     const labels: Record<string, string> = {
