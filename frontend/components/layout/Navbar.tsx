@@ -576,6 +576,7 @@ export function Navbar({ user: initialUser }: NavbarProps) {
                 </button>
                 <button
                   className="mobile-nav-link"
+                  style={{ opacity: 1, cursor: 'pointer' }}
                   onClick={() => {
                     (window as any).thesisNowExportExcel?.();
                     handleMenuClose();
