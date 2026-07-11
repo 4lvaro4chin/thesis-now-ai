@@ -228,13 +228,14 @@ async def export_excel(job_id: str):
     ws.column_dimensions["E"].width = 20
 
     # Save to BytesIO (in memory)
+    from fastapi.responses import Response
     excel_file = BytesIO()
     wb.save(excel_file)
-    excel_file.seek(0)
+    excel_content = excel_file.getvalue()
 
     filename = f"{job.get('title', 'resultados').replace(' ', '_')}.xlsx"
-    return StreamingResponse(
-        iter([excel_file.getvalue()]),
+    return Response(
+        content=excel_content,
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         headers={"Content-Disposition": f"attachment; filename={filename}"}
     )
