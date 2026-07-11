@@ -1,7 +1,7 @@
 import os
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import FileResponse
 import logging
 import uuid
 from typing import Optional
@@ -227,16 +227,20 @@ async def export_excel(job_id: str):
     ws.column_dimensions["D"].width = 20
     ws.column_dimensions["E"].width = 20
 
-    # Save to BytesIO (in memory)
-    from fastapi.responses import Response
-    excel_file = BytesIO()
-    wb.save(excel_file)
-    excel_content = excel_file.getvalue()
+    # Save to temporary file
+    import tempfile
+    import os
 
     filename = f"{job.get('title', 'resultados').replace(' ', '_')}.xlsx"
-    return Response(
-        content=excel_content,
+
+    with tempfile.NamedTemporaryFile(suffix=".xlsx", delete=False) as tmp:
+        wb.save(tmp.name)
+        tmp_path = tmp.name
+
+    return FileResponse(
+        path=tmp_path,
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        filename=filename,
         headers={"Content-Disposition": f"attachment; filename={filename}"}
     )
 
