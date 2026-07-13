@@ -268,12 +268,15 @@ async def export_excel(job_id: str):
     )
 
 @app.post("/export/excel")
-async def export_publications_excel(body: dict):
+async def export_publications_excel(body: dict | list):
     """
     Export publications as Excel file (for board/saved publications).
-    Expects JSON body with 'results' key containing list of publications.
+    Accepts either: {"results": [...]} or just [...]
     """
-    results = body.get("results", []) if isinstance(body, dict) else []
+    if isinstance(body, dict):
+        results = body.get("results", [])
+    else:
+        results = body
 
     if not results:
         raise HTTPException(status_code=400, detail="No results to export")
