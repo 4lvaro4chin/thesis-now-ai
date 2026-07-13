@@ -60,6 +60,41 @@ export default function BoardPage() {
     }
   };
 
+  const exportToExcel = async () => {
+    try {
+      if (filteredPublications.length === 0) {
+        alert('No publications to export');
+        return;
+      }
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/export/excel`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(filteredPublications),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Export error:', response.status, errorText);
+        alert(`Error al descargar Excel: ${errorText}`);
+        return;
+      }
+
+      const blob = await response.blob();
+      const downloadUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = `publicaciones_${selectedThesis.replace(/\s+/g, '_')}.xlsx`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(downloadUrl);
+    } catch (error) {
+      console.error('Export error:', error);
+      alert('Error al exportar publicaciones: ' + (error instanceof Error ? error.message : String(error)));
+    }
+  };
+
   const sortPublications = (items: SavedPublication[]): SavedPublication[] => {
     const sorted = [...items];
     switch (sortBy) {
@@ -224,24 +259,25 @@ export default function BoardPage() {
               </div>
             )}
 
-            {/* Sort Options */}
-            {selectedThesis && filteredPublications.length > 1 && (
+            {/* Sort Options & Export */}
+            {selectedThesis && filteredPublications.length > 0 && (
               <div style={{ marginBottom: '24px', paddingBottom: '16px', borderBottom: '1px solid #E8EDEB' }}>
                 <label style={{ fontSize: '12px', fontWeight: 600, color: '#1B2A4A', display: 'block', marginBottom: '8px', textTransform: 'uppercase' }}>
                   {t('board.sortBy')}
                 </label>
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as any)}
-                  style={{
-                    padding: '10px 14px',
-                    border: '1px solid #E8EDEB',
-                    borderRadius: '6px',
-                    fontSize: '13px',
-                    fontFamily: "'DM Sans', sans-serif",
-                    color: '#1B2A4A',
-                    cursor: 'pointer',
-                    backgroundColor: '#FFFFFF',
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-end' }}>
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as any)}
+                    style={{
+                      padding: '10px 14px',
+                      border: '1px solid #E8EDEB',
+                      borderRadius: '6px',
+                      fontSize: '13px',
+                      fontFamily: "'DM Sans', sans-serif",
+                      color: '#1B2A4A',
+                      cursor: 'pointer',
+                      backgroundColor: '#FFFFFF',
                     fontWeight: 500,
                   }}
                 >
@@ -251,6 +287,32 @@ export default function BoardPage() {
                   <option value="source">{t('board.sort.source')}</option>
                   <option value="title">{t('board.sort.title')}</option>
                 </select>
+                  <button
+                    onClick={exportToExcel}
+                    style={{
+                      padding: '10px 16px',
+                      background: '#1D9E75',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '6px',
+                      fontSize: '13px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      whiteSpace: 'nowrap',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = '#0F6E56';
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = '#1D9E75';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                    }}
+                  >
+                    📊 {t('navbar.exportExcel')}
+                  </button>
+                </div>
               </div>
             )}
 

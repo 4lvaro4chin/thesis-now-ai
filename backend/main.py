@@ -186,22 +186,8 @@ async def get_search_status(job_id: str):
     logger.debug(f"[{job_id}] Status check: {job['status']}")
     return job
 
-@app.get("/report/{job_id}/excel")
-async def export_excel(job_id: str):
-    """
-    Export search results as Excel (XLSX) file with formatting.
-    """
-    if job_id not in jobs:
-        logger.warning(f"[{job_id}] Search not found")
-        raise HTTPException(status_code=404, detail="Search not found")
-
-    job = jobs[job_id]
-    results = job.get("results", [])
-
-    if not results:
-        raise HTTPException(status_code=400, detail="No results to export")
-
-    # Create workbook
+def generate_excel_workbook(results: list, title: str = "resultados"):
+    """Helper function to generate Excel workbook from results."""
     wb = Workbook()
     ws = wb.active
     ws.title = "Resultados"
@@ -220,7 +206,7 @@ async def export_excel(job_id: str):
 
     # Data rows
     for row_idx, result in enumerate(results, start=2):
-        title = result.get("title") if isinstance(result, dict) else result.title or ""
+        title_val = result.get("title") if isinstance(result, dict) else result.title or ""
         authors = result.get("authors", []) if isinstance(result, dict) else result.authors or []
         if not authors:
             authors_str = ""
@@ -233,7 +219,7 @@ async def export_excel(job_id: str):
         doc_type = result.get("doc_type") if isinstance(result, dict) else result.doc_type or ""
         url = result.get("url") if isinstance(result, dict) else result.url or ""
 
-        ws.cell(row=row_idx, column=1, value=title)
+        ws.cell(row=row_idx, column=1, value=title_val)
         ws.cell(row=row_idx, column=2, value=authors_str)
         ws.cell(row=row_idx, column=3, value=year)
         ws.cell(row=row_idx, column=4, value=source)
@@ -251,12 +237,48 @@ async def export_excel(job_id: str):
     ws.column_dimensions["E"].width = 20
     ws.column_dimensions["F"].width = 45
 
-    # Save to BytesIO
+    return wb, title.replace(" ", "_")
+
+@app.get("/report/{job_id}/excel")
+async def export_excel(job_id: str):
+    """
+    Export search results as Excel (XLSX) file with formatting.
+    """
+    if job_id not in jobs:
+        logger.warning(f"[{job_id}] Search not found")
+        raise HTTPException(status_code=404, detail="Search not found")
+
+    job = jobs[job_id]
+    results = job.get("results", [])
+
+    if not results:
+        raise HTTPException(status_code=400, detail="No results to export")
+
+    wb, safe_title = generate_excel_workbook(results, job.get("title", "resultados"))
     excel_file = BytesIO()
     wb.save(excel_file)
     excel_bytes = excel_file.getvalue()
+    filename = f"{safe_title}.xlsx"
 
-    filename = f"{job.get('title', 'resultados').replace(' ', '_')}.xlsx"
+    return Response(
+        content=excel_bytes,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )
+
+@app.post("/export/excel")
+async def export_publications_excel(results: list):
+    """
+    Export publications as Excel file (for board/saved publications).
+    """
+    if not results:
+        raise HTTPException(status_code=400, detail="No results to export")
+
+    wb, _ = generate_excel_workbook(results, "publicaciones")
+    excel_file = BytesIO()
+    wb.save(excel_file)
+    excel_bytes = excel_file.getvalue()
+    filename = "publicaciones.xlsx"
 
     return Response(
         content=excel_bytes,
