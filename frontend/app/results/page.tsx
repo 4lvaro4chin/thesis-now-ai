@@ -31,15 +31,15 @@ export default function ResultsPage() {
       console.log('Exporting to:', url);
 
       const response = await fetch(url);
-      const responseText = await response.text();
 
       if (!response.ok) {
+        const responseText = await response.text();
         console.error('Export error:', response.status, responseText);
         alert(`Error al descargar Excel: ${responseText}`);
         return;
       }
 
-      const blob = new Blob([responseText], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const blob = await response.blob();
       const downloadUrl = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = downloadUrl;

@@ -200,9 +200,9 @@ async def export_excel(job_id: str):
     ws.title = "Resultados"
 
     # Headers with styling
-    headers = ["Título", "Autores", "Año", "Base de datos", "Tipo de estudio"]
+    headers = ["Título", "Autor/es", "Año", "Base de datos", "Tipo de estudio"]
     header_font = Font(bold=True, color="FFFFFF")
-    header_fill = PatternFill(start_color="1D9E75", end_color="1D9E75", fill_type="solid")
+    header_fill = PatternFill(start_color="1F3864", end_color="1F3864", fill_type="solid")
     header_alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
 
     for col_idx, header in enumerate(headers, start=1):
@@ -215,7 +215,12 @@ async def export_excel(job_id: str):
     for row_idx, result in enumerate(results, start=2):
         title = result.get("title") if isinstance(result, dict) else result.title or ""
         authors = result.get("authors", []) if isinstance(result, dict) else result.authors or []
-        authors_str = ", ".join(authors) if authors else ""
+        if not authors:
+            authors_str = ""
+        elif len(authors) == 1:
+            authors_str = authors[0]
+        else:
+            authors_str = f"{authors[0]} et al."
         year = result.get("year") if isinstance(result, dict) else result.year or ""
         source = result.get("source") if isinstance(result, dict) else result.source or ""
         doc_type = result.get("doc_type") if isinstance(result, dict) else result.doc_type or ""
