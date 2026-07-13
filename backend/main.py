@@ -9,6 +9,7 @@ from datetime import datetime
 from io import BytesIO
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment
+from typing import List
 
 # Config
 from dotenv import load_dotenv
@@ -267,10 +268,13 @@ async def export_excel(job_id: str):
     )
 
 @app.post("/export/excel")
-async def export_publications_excel(results: list):
+async def export_publications_excel(body: dict):
     """
     Export publications as Excel file (for board/saved publications).
+    Expects JSON body with 'results' key containing list of publications.
     """
+    results = body.get("results", []) if isinstance(body, dict) else []
+
     if not results:
         raise HTTPException(status_code=400, detail="No results to export")
 

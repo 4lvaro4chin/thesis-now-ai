@@ -84,7 +84,7 @@ export default function BoardPage() {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/export/excel`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(filteredPublications),
+        body: JSON.stringify({ results: filteredPublications }),
       });
 
       if (!response.ok) {
