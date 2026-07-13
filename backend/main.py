@@ -189,7 +189,7 @@ async def get_search_status(job_id: str):
 @app.get("/report/{job_id}/excel")
 async def export_excel(job_id: str):
     """
-    Export search results as Excel file.
+    Export search results as Excel (XLSX) file with formatting.
     """
     if job_id not in jobs:
         logger.warning(f"[{job_id}] Search not found")
