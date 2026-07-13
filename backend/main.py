@@ -200,7 +200,7 @@ async def export_excel(job_id: str):
     ws.title = "Resultados"
 
     # Headers with styling
-    headers = ["Título", "Autor/es", "Año", "Base de datos", "Tipo de estudio"]
+    headers = ["Título", "Autor/es", "Año", "Base de datos", "Tipo de estudio", "Link"]
     header_font = Font(bold=True, color="FFFFFF")
     header_fill = PatternFill(start_color="1F3864", end_color="1F3864", fill_type="solid")
     header_alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
@@ -224,12 +224,17 @@ async def export_excel(job_id: str):
         year = result.get("year") if isinstance(result, dict) else result.year or ""
         source = result.get("source") if isinstance(result, dict) else result.source or ""
         doc_type = result.get("doc_type") if isinstance(result, dict) else result.doc_type or ""
+        url = result.get("url") if isinstance(result, dict) else result.url or ""
 
         ws.cell(row=row_idx, column=1, value=title)
         ws.cell(row=row_idx, column=2, value=authors_str)
         ws.cell(row=row_idx, column=3, value=year)
         ws.cell(row=row_idx, column=4, value=source)
         ws.cell(row=row_idx, column=5, value=doc_type)
+        link_cell = ws.cell(row=row_idx, column=6, value=url)
+        if url:
+            link_cell.hyperlink = url
+            link_cell.font = Font(color="0563C1", underline="single")
 
     # Column widths
     ws.column_dimensions["A"].width = 50
@@ -237,6 +242,7 @@ async def export_excel(job_id: str):
     ws.column_dimensions["C"].width = 12
     ws.column_dimensions["D"].width = 20
     ws.column_dimensions["E"].width = 20
+    ws.column_dimensions["F"].width = 45
 
     # Save to BytesIO
     excel_file = BytesIO()
