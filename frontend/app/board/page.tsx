@@ -34,6 +34,20 @@ export default function BoardPage() {
     loadPublications();
   }, [getAllSavedByUser]);
 
+  // Expose export function to window for Navbar access
+  useEffect(() => {
+    (window as any).thesisNowExportBoard = () => {
+      if (filteredPublications.length > 0) {
+        exportToExcel();
+      } else {
+        alert('No publications to export');
+      }
+    };
+    return () => {
+      delete (window as any).thesisNowExportBoard;
+    };
+  }, [filteredPublications, exportToExcel]);
+
   const theses = Array.from(new Set(publications.map((p) => p.thesis_title)));
   const filteredPublications = selectedThesis
     ? publications.filter((p) => p.thesis_title === selectedThesis)
@@ -287,31 +301,6 @@ export default function BoardPage() {
                   <option value="source">{t('board.sort.source')}</option>
                   <option value="title">{t('board.sort.title')}</option>
                 </select>
-                  <button
-                    onClick={exportToExcel}
-                    style={{
-                      padding: '10px 16px',
-                      background: '#1D9E75',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '6px',
-                      fontSize: '13px',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      transition: 'all 0.2s',
-                      whiteSpace: 'nowrap',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = '#0F6E56';
-                      e.currentTarget.style.transform = 'translateY(-2px)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = '#1D9E75';
-                      e.currentTarget.style.transform = 'translateY(0)';
-                    }}
-                  >
-                    📊 {t('navbar.exportExcel')}
-                  </button>
                 </div>
               </div>
             )}
