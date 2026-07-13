@@ -1,5 +1,5 @@
 import os
-from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi import FastAPI, HTTPException, BackgroundTasks, Body
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 import logging
@@ -268,7 +268,7 @@ async def export_excel(job_id: str):
     )
 
 @app.post("/export/excel")
-async def export_publications_excel(body: dict | list):
+async def export_publications_excel(body: dict | list = Body(...)):
     """
     Export publications as Excel file (for board/saved publications).
     Accepts either: {"results": [...]} or just [...]
