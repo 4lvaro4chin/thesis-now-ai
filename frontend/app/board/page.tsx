@@ -273,7 +273,7 @@ export default function BoardPage() {
               </div>
             )}
 
-            {/* Sort Options & Export */}
+            {/* Sort Options */}
             {selectedThesis && filteredPublications.length > 0 && (
               <div style={{ marginBottom: '24px', paddingBottom: '16px', borderBottom: '1px solid #E8EDEB' }}>
                 <label style={{ fontSize: '12px', fontWeight: 600, color: '#1B2A4A', display: 'block', marginBottom: '8px', textTransform: 'uppercase' }}>
