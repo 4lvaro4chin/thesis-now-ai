@@ -1,7 +1,7 @@
 import os
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import Response
 import logging
 import uuid
 from typing import Optional
@@ -213,12 +213,18 @@ async def export_excel(job_id: str):
 
     # Data rows
     for row_idx, result in enumerate(results, start=2):
-        ws.cell(row=row_idx, column=1, value=result.title or "")
-        authors = ", ".join(result.authors) if result.authors else ""
-        ws.cell(row=row_idx, column=2, value=authors)
-        ws.cell(row=row_idx, column=3, value=result.year or "")
-        ws.cell(row=row_idx, column=4, value=result.source or "")
-        ws.cell(row=row_idx, column=5, value=result.doc_type or "")
+        title = result.get("title") if isinstance(result, dict) else result.title or ""
+        authors = result.get("authors", []) if isinstance(result, dict) else result.authors or []
+        authors_str = ", ".join(authors) if authors else ""
+        year = result.get("year") if isinstance(result, dict) else result.year or ""
+        source = result.get("source") if isinstance(result, dict) else result.source or ""
+        doc_type = result.get("doc_type") if isinstance(result, dict) else result.doc_type or ""
+
+        ws.cell(row=row_idx, column=1, value=title)
+        ws.cell(row=row_idx, column=2, value=authors_str)
+        ws.cell(row=row_idx, column=3, value=year)
+        ws.cell(row=row_idx, column=4, value=source)
+        ws.cell(row=row_idx, column=5, value=doc_type)
 
     # Column widths
     ws.column_dimensions["A"].width = 50
@@ -227,20 +233,16 @@ async def export_excel(job_id: str):
     ws.column_dimensions["D"].width = 20
     ws.column_dimensions["E"].width = 20
 
-    # Save to temporary file
-    import tempfile
-    import os
+    # Save to BytesIO
+    excel_file = BytesIO()
+    wb.save(excel_file)
+    excel_bytes = excel_file.getvalue()
 
     filename = f"{job.get('title', 'resultados').replace(' ', '_')}.xlsx"
 
-    with tempfile.NamedTemporaryFile(suffix=".xlsx", delete=False) as tmp:
-        wb.save(tmp.name)
-        tmp_path = tmp.name
-
-    return FileResponse(
-        path=tmp_path,
+    return Response(
+        content=excel_bytes,
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        filename=filename,
         headers={"Content-Disposition": f"attachment; filename={filename}"}
     )
 
