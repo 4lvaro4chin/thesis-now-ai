@@ -34,20 +34,6 @@ export default function BoardPage() {
     loadPublications();
   }, [getAllSavedByUser]);
 
-  // Expose export function to window for Navbar access
-  useEffect(() => {
-    (window as any).thesisNowExportBoard = () => {
-      if (filteredPublications.length > 0) {
-        exportToExcel();
-      } else {
-        alert('No publications to export');
-      }
-    };
-    return () => {
-      delete (window as any).thesisNowExportBoard;
-    };
-  }, [filteredPublications, exportToExcel]);
-
   const theses = Array.from(new Set(publications.map((p) => p.thesis_title)));
   const filteredPublications = selectedThesis
     ? publications.filter((p) => p.thesis_title === selectedThesis)
@@ -108,6 +94,20 @@ export default function BoardPage() {
       alert('Error al exportar publicaciones: ' + (error instanceof Error ? error.message : String(error)));
     }
   };
+
+  // Expose export function to window for Navbar access
+  useEffect(() => {
+    (window as any).thesisNowExportBoard = () => {
+      if (filteredPublications.length > 0) {
+        exportToExcel();
+      } else {
+        alert('No publications to export');
+      }
+    };
+    return () => {
+      delete (window as any).thesisNowExportBoard;
+    };
+  }, [filteredPublications, exportToExcel]);
 
   const sortPublications = (items: SavedPublication[]): SavedPublication[] => {
     const sorted = [...items];
